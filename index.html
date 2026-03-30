@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-инструктор 3.1 | Resusci Anne</title>
+  <title>AI-инструктор 3.2 | Resusci Anne</title>
   <style>
     :root {
       --bg: #050505;
@@ -17,10 +17,12 @@
       --danger: #b84f5b;
       --success: #2e9f5b;
       --border: #262626;
-      --shadow: 0 10px 30px rgba(0,0,0,.28);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -76,12 +78,12 @@
       height: 10px;
       border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 12px rgba(111, 211, 154, .7);
+      box-shadow: 0 0 12px rgba(111, 211, 154, 0.7);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 1.35fr .65fr;
+      grid-template-columns: 1.35fr 0.65fr;
       gap: 18px;
     }
 
@@ -93,7 +95,8 @@
       box-shadow: var(--shadow);
     }
 
-    .card h2, .card h3 {
+    .card h2,
+    .card h3 {
       margin: 0 0 14px 0;
     }
 
@@ -102,8 +105,8 @@
       margin-bottom: 18px;
       padding: 20px;
       border-radius: 20px;
-      border: 1px solid rgba(111, 211, 154, .25);
-      background: rgba(111, 211, 154, .08);
+      border: 1px solid rgba(111, 211, 154, 0.25);
+      background: rgba(111, 211, 154, 0.08);
     }
 
     .welcome.active {
@@ -158,7 +161,7 @@
       font-weight: 700;
       cursor: pointer;
       text-align: left;
-      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     }
 
     .scenario-btn:hover,
@@ -181,7 +184,7 @@
 
     .scenario-btn.active {
       border-color: var(--accent-2);
-      box-shadow: inset 0 0 0 1px rgba(79,131,241,.35);
+      box-shadow: inset 0 0 0 1px rgba(79, 131, 241, 0.35);
     }
 
     .step-box {
@@ -226,8 +229,8 @@
       margin-top: 16px;
       padding: 14px 16px;
       border-radius: 16px;
-      background: rgba(79,131,241,.10);
-      border: 1px solid rgba(79,131,241,.25);
+      background: rgba(79, 131, 241, 0.1);
+      border: 1px solid rgba(79, 131, 241, 0.25);
       color: #e3ecff;
       line-height: 1.5;
     }
@@ -313,8 +316,8 @@
       margin-top: 18px;
       padding: 18px;
       border-radius: 18px;
-      border: 1px solid rgba(79,131,241,.25);
-      background: rgba(79,131,241,.08);
+      border: 1px solid rgba(79, 131, 241, 0.25);
+      background: rgba(79, 131, 241, 0.08);
     }
 
     .quiz-box.visible {
@@ -341,12 +344,12 @@
 
     .answer-btn.correct {
       border-color: var(--success);
-      background: rgba(46,159,91,.18);
+      background: rgba(46, 159, 91, 0.18);
     }
 
     .answer-btn.wrong {
       border-color: var(--danger);
-      background: rgba(184,79,91,.18);
+      background: rgba(184, 79, 91, 0.18);
     }
 
     .quiz-feedback {
@@ -363,14 +366,14 @@
     }
 
     .quiz-feedback.success {
-      background: rgba(46,159,91,.12);
-      border: 1px solid rgba(46,159,91,.28);
+      background: rgba(46, 159, 91, 0.12);
+      border: 1px solid rgba(46, 159, 91, 0.28);
       color: #dff7e8;
     }
 
     .quiz-feedback.error {
-      background: rgba(184,79,91,.12);
-      border: 1px solid rgba(184,79,91,.28);
+      background: rgba(184, 79, 91, 0.12);
+      border: 1px solid rgba(184, 79, 91, 0.28);
       color: #ffe0e5;
     }
 
@@ -379,8 +382,8 @@
       margin-top: 18px;
       padding: 22px;
       border-radius: 20px;
-      border: 1px solid rgba(111,211,154,.25);
-      background: linear-gradient(180deg, rgba(111,211,154,.10) 0%, rgba(79,131,241,.06) 100%);
+      border: 1px solid rgba(111, 211, 154, 0.25);
+      background: linear-gradient(180deg, rgba(111, 211, 154, 0.1) 0%, rgba(79, 131, 241, 0.06) 100%);
     }
 
     .results-box.visible {
@@ -408,25 +411,25 @@
       font-size: 14px;
       font-weight: 700;
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.05);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .results-level.basic {
       color: #ffd98a;
-      border-color: rgba(216,162,58,.35);
-      background: rgba(216,162,58,.10);
+      border-color: rgba(216, 162, 58, 0.35);
+      background: rgba(216, 162, 58, 0.1);
     }
 
     .results-level.good {
       color: #cfe1ff;
-      border-color: rgba(79,131,241,.35);
-      background: rgba(79,131,241,.12);
+      border-color: rgba(79, 131, 241, 0.35);
+      background: rgba(79, 131, 241, 0.12);
     }
 
     .results-level.excellent {
       color: #dff7e8;
-      border-color: rgba(46,159,91,.35);
-      background: rgba(46,159,91,.12);
+      border-color: rgba(46, 159, 91, 0.35);
+      background: rgba(46, 159, 91, 0.12);
     }
 
     .results-text {
@@ -495,8 +498,8 @@
 <body>
   <div class="app">
     <div class="hero">
-      <div class="hero-title">AI-инструктор 3.1 · Resusci Anne</div>
-      <div class="hero-subtitle">QR-сценарии, голос, пошаговое сопровождение, проверка знаний и красивый итог тренировки.</div>
+      <div class="hero-title">AI-инструктор 3.2 · Resusci Anne</div>
+      <div class="hero-subtitle">QR-сценарии, голос, пошаговое сопровождение, проверка знаний и итоговый результат во всех трех сценариях.</div>
       <div class="status">
         <span class="dot"></span>
         <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
@@ -515,17 +518,17 @@
         <div class="scenario-list">
           <button class="scenario-btn" id="btn-triage" onclick="manualScenarioStart('triage')">
             Первичная оценка
-            <small>Проверка безопасности, сознания и дыхания с переходом в нужную ветку.</small>
+            <small>Проверка безопасности, сознания и дыхания с вопросами и итоговым результатом.</small>
           </button>
 
           <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
-            СЛР 3.1
+            СЛР
             <small>Пошаговое сопровождение плюс вопросы, проверка, уровень и итоговый результат.</small>
           </button>
 
           <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
             AED
-            <small>Работа с автоматическим наружным дефибриллятором.</small>
+            <small>Работа с автоматическим наружным дефибриллятором, вопросами и проверкой.</small>
           </button>
         </div>
 
@@ -593,198 +596,226 @@
 
   <script>
     const scenarios = {
-const scenarios = {
-  triage: {
-    name: "Первичная оценка",
-    intro: "Запускаю сценарий: Первичная оценка.",
-    steps: [
-      {
-        title: "Шаг 1",
-        text: "Проверь безопасность места.",
-        explain: "Убедись, что нет угроз.",
-        risks: "Можно пострадать самому."
+      triage: {
+        name: "Первичная оценка",
+        intro: "Запускаю сценарий: Первичная оценка.",
+        steps: [
+          {
+            title: "Шаг 1",
+            text: "Проверь безопасность места.",
+            explain: "Перед началом помощи убедись, что тебе и пострадавшему ничего не угрожает.",
+            risks: "Если не проверить обстановку, можно пострадать самому.",
+            quiz: {
+              question: "Что проверяем первым?",
+              answers: [
+                { text: "Пульс", correct: false },
+                { text: "Безопасность места", correct: true },
+                { text: "Документы пострадавшего", correct: false }
+              ],
+              correctText: "Верно. Сначала оценивается безопасность места.",
+              wrongText: "Неверно. Сначала нужно убедиться в безопасности места.",
+              topic: "безопасность места"
+            }
+          },
+          {
+            title: "Шаг 2",
+            text: "Проверь сознание. Аккуратно потряси за плечи и громко спроси: Вы меня слышите?",
+            explain: "Это помогает понять, реагирует ли пострадавший на обращение и прикосновение.",
+            risks: "Если не проверить сознание, можно выбрать неправильный алгоритм помощи."
+          },
+          {
+            title: "Шаг 3",
+            text: "Проверь дыхание в течение 10 секунд.",
+            explain: "Оцени дыхание быстро и без лишней задержки.",
+            risks: "Долгая или неверная оценка дыхания может задержать начало правильных действий.",
+            quiz: {
+              question: "Сколько времени в этом сценарии отводится на проверку дыхания?",
+              answers: [
+                { text: "5 секунд", correct: false },
+                { text: "10 секунд", correct: true },
+                { text: "30 секунд", correct: false }
+              ],
+              correctText: "Верно. Для оценки дыхания берется ориентир 10 секунд.",
+              wrongText: "Неверно. В этом сценарии ориентир — 10 секунд.",
+              topic: "проверка дыхания"
+            }
+          },
+          {
+            title: "Шаг 4",
+            text: "Сообщи результат: не дышит, дышит или без сознания, но дышит.",
+            explain: "Это развилка, от которой зависит дальнейший алгоритм помощи.",
+            risks: "Неправильная оценка состояния приведет к неверному сценарию.",
+            quiz: {
+              question: "Если пострадавший без сознания, но дышит, что делать дальше?",
+              answers: [
+                { text: "Начать СЛР", correct: false },
+                { text: "Вызвать помощь и контролировать состояние", correct: true },
+                { text: "Игнорировать дыхание", correct: false }
+              ],
+              correctText: "Верно. Нужно вызвать помощь и наблюдать за состоянием.",
+              wrongText: "Неверно. В этой ситуации нужно вызвать помощь и контролировать состояние.",
+              topic: "дальнейшие действия при наличии дыхания"
+            }
+          }
+        ]
       },
-      {
-        title: "Шаг 2",
-        text: "Проверь сознание.",
-        explain: "Обратись к пострадавшему.",
-        risks: "Можно пропустить критическое состояние.",
-        quiz: {
-          question: "Что проверяем сначала?",
-          answers: [
-            { text: "Дыхание", correct: false },
-            { text: "Безопасность места", correct: true },
-            { text: "Пульс", correct: false }
-          ],
-          correctText: "Верно. Сначала безопасность.",
-          wrongText: "Неверно. Сначала безопасность.",
-          topic: "безопасность"
-        }
-      },
-      {
-        title: "Шаг 3",
-        text: "Проверь дыхание 10 секунд.",
-        explain: "Оцени дыхание.",
-        risks: "Можно ошибиться.",
-        quiz: {
-          question: "Сколько проверяем дыхание?",
-          answers: [
-            { text: "5 секунд", correct: false },
-            { text: "10 секунд", correct: true },
-            { text: "30 секунд", correct: false }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "дыхание"
-        }
-      },
-      {
-        title: "Шаг 4",
-        text: "Скажи результат.",
-        explain: "Это влияет на действия.",
-        risks: "Неправильный выбор сценария."
-      }
-    ]
-  },
 
-  cpr: {
-    name: "СЛР",
-    intro: "Запускаю СЛР.",
-    steps: [
-      {
-        title: "Шаг 1",
-        text: "Проверь безопасность.",
-        explain: "Безопасность важна.",
-        risks: "Риск для тебя."
+      cpr: {
+        name: "СЛР",
+        intro: "Запускаю сценарий: сердечно-легочная реанимация с проверкой знаний.",
+        steps: [
+          {
+            title: "Шаг 1",
+            text: "Проверь безопасность места.",
+            explain: "Убедись, что проводить помощь безопасно для тебя и пострадавшего.",
+            risks: "В опасной зоне оказание помощи может привести к дополнительным пострадавшим."
+          },
+          {
+            title: "Шаг 2",
+            text: "Проверь сознание: потряси за плечи и громко обратись к пострадавшему.",
+            explain: "Так ты определяешь, есть ли реакция на внешнее воздействие.",
+            risks: "Без проверки сознания нельзя правильно выбрать дальнейшие действия."
+          },
+          {
+            title: "Шаг 3",
+            text: "Оцени дыхание и признаки жизни по учебному алгоритму. Если нет сознания, нет нормального дыхания и отсутствуют признаки кровообращения — переходи к СЛР.",
+            explain: "Формулировка может отличаться в зависимости от программы обучения, но логика шага — быстро распознать критическое состояние и не задерживать начало помощи.",
+            risks: "Затягивание оценки состояния уменьшает шансы на эффективную помощь.",
+            quiz: {
+              question: "Сколько времени по учебному алгоритму отводится на проверку дыхания?",
+              answers: [
+                { text: "3 секунды", correct: false },
+                { text: "10 секунд", correct: true },
+                { text: "30 секунд", correct: false }
+              ],
+              correctText: "Верно. Проверка дыхания проводится быстро, обычно в пределах 10 секунд.",
+              wrongText: "Неверно. В этом сценарии правильный ориентир — 10 секунд.",
+              topic: "проверка дыхания"
+            }
+          },
+          {
+            title: "Шаг 4",
+            text: "Вызови помощь или попроси принести AED.",
+            explain: "Чем раньше вызвана помощь и подготовлен AED, тем выше шанс на успешную реанимацию.",
+            risks: "Задержка вызова помощи уменьшает шансы на выживание."
+          },
+          {
+            title: "Шаг 5",
+            text: "Если пострадавший без сознания, не дышит нормально и отсутствуют признаки жизни — немедленно начинай СЛР.",
+            explain: "Это ключевая точка принятия решения: не ждать лишнего и не откладывать начало помощи.",
+            risks: "Промедление перед началом СЛР ухудшает прогноз.",
+            quiz: {
+              question: "Что делать, если пострадавший без сознания и не дышит нормально?",
+              answers: [
+                { text: "Положить на бок и ждать", correct: false },
+                { text: "Начать СЛР", correct: true },
+                { text: "Отложить помощь до приезда специалистов", correct: false }
+              ],
+              correctText: "Верно. В рамках этого сценария правильное действие — немедленно начать СЛР.",
+              wrongText: "Неверно. Здесь нужно немедленно начать СЛР.",
+              topic: "начало СЛР"
+            }
+          },
+          {
+            title: "Шаг 6",
+            text: "Начни компрессии грудной клетки: глубина 5–6 сантиметров, темп 100–120 в минуту.",
+            explain: "Компрессии должны быть ритмичными, с полным расправлением грудной клетки между нажатиями.",
+            risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР.",
+            quiz: {
+              question: "Какая глубина компрессий используется в этом сценарии?",
+              answers: [
+                { text: "2–3 сантиметра", correct: false },
+                { text: "5–6 сантиметров", correct: true },
+                { text: "8–10 сантиметров", correct: false }
+              ],
+              correctText: "Верно. Для этого сценария ориентир — 5–6 сантиметров.",
+              wrongText: "Неверно. В этом сценарии правильный ориентир — 5–6 сантиметров.",
+              topic: "глубина компрессий"
+            }
+          },
+          {
+            title: "Шаг 7",
+            text: "Продолжай цикл помощи до прибытия помощи, появления AED или восстановления признаков жизни.",
+            explain: "Не прекращай помощь без причины. Оцени состояние только при необходимости.",
+            risks: "Преждевременная остановка СЛР резко снижает шанс на выживание."
+          }
+        ]
       },
-      {
-        title: "Шаг 2",
-        text: "Проверь сознание.",
-        explain: "Обратись к пострадавшему.",
-        risks: "Можно ошибиться."
-      },
-      {
-        title: "Шаг 3",
-        text: "Оцени дыхание.",
-        explain: "Быстро.",
-        risks: "Задержка.",
-        quiz: {
-          question: "Сколько времени проверяем дыхание?",
-          answers: [
-            { text: "3 секунды", correct: false },
-            { text: "10 секунд", correct: true },
-            { text: "30 секунд", correct: false }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "дыхание"
-        }
-      },
-      {
-        title: "Шаг 4",
-        text: "Вызови помощь.",
-        explain: "Важно.",
-        risks: "Потеря времени."
-      },
-      {
-        title: "Шаг 5",
-        text: "Начни СЛР.",
-        explain: "Не жди.",
-        risks: "Снижение шансов.",
-        quiz: {
-          question: "Что делать если не дышит?",
-          answers: [
-            { text: "Ждать", correct: false },
-            { text: "Начать СЛР", correct: true },
-            { text: "Повернуть", correct: false }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "начало слр"
-        }
-      },
-      {
-        title: "Шаг 6",
-        text: "Компрессии 5–6 см.",
-        explain: "Глубина важна.",
-        risks: "Низкая эффективность.",
-        quiz: {
-          question: "Глубина компрессий?",
-          answers: [
-            { text: "2 см", correct: false },
-            { text: "5–6 см", correct: true },
-            { text: "10 см", correct: false }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "глубина"
-        }
-      }
-    ]
-  },
 
-  aed: {
-    name: "AED",
-    intro: "Запускаю AED.",
-    steps: [
-      {
-        title: "Шаг 1",
-        text: "Включи AED.",
-        explain: "Он даст инструкции.",
-        risks: "Задержка помощи.",
-        quiz: {
-          question: "Что сделать первым?",
-          answers: [
-            { text: "Включить AED", correct: true },
-            { text: "Ждать", correct: false },
-            { text: "Делать массаж", correct: false }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "включение"
-        }
-      },
-      {
-        title: "Шаг 2",
-        text: "Наклей электроды.",
-        explain: "По схеме.",
-        risks: "Ошибка анализа."
-      },
-      {
-        title: "Шаг 3",
-        text: "Не трогай во время анализа.",
-        explain: "Важно.",
-        risks: "Ошибка.",
-        quiz: {
-          question: "Можно ли касаться?",
-          answers: [
-            { text: "Да", correct: false },
-            { text: "Нет", correct: true }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "касание"
-        }
-      },
-      {
-        title: "Шаг 4",
-        text: "Сделай разряд.",
-        explain: "Если говорит AED.",
-        risks: "Опасность.",
-        quiz: {
-          question: "Что после разряда?",
-          answers: [
-            { text: "Ждать", correct: false },
-            { text: "Продолжить СЛР", correct: true }
-          ],
-          correctText: "Верно.",
-          wrongText: "Неверно.",
-          topic: "после разряда"
-        }
+      aed: {
+        name: "AED",
+        intro: "Запускаю сценарий: работа с автоматическим наружным дефибриллятором.",
+        steps: [
+          {
+            title: "Шаг 1",
+            text: "Принеси AED и включи его.",
+            explain: "После включения AED устройство начнет давать голосовые подсказки.",
+            risks: "Если AED не включен сразу, помощь задерживается.",
+            quiz: {
+              question: "Что нужно сделать первым после того, как AED оказался рядом?",
+              answers: [
+                { text: "Включить AED", correct: true },
+                { text: "Убрать AED в сторону", correct: false },
+                { text: "Ждать указаний окружающих", correct: false }
+              ],
+              correctText: "Верно. Сначала AED нужно включить.",
+              wrongText: "Неверно. В этой ситуации сначала нужно включить AED.",
+              topic: "включение AED"
+            }
+          },
+          {
+            title: "Шаг 2",
+            text: "Освободи грудную клетку пострадавшего.",
+            explain: "Электроды AED должны быть наклеены на доступную поверхность.",
+            risks: "Неправильная подготовка снижает эффективность анализа и разряда."
+          },
+          {
+            title: "Шаг 3",
+            text: "Наклей электроды согласно схеме на них.",
+            explain: "Обычно один электрод размещается справа вверху грудной клетки, второй — слева сбоку ниже.",
+            risks: "Неверное положение электродов может помешать анализу ритма."
+          },
+          {
+            title: "Шаг 4",
+            text: "Не касайся пострадавшего во время анализа ритма.",
+            explain: "Во время анализа никто не должен касаться пострадавшего.",
+            risks: "При касании результат анализа может быть неправильным.",
+            quiz: {
+              question: "Можно ли касаться пострадавшего во время анализа AED?",
+              answers: [
+                { text: "Да, если делать это аккуратно", correct: false },
+                { text: "Нет", correct: true }
+              ],
+              correctText: "Верно. Во время анализа касаться пострадавшего нельзя.",
+              wrongText: "Неверно. Во время анализа касаться пострадавшего нельзя.",
+              topic: "касание во время анализа"
+            }
+          },
+          {
+            title: "Шаг 5",
+            text: "Если AED рекомендует разряд, убедись, что никто не касается пострадавшего, и нажми кнопку разряда.",
+            explain: "Перед разрядом громко предупреди окружающих.",
+            risks: "При касании пострадавшего во время разряда можно травмировать окружающих."
+          },
+          {
+            title: "Шаг 6",
+            text: "Сразу после разряда или сообщения AED возобнови СЛР.",
+            explain: "Даже после разряда необходимо продолжать компрессии.",
+            risks: "Пауза после разряда ухудшает эффективность реанимации.",
+            quiz: {
+              question: "Что делать после разряда AED?",
+              answers: [
+                { text: "Ждать без действий", correct: false },
+                { text: "Продолжить СЛР", correct: true }
+              ],
+              correctText: "Верно. После разряда нужно продолжить СЛР.",
+              wrongText: "Неверно. После разряда нужно продолжить СЛР.",
+              topic: "действия после разряда"
+            }
+          }
+        ]
       }
-    ]
-  }
-};
+    };
 
     let currentScenarioKey = null;
     let currentStepIndex = -1;
@@ -1019,6 +1050,7 @@ const scenarios = {
         speak(`${quiz.wrongText} Правильный ответ: ${correctAnswerText}.`);
         quizState.mistakes.push(quiz.topic);
         log(`Ошибка в вопросе: ${quiz.topic}`);
+
         buttons.forEach(btn => {
           if (btn.textContent === correctAnswerText) {
             btn.classList.add("correct");
@@ -1068,9 +1100,7 @@ const scenarios = {
         ? `Рекомендация:\nПовтори сценарий ${scenario.name} и обрати внимание на ошибки.`
         : "Рекомендация:\nОтличная работа. Можно переходить к следующему сценарию.";
 
-      resultsText.textContent =
-        `${mistakesText}\n\n${recommendation}`;
-
+      resultsText.textContent = `${mistakesText}\n\n${recommendation}`;
       resultsBox.classList.add("visible");
     }
 
