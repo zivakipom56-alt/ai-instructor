@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-инструктор | Resusci Anne</title>
+  <title>AI-инструктор 2.0 | Resusci Anne</title>
   <style>
     :root {
       --bg: #050505;
-      --card: #111111;
+      --card: #101010;
       --card-2: #171717;
       --text: #ffffff;
       --muted: #bdbdbd;
-      --accent: #3ddc97;
-      --accent-2: #2f80ed;
-      --warn: #ffb020;
-      --danger: #ff5c5c;
+      --accent: #6fd39a;
+      --accent-2: #4f83f1;
+      --warn: #d8a23a;
+      --danger: #b84f5b;
       --border: #262626;
+      --shadow: 0 10px 30px rgba(0,0,0,.28);
     }
 
     * { box-sizing: border-box; }
@@ -29,46 +30,31 @@
     }
 
     .app {
-      max-width: 980px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 18px;
     }
 
-    .header {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 20px;
+    .hero {
+      margin-bottom: 18px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #0f0f0f 0%, #090909 100%);
+      box-shadow: var(--shadow);
     }
 
-    .title {
+    .hero-title {
       font-size: 34px;
       font-weight: 800;
-      letter-spacing: 0.3px;
+      line-height: 1.12;
+      margin-bottom: 8px;
     }
 
-    .subtitle {
+    .hero-subtitle {
       color: var(--muted);
       font-size: 16px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 20px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-    }
-
-    .card h2 {
-      margin: 0 0 14px 0;
-      font-size: 22px;
+      line-height: 1.45;
     }
 
     .status {
@@ -81,7 +67,7 @@
       padding: 10px 14px;
       color: var(--muted);
       font-size: 14px;
-      margin-bottom: 16px;
+      margin-top: 14px;
     }
 
     .dot {
@@ -89,13 +75,72 @@
       height: 10px;
       border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 12px rgba(61, 220, 151, 0.7);
+      box-shadow: 0 0 12px rgba(111, 211, 154, .7);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2, .card h3 {
+      margin: 0 0 14px 0;
+    }
+
+    .welcome {
+      display: none;
+      margin-bottom: 18px;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(111, 211, 154, .25);
+      background: rgba(111, 211, 154, .08);
+    }
+
+    .welcome.active {
+      display: block;
+    }
+
+    .welcome-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .welcome-text {
+      color: #e8f8ee;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .big-start {
+      width: 100%;
+      border: 0;
+      border-radius: 18px;
+      padding: 18px 20px;
+      font-size: 21px;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--accent);
+      color: #08110d;
+    }
+
+    .big-start:hover {
+      filter: brightness(1.03);
     }
 
     .scenario-list {
       display: grid;
       gap: 12px;
-      margin-top: 14px;
+      margin-top: 10px;
     }
 
     .scenario-btn,
@@ -104,20 +149,20 @@
       border: 1px solid var(--border);
       background: var(--card-2);
       color: var(--text);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 16px;
       font-size: 17px;
       font-weight: 700;
       cursor: pointer;
       text-align: left;
-      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
     }
 
     .scenario-btn:hover,
     .action-btn:hover {
       transform: translateY(-1px);
       border-color: #3a3a3a;
-      background: #1c1c1c;
+      background: #1b1b1b;
     }
 
     .scenario-btn small {
@@ -126,28 +171,28 @@
       color: var(--muted);
       font-size: 13px;
       font-weight: 500;
+      line-height: 1.4;
     }
 
     .scenario-btn.active {
       border-color: var(--accent-2);
-      box-shadow: 0 0 0 1px rgba(47, 128, 237, 0.35) inset;
+      box-shadow: inset 0 0 0 1px rgba(79,131,241,.35);
     }
 
     .step-box {
-      background: linear-gradient(180deg, #121212 0%, #0c0c0c 100%);
+      margin-top: 16px;
+      background: linear-gradient(180deg, #121212 0%, #0d0d0d 100%);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 22px;
-      min-height: 230px;
+      padding: 20px;
+      min-height: 220px;
     }
 
     .step-meta {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 18px;
-      color: var(--muted);
-      font-size: 14px;
+      margin-bottom: 16px;
     }
 
     .badge {
@@ -155,29 +200,35 @@
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 8px 12px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
     .step-title {
       font-size: 28px;
       font-weight: 800;
-      margin-bottom: 14px;
-      line-height: 1.2;
+      margin-bottom: 12px;
     }
 
     .step-text {
       font-size: 20px;
-      line-height: 1.5;
-      color: #f0f0f0;
+      line-height: 1.55;
+      color: #f3f3f3;
     }
 
     .hint {
-      margin-top: 18px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(47, 128, 237, 0.08);
-      border: 1px solid rgba(47, 128, 237, 0.25);
-      color: #dfeaff;
       display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(79,131,241,.10);
+      border: 1px solid rgba(79,131,241,.25);
+      color: #e3ecff;
+      line-height: 1.5;
+    }
+
+    .hint.visible {
+      display: block;
     }
 
     .actions {
@@ -192,129 +243,148 @@
       border-color: transparent;
     }
 
-    .action-btn.primary:hover {
-      background: #236fd0;
-    }
-
     .action-btn.voice {
       background: var(--accent);
       color: #08110d;
       border-color: transparent;
     }
 
-    .action-btn.voice:hover {
-      background: #35c789;
-    }
-
     .action-btn.warn {
-      background: #2a1d00;
-      border-color: #5c4300;
+      background: #2d2107;
+      border-color: #694b0a;
       color: #ffd98a;
     }
 
     .action-btn.danger {
-      background: #2a1010;
-      border-color: #5b2222;
-      color: #ffb2b2;
+      background: #2d1115;
+      border-color: #69303a;
+      color: #ffc0c7;
     }
 
-    .side-panel h3 {
-      margin: 0 0 12px 0;
-      font-size: 18px;
-    }
-
-    .commands {
+    .mini-tools {
       display: grid;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
-    .command {
+    .tool-note {
       background: var(--card-2);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 14px;
       color: var(--muted);
+      line-height: 1.4;
       font-size: 14px;
     }
 
     .log {
       background: #0b0b0b;
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px;
       min-height: 180px;
-      max-height: 280px;
+      max-height: 320px;
       overflow: auto;
       font-size: 14px;
-      color: #d8d8d8;
-      line-height: 1.45;
+      line-height: 1.5;
+      color: #ddd;
     }
 
     .log-entry {
       margin-bottom: 10px;
       padding-bottom: 10px;
-      border-bottom: 1px dashed #242424;
+      border-bottom: 1px dashed #232323;
     }
 
     .footer-note {
+      margin-top: 14px;
       color: var(--muted);
       font-size: 13px;
-      margin-top: 14px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
-      .actions { grid-template-columns: 1fr; }
-      .title { font-size: 28px; }
-      .step-title { font-size: 24px; }
-      .step-text { font-size: 18px; }
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 12px;
+      }
+
+      .hero-title {
+        font-size: 26px;
+      }
+
+      .hero-subtitle {
+        font-size: 15px;
+      }
+
+      .step-title {
+        font-size: 24px;
+      }
+
+      .step-text {
+        font-size: 18px;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .big-start {
+        font-size: 19px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="header">
-      <div class="title">AI-инструктор · Resusci Anne</div>
-      <div class="subtitle">MVP для очков XREAL: 3 сценария, голосовое управление, пошаговое сопровождение</div>
+    <div class="hero">
+      <div class="hero-title">AI-инструктор · Resusci Anne</div>
+      <div class="hero-subtitle">MVP для очков XREAL: QR-сценарии, голос, пошаговое сопровождение и быстрый мобильный запуск.</div>
+      <div class="status">
+        <span class="dot"></span>
+        <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
+      </div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <div class="status">
-          <span class="dot"></span>
-          <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или скажи голосом.</span>
+        <div class="welcome" id="welcomeBox">
+          <div class="welcome-title" id="welcomeTitle">Сценарий распознан</div>
+          <div class="welcome-text" id="welcomeText">Нажми кнопку ниже, чтобы включить звук и начать сценарий. Это особенно важно на iPhone.</div>
+          <button class="big-start" onclick="activateScenario()">▶️ Включить звук и начать</button>
         </div>
 
         <h2>Сценарии</h2>
         <div class="scenario-list">
-          <button class="scenario-btn" id="btn-triage" onclick="startScenario('triage')">
+          <button class="scenario-btn" id="btn-triage" onclick="manualScenarioStart('triage')">
             Первичная оценка
-            <small>Проверка безопасности, сознания и дыхания с переходом в нужную ветку</small>
+            <small>Проверка безопасности, сознания и дыхания с переходом в нужную ветку.</small>
           </button>
 
-          <button class="scenario-btn" id="btn-cpr" onclick="startScenario('cpr')">
+          <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
             СЛР
-            <small>Пошаговое сопровождение сердечно-легочной реанимации</small>
+            <small>Пошаговое сопровождение сердечно-легочной реанимации.</small>
           </button>
 
-          <button class="scenario-btn" id="btn-aed" onclick="startScenario('aed')">
+          <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
             AED
-            <small>Работа с автоматическим наружным дефибриллятором</small>
+            <small>Работа с автоматическим наружным дефибриллятором.</small>
           </button>
         </div>
 
-        <div class="step-box" style="margin-top: 18px;">
+        <div class="step-box">
           <div class="step-meta">
             <div class="badge" id="scenarioBadge">Сценарий: не выбран</div>
             <div class="badge" id="stepBadge">Шаг: —</div>
           </div>
 
           <div class="step-title" id="stepTitle">Готов к запуску</div>
-          <div class="step-text" id="stepText">
-            Скажи “Первичная оценка”, “СЛР” или “AED”, либо выбери сценарий кнопкой.
-          </div>
-
+          <div class="step-text" id="stepText">Сканируй QR или выбери сценарий кнопкой.</div>
           <div class="hint" id="hintBox"></div>
         </div>
 
@@ -332,16 +402,16 @@
         </div>
       </div>
 
-      <div class="card side-panel">
+      <div class="card">
         <h3>Что сказать</h3>
-        <div class="commands">
-          <div class="command">“Первичная оценка”</div>
-          <div class="command">“СЛР”</div>
-          <div class="command">“AED”</div>
-          <div class="command">“Дальше”</div>
-          <div class="command">“Объясни”</div>
-          <div class="command">“Риски”</div>
-          <div class="command">“Не дышит” / “Дышит”</div>
+        <div class="mini-tools">
+          <div class="tool-note">“Первичная оценка”</div>
+          <div class="tool-note">“СЛР”</div>
+          <div class="tool-note">“AED”</div>
+          <div class="tool-note">“Дальше”</div>
+          <div class="tool-note">“Объясни”</div>
+          <div class="tool-note">“Риски”</div>
+          <div class="tool-note">“Не дышит” / “Дышит”</div>
         </div>
 
         <h3>Лог ассистента</h3>
@@ -354,6 +424,7 @@
     const scenarios = {
       triage: {
         name: "Первичная оценка",
+        intro: "Запускаю сценарий: Первичная оценка.",
         steps: [
           {
             title: "Шаг 1",
@@ -375,7 +446,7 @@
           },
           {
             title: "Шаг 4",
-            text: "Сообщи результат: не дышит, дышит или без сознания, дышит.",
+            text: "Сообщи результат: не дышит, дышит или без сознания, но дышит.",
             explain: "Это ключевая развилка сценария. От твоего ответа зависит дальнейший алгоритм.",
             risks: "Неправильная оценка состояния приведет к неверному сценарию помощи."
           }
@@ -383,6 +454,7 @@
       },
       cpr: {
         name: "СЛР",
+        intro: "Запускаю сценарий: сердечно-легочная реанимация.",
         steps: [
           {
             title: "Шаг 1",
@@ -410,7 +482,7 @@
           },
           {
             title: "Шаг 5",
-            text: "Начни компрессии грудной клетки: глубина 5–6 см, темп 100–120 в минуту.",
+            text: "Начни компрессии грудной клетки: глубина 5–6 сантиметров, темп 100–120 в минуту.",
             explain: "Компрессии должны быть ритмичными, с полным расправлением грудной клетки между нажатиями.",
             risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР."
           },
@@ -430,6 +502,7 @@
       },
       aed: {
         name: "AED",
+        intro: "Запускаю сценарий: работа с автоматическим наружным дефибриллятором.",
         steps: [
           {
             title: "Шаг 1",
@@ -458,7 +531,7 @@
           {
             title: "Шаг 5",
             text: "Если AED рекомендует разряд, убедись, что никто не касается пострадавшего, и нажми кнопку разряда.",
-            explain: "Перед разрядом громко предупреди окружающих: Отойдите, разряд!",
+            explain: "Перед разрядом громко предупреди окружающих: Отойдите, разряд.",
             risks: "При касании пострадавшего во время разряда можно травмировать окружающих."
           },
           {
@@ -475,6 +548,8 @@
     let currentStepIndex = -1;
     let lastSpokenText = "";
     let metronomeInterval = null;
+    let pendingScenarioKey = null;
+    let audioActivated = false;
 
     const statusText = document.getElementById("statusText");
     const scenarioBadge = document.getElementById("scenarioBadge");
@@ -483,6 +558,9 @@
     const stepText = document.getElementById("stepText");
     const hintBox = document.getElementById("hintBox");
     const logBox = document.getElementById("logBox");
+    const welcomeBox = document.getElementById("welcomeBox");
+    const welcomeTitle = document.getElementById("welcomeTitle");
+    const welcomeText = document.getElementById("welcomeText");
 
     function log(message) {
       const time = new Date().toLocaleTimeString("ru-RU", {
@@ -498,26 +576,60 @@
     }
 
     function speak(text) {
+      lastSpokenText = text;
+      log(`Ассистент: ${text}`);
+
+      if (!audioActivated) return;
+
       window.speechSynthesis.cancel();
       const msg = new SpeechSynthesisUtterance(text);
       msg.lang = "ru-RU";
       msg.rate = 1.0;
       msg.pitch = 1.0;
-      lastSpokenText = text;
       window.speechSynthesis.speak(msg);
-      log(`Ассистент: ${text}`);
     }
 
     function setHint(text = "", visible = false) {
       hintBox.textContent = text;
-      hintBox.style.display = visible ? "block" : "none";
+      hintBox.classList.toggle("visible", visible);
     }
 
     function clearActiveButtons() {
       document.querySelectorAll(".scenario-btn").forEach(btn => btn.classList.remove("active"));
     }
 
-    function startScenario(key) {
+    function primeAudio() {
+      audioActivated = true;
+      const msg = new SpeechSynthesisUtterance("Звук включен.");
+      msg.lang = "ru-RU";
+      msg.volume = 0.01;
+      window.speechSynthesis.speak(msg);
+    }
+
+    function manualScenarioStart(key) {
+      pendingScenarioKey = key;
+      welcomeBox.classList.add("active");
+      welcomeTitle.textContent = `Сценарий: ${scenarios[key].name}`;
+      welcomeText.textContent = "Нажми кнопку ниже, чтобы включить звук и сразу начать этот сценарий.";
+      statusText.textContent = `Выбран сценарий: ${scenarios[key].name}`;
+      log(`Сценарий выбран вручную: ${scenarios[key].name}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function activateScenario() {
+      primeAudio();
+
+      if (!pendingScenarioKey) {
+        speak("Сценарий не выбран.");
+        return;
+      }
+
+      welcomeBox.classList.remove("active");
+      startScenario(pendingScenarioKey, true);
+      pendingScenarioKey = null;
+    }
+
+    function startScenario(key, withIntro = false) {
       stopMetronome();
       currentScenarioKey = key;
       currentStepIndex = 0;
@@ -526,10 +638,16 @@
       const btn = document.getElementById(`btn-${key}`);
       if (btn) btn.classList.add("active");
 
-      renderStep();
       const name = scenarios[key].name;
       statusText.textContent = `Запущен сценарий: ${name}`;
-      log(`Запускаю сценарий: ${name}`);
+
+      if (withIntro) {
+        speak(scenarios[key].intro);
+      } else {
+        log(`Запускаю сценарий: ${name}`);
+      }
+
+      renderStep();
     }
 
     function renderStep() {
@@ -537,7 +655,7 @@
         scenarioBadge.textContent = "Сценарий: не выбран";
         stepBadge.textContent = "Шаг: —";
         stepTitle.textContent = "Готов к запуску";
-        stepText.textContent = "Скажи: Первичная оценка, СЛР или AED.";
+        stepText.textContent = "Сканируй QR или выбери сценарий кнопкой.";
         setHint("", false);
         return;
       }
@@ -629,6 +747,8 @@
 
       metronomeInterval = setInterval(() => {
         count += 1;
+        log(`Ритм компрессий: ${count}`);
+        if (!audioActivated) return;
         const utter = new SpeechSynthesisUtterance(String(count));
         utter.lang = "ru-RU";
         utter.rate = 1.1;
@@ -638,8 +758,6 @@
           metronomeInterval = null;
         }
       }, 600);
-
-      log("Запущен голосовой ритм компрессий");
     }
 
     function stopMetronome() {
@@ -655,7 +773,7 @@
       if (transcript.includes("не дышит")) {
         statusText.textContent = "Результат оценки: не дышит. Переход к СЛР.";
         log("Пострадавший не дышит. Переход к СЛР.");
-        startScenario("cpr");
+        startScenario("cpr", true);
         return true;
       }
 
@@ -691,17 +809,17 @@
       statusText.textContent = `Ты сказал: ${transcript}`;
 
       if (transcript.includes("первичная оценка")) {
-        startScenario("triage");
+        startScenario("triage", true);
         return;
       }
 
       if (transcript === "слр" || transcript.includes("с л р")) {
-        startScenario("cpr");
+        startScenario("cpr", true);
         return;
       }
 
       if (transcript.includes("aed") || transcript.includes("аед")) {
-        startScenario("aed");
+        startScenario("aed", true);
         return;
       }
 
@@ -746,6 +864,8 @@
         return;
       }
 
+      primeAudio();
+
       const recognition = new SpeechRecognition();
       recognition.lang = "ru-RU";
       recognition.interimResults = false;
@@ -777,23 +897,16 @@
 
       if (!scenario) return;
 
-      if (scenario === "cpr") {
-        startScenario("cpr");
-        log("Сценарий загружен через QR: cpr");
-        return;
-      }
+      if (!scenarios[scenario]) return;
 
-      if (scenario === "aed") {
-        startScenario("aed");
-        log("Сценарий загружен через QR: aed");
-        return;
-      }
+      pendingScenarioKey = scenario;
+      const name = scenarios[scenario].name;
 
-      if (scenario === "triage") {
-        startScenario("triage");
-        log("Сценарий загружен через QR: triage");
-        return;
-      }
+      welcomeBox.classList.add("active");
+      welcomeTitle.textContent = `QR: ${name}`;
+      welcomeText.textContent = `Сценарий ${name} загружен через QR. Нажми кнопку ниже, чтобы включить звук и начать.`;
+      statusText.textContent = `Сценарий распознан по QR: ${name}`;
+      log(`Сценарий загружен через QR: ${scenario}`);
     }
 
     renderStep();
