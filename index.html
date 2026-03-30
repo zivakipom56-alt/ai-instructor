@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-инструктор 3.0 | Resusci Anne</title>
+  <title>AI-инструктор 3.1 | Resusci Anne</title>
   <style>
     :root {
       --bg: #050505;
@@ -146,7 +146,8 @@
 
     .scenario-btn,
     .action-btn,
-    .answer-btn {
+    .answer-btn,
+    .result-btn {
       width: 100%;
       border: 1px solid var(--border);
       background: var(--card-2);
@@ -162,7 +163,8 @@
 
     .scenario-btn:hover,
     .action-btn:hover,
-    .answer-btn:hover {
+    .answer-btn:hover,
+    .result-btn:hover {
       transform: translateY(-1px);
       border-color: #3a3a3a;
       background: #1b1b1b;
@@ -375,10 +377,10 @@
     .results-box {
       display: none;
       margin-top: 18px;
-      padding: 18px;
-      border-radius: 18px;
+      padding: 22px;
+      border-radius: 20px;
       border: 1px solid rgba(111,211,154,.25);
-      background: rgba(111,211,154,.08);
+      background: linear-gradient(180deg, rgba(111,211,154,.10) 0%, rgba(79,131,241,.06) 100%);
     }
 
     .results-box.visible {
@@ -386,15 +388,70 @@
     }
 
     .results-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
       margin-bottom: 10px;
+    }
+
+    .results-score {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .results-level {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.05);
+    }
+
+    .results-level.basic {
+      color: #ffd98a;
+      border-color: rgba(216,162,58,.35);
+      background: rgba(216,162,58,.10);
+    }
+
+    .results-level.good {
+      color: #cfe1ff;
+      border-color: rgba(79,131,241,.35);
+      background: rgba(79,131,241,.12);
+    }
+
+    .results-level.excellent {
+      color: #dff7e8;
+      border-color: rgba(46,159,91,.35);
+      background: rgba(46,159,91,.12);
     }
 
     .results-text {
       line-height: 1.6;
       color: #e8f8ee;
       white-space: pre-line;
+      margin-bottom: 16px;
+    }
+
+    .results-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .result-btn.primary {
+      background: var(--accent);
+      color: #08110d;
+      border-color: transparent;
+    }
+
+    .result-btn.secondary {
+      background: var(--accent-2);
+      color: #ffffff;
+      border-color: transparent;
     }
 
     @media (max-width: 900px) {
@@ -424,7 +481,8 @@
         font-size: 18px;
       }
 
-      .actions {
+      .actions,
+      .results-actions {
         grid-template-columns: 1fr;
       }
 
@@ -437,8 +495,8 @@
 <body>
   <div class="app">
     <div class="hero">
-      <div class="hero-title">AI-инструктор 3.0 · Resusci Anne</div>
-      <div class="hero-subtitle">QR-сценарии, голос, пошаговое сопровождение и проверка знаний внутри сценария СЛР.</div>
+      <div class="hero-title">AI-инструктор 3.1 · Resusci Anne</div>
+      <div class="hero-subtitle">QR-сценарии, голос, пошаговое сопровождение, проверка знаний и красивый итог тренировки.</div>
       <div class="status">
         <span class="dot"></span>
         <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
@@ -461,8 +519,8 @@
           </button>
 
           <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
-            СЛР 3.0
-            <small>Пошаговое сопровождение плюс вопросы, проверка и итоговый результат.</small>
+            СЛР 3.1
+            <small>Пошаговое сопровождение плюс вопросы, проверка, уровень и итоговый результат.</small>
           </button>
 
           <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
@@ -492,7 +550,13 @@
 
         <div class="results-box" id="resultsBox">
           <div class="results-title">Сценарий завершён</div>
+          <div class="results-score" id="resultsScore"></div>
+          <div class="results-level" id="resultsLevel"></div>
           <div class="results-text" id="resultsText"></div>
+          <div class="results-actions">
+            <button class="result-btn primary" onclick="restartCurrentScenario()">🔁 Пройти заново</button>
+            <button class="result-btn secondary" onclick="resetToHome()">📋 Выбрать другой сценарий</button>
+          </div>
         </div>
 
         <div class="actions">
@@ -560,7 +624,7 @@
         ]
       },
       cpr: {
-        name: "СЛР 3.0",
+        name: "СЛР 3.1",
         intro: "Запускаю сценарий: сердечно-легочная реанимация с проверкой знаний.",
         steps: [
           {
@@ -714,6 +778,8 @@
     const answersBox = document.getElementById("answersBox");
     const quizFeedback = document.getElementById("quizFeedback");
     const resultsBox = document.getElementById("resultsBox");
+    const resultsScore = document.getElementById("resultsScore");
+    const resultsLevel = document.getElementById("resultsLevel");
     const resultsText = document.getElementById("resultsText");
 
     function log(message) {
@@ -786,6 +852,9 @@
 
     function hideResults() {
       resultsBox.classList.remove("visible");
+      resultsScore.textContent = "";
+      resultsLevel.textContent = "";
+      resultsLevel.className = "results-level";
       resultsText.textContent = "";
     }
 
@@ -844,6 +913,8 @@
         hideQuiz();
         return;
       }
+
+      hideResults();
 
       const scenario = scenarios[currentScenarioKey];
       const step = scenario.steps[currentStepIndex];
@@ -920,6 +991,51 @@
       updateScoreBadge();
     }
 
+    function getLevel() {
+      if (quizState.total === 0) {
+        return { label: "Без оценки", className: "good" };
+      }
+
+      const ratio = quizState.correct / quizState.total;
+
+      if (ratio === 1) {
+        return { label: "Отличный уровень", className: "excellent" };
+      }
+
+      if (ratio >= 0.67) {
+        return { label: "Уверенный уровень", className: "good" };
+      }
+
+      return { label: "Базовый уровень", className: "basic" };
+    }
+
+    function finishScenario() {
+      const scenario = scenarios[currentScenarioKey];
+      stopMetronome();
+      speak(`Сценарий ${scenario.name} завершен.`);
+      statusText.textContent = `Сценарий ${scenario.name} завершен`;
+      setHint("Сценарий завершен. Можно пройти его заново или выбрать другой.", true);
+      hideQuiz();
+
+      const level = getLevel();
+      resultsScore.textContent = `Результат: ${quizState.correct} / ${quizState.total}`;
+      resultsLevel.textContent = level.label;
+      resultsLevel.className = `results-level ${level.className}`;
+
+      const mistakesText = quizState.mistakes.length
+        ? "Ошибки:\n- " + quizState.mistakes.join("\n- ")
+        : "Ошибок не было.";
+
+      const recommendation = quizState.mistakes.length
+        ? `Рекомендация:\nПовтори сценарий ${scenario.name} и обрати внимание на ошибки.`
+        : "Рекомендация:\nОтличная работа. Можно переходить к следующему сценарию.";
+
+      resultsText.textContent =
+        `${mistakesText}\n\n${recommendation}`;
+
+      resultsBox.classList.add("visible");
+    }
+
     function nextStep() {
       if (!currentScenarioKey) {
         speak("Сначала выбери сценарий.");
@@ -942,27 +1058,6 @@
       }
     }
 
-    function finishScenario() {
-      const scenario = scenarios[currentScenarioKey];
-      stopMetronome();
-      speak(`Сценарий ${scenario.name} завершен.`);
-      statusText.textContent = `Сценарий ${scenario.name} завершен`;
-      setHint("Сценарий завершен. Можно выбрать другой сценарий.", true);
-      hideQuiz();
-
-      const mistakesText = quizState.mistakes.length
-        ? "Ошибки:\n- " + quizState.mistakes.join("\n- ")
-        : "Ошибок не было.";
-
-      const recommendation = quizState.mistakes.length
-        ? `Рекомендация:\nПовтори сценарий ${scenario.name}.`
-        : "Рекомендация:\nОтличный результат. Можно переходить к следующему сценарию.";
-
-      resultsText.textContent =
-        `Результат: ${quizState.correct} / ${quizState.total}\n\n${mistakesText}\n\n${recommendation}`;
-      resultsBox.classList.add("visible");
-    }
-
     function goBack() {
       if (!currentScenarioKey) {
         speak("Сценарий еще не выбран.");
@@ -971,7 +1066,6 @@
 
       if (currentStepIndex > 0) {
         currentStepIndex -= 1;
-        hideResults();
         renderStep();
       } else {
         speak("Это первый шаг сценария.");
@@ -1054,6 +1148,7 @@
         setHint("Следи за дыханием и не оставляй пострадавшего без наблюдения.", true);
         speak("Пострадавший без сознания, но дышит. Вызови помощь и контролируй состояние.");
         hideQuiz();
+        hideResults();
         return true;
       }
 
@@ -1067,6 +1162,7 @@
         setHint("Если состояние ухудшается, повторно оцени дыхание и сознание.", true);
         speak("Дыхание есть. Продолжай наблюдение и вызови помощь при необходимости.");
         hideQuiz();
+        hideResults();
         return true;
       }
 
@@ -1175,6 +1271,24 @@
       welcomeText.textContent = `Сценарий ${name} загружен через QR. Нажми кнопку ниже, чтобы включить звук и начать.`;
       statusText.textContent = `Сценарий распознан по QR: ${name}`;
       log(`Сценарий загружен через QR: ${scenario}`);
+    }
+
+    function restartCurrentScenario() {
+      if (!currentScenarioKey) return;
+      startScenario(currentScenarioKey, true);
+    }
+
+    function resetToHome() {
+      stopMetronome();
+      currentScenarioKey = null;
+      currentStepIndex = -1;
+      pendingScenarioKey = null;
+      clearActiveButtons();
+      resetResults();
+      welcomeBox.classList.remove("active");
+      statusText.textContent = "Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.";
+      renderStep();
+      log("Возврат к выбору сценария.");
     }
 
     renderStep();
