@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-инструктор 2.0 | Resusci Anne</title>
+  <title>AI-инструктор 3.0 | Resusci Anne</title>
   <style>
     :root {
       --bg: #050505;
@@ -15,6 +15,7 @@
       --accent-2: #4f83f1;
       --warn: #d8a23a;
       --danger: #b84f5b;
+      --success: #2e9f5b;
       --border: #262626;
       --shadow: 0 10px 30px rgba(0,0,0,.28);
     }
@@ -30,7 +31,7 @@
     }
 
     .app {
-      max-width: 1080px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 18px;
     }
@@ -80,7 +81,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 1.3fr .7fr;
+      grid-template-columns: 1.35fr .65fr;
       gap: 18px;
     }
 
@@ -144,7 +145,8 @@
     }
 
     .scenario-btn,
-    .action-btn {
+    .action-btn,
+    .answer-btn {
       width: 100%;
       border: 1px solid var(--border);
       background: var(--card-2);
@@ -159,7 +161,8 @@
     }
 
     .scenario-btn:hover,
-    .action-btn:hover {
+    .action-btn:hover,
+    .answer-btn:hover {
       transform: translateY(-1px);
       border-color: #3a3a3a;
       background: #1b1b1b;
@@ -303,6 +306,97 @@
       line-height: 1.5;
     }
 
+    .quiz-box {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(79,131,241,.25);
+      background: rgba(79,131,241,.08);
+    }
+
+    .quiz-box.visible {
+      display: block;
+    }
+
+    .quiz-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .quiz-question {
+      color: #f0f6ff;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    .answers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answer-btn.correct {
+      border-color: var(--success);
+      background: rgba(46,159,91,.18);
+    }
+
+    .answer-btn.wrong {
+      border-color: var(--danger);
+      background: rgba(184,79,91,.18);
+    }
+
+    .quiz-feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .quiz-feedback.visible {
+      display: block;
+    }
+
+    .quiz-feedback.success {
+      background: rgba(46,159,91,.12);
+      border: 1px solid rgba(46,159,91,.28);
+      color: #dff7e8;
+    }
+
+    .quiz-feedback.error {
+      background: rgba(184,79,91,.12);
+      border: 1px solid rgba(184,79,91,.28);
+      color: #ffe0e5;
+    }
+
+    .results-box {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(111,211,154,.25);
+      background: rgba(111,211,154,.08);
+    }
+
+    .results-box.visible {
+      display: block;
+    }
+
+    .results-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .results-text {
+      line-height: 1.6;
+      color: #e8f8ee;
+      white-space: pre-line;
+    }
+
     @media (max-width: 900px) {
       .grid {
         grid-template-columns: 1fr;
@@ -343,8 +437,8 @@
 <body>
   <div class="app">
     <div class="hero">
-      <div class="hero-title">AI-инструктор · Resusci Anne</div>
-      <div class="hero-subtitle">MVP для очков XREAL: QR-сценарии, голос, пошаговое сопровождение и быстрый мобильный запуск.</div>
+      <div class="hero-title">AI-инструктор 3.0 · Resusci Anne</div>
+      <div class="hero-subtitle">QR-сценарии, голос, пошаговое сопровождение и проверка знаний внутри сценария СЛР.</div>
       <div class="status">
         <span class="dot"></span>
         <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
@@ -355,7 +449,7 @@
       <div class="card">
         <div class="welcome" id="welcomeBox">
           <div class="welcome-title" id="welcomeTitle">Сценарий распознан</div>
-          <div class="welcome-text" id="welcomeText">Нажми кнопку ниже, чтобы включить звук и начать сценарий. Это особенно важно на iPhone.</div>
+          <div class="welcome-text" id="welcomeText">Нажми кнопку ниже, чтобы включить звук и начать сценарий.</div>
           <button class="big-start" onclick="activateScenario()">▶️ Включить звук и начать</button>
         </div>
 
@@ -367,8 +461,8 @@
           </button>
 
           <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
-            СЛР
-            <small>Пошаговое сопровождение сердечно-легочной реанимации.</small>
+            СЛР 3.0
+            <small>Пошаговое сопровождение плюс вопросы, проверка и итоговый результат.</small>
           </button>
 
           <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
@@ -381,11 +475,24 @@
           <div class="step-meta">
             <div class="badge" id="scenarioBadge">Сценарий: не выбран</div>
             <div class="badge" id="stepBadge">Шаг: —</div>
+            <div class="badge" id="scoreBadge">Результат: 0 / 0</div>
           </div>
 
           <div class="step-title" id="stepTitle">Готов к запуску</div>
           <div class="step-text" id="stepText">Сканируй QR или выбери сценарий кнопкой.</div>
           <div class="hint" id="hintBox"></div>
+        </div>
+
+        <div class="quiz-box" id="quizBox">
+          <div class="quiz-title">Проверка</div>
+          <div class="quiz-question" id="quizQuestion"></div>
+          <div class="answers" id="answersBox"></div>
+          <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+
+        <div class="results-box" id="resultsBox">
+          <div class="results-title">Сценарий завершён</div>
+          <div class="results-text" id="resultsText"></div>
         </div>
 
         <div class="actions">
@@ -440,26 +547,26 @@
           },
           {
             title: "Шаг 3",
-            text: "Проверь дыхание в течение 10 секунд. Смотри на грудную клетку, слушай и ощущай дыхание.",
+            text: "Проверь дыхание в течение 10 секунд.",
             explain: "Оцени наличие нормального дыхания, а не редких судорожных вдохов.",
             risks: "Ошибочная оценка дыхания может задержать начало СЛР."
           },
           {
             title: "Шаг 4",
             text: "Сообщи результат: не дышит, дышит или без сознания, но дышит.",
-            explain: "Это ключевая развилка сценария. От твоего ответа зависит дальнейший алгоритм.",
+            explain: "Это ключевая развилка сценария.",
             risks: "Неправильная оценка состояния приведет к неверному сценарию помощи."
           }
         ]
       },
       cpr: {
-        name: "СЛР",
-        intro: "Запускаю сценарий: сердечно-легочная реанимация.",
+        name: "СЛР 3.0",
+        intro: "Запускаю сценарий: сердечно-легочная реанимация с проверкой знаний.",
         steps: [
           {
             title: "Шаг 1",
             text: "Проверь безопасность места.",
-            explain: "Убедись, что проводить реанимацию безопасно для тебя и пострадавшего.",
+            explain: "Убедись, что проводить помощь безопасно для тебя и пострадавшего.",
             risks: "В опасной зоне оказание помощи может привести к дополнительным пострадавшим."
           },
           {
@@ -470,9 +577,20 @@
           },
           {
             title: "Шаг 3",
-            text: "Проверь дыхание в течение 10 секунд.",
-            explain: "Нужно убедиться, что дыхание отсутствует или оно неэффективное.",
-            risks: "Если начать СЛР при нормальном дыхании, это может навредить."
+            text: "Оцени дыхание и признаки жизни по учебному алгоритму. Если нет сознания, нет нормального дыхания и отсутствуют признаки кровообращения — переходи к СЛР.",
+            explain: "Формулировка может отличаться в зависимости от вашей программы обучения, но логика шага — быстро распознать критическое состояние и не задерживать начало помощи.",
+            risks: "Затягивание оценки состояния уменьшает шансы на эффективную помощь.",
+            quiz: {
+              question: "Сколько времени по учебному алгоритму отводится на проверку дыхания?",
+              answers: [
+                { text: "3 секунды", correct: false },
+                { text: "10 секунд", correct: true },
+                { text: "30 секунд", correct: false }
+              ],
+              correctText: "Верно. Проверка дыхания проводится быстро, обычно в пределах 10 секунд.",
+              wrongText: "Неверно. В этом сценарии правильный ориентир — 10 секунд.",
+              topic: "проверка дыхания"
+            }
           },
           {
             title: "Шаг 4",
@@ -482,19 +600,41 @@
           },
           {
             title: "Шаг 5",
-            text: "Начни компрессии грудной клетки: глубина 5–6 сантиметров, темп 100–120 в минуту.",
-            explain: "Компрессии должны быть ритмичными, с полным расправлением грудной клетки между нажатиями.",
-            risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР."
+            text: "Если пострадавший без сознания, не дышит нормально и отсутствуют признаки жизни — немедленно начинай СЛР.",
+            explain: "Это ключевая точка принятия решения: не ждать лишнего и не откладывать начало помощи.",
+            risks: "Промедление перед началом СЛР ухудшает прогноз.",
+            quiz: {
+              question: "Что делать, если пострадавший без сознания и не дышит нормально?",
+              answers: [
+                { text: "Положить на бок и ждать", correct: false },
+                { text: "Начать СЛР", correct: true },
+                { text: "Отложить помощь до приезда специалистов", correct: false }
+              ],
+              correctText: "Верно. В рамках этого сценария правильное действие — немедленно начать СЛР.",
+              wrongText: "Неверно. Здесь нужно немедленно начать СЛР.",
+              topic: "начало СЛР"
+            }
           },
           {
             title: "Шаг 6",
-            text: "Продолжай цикл 30 компрессий и 2 вдоха, если это предусмотрено обучением.",
-            explain: "Соблюдай устойчивый ритм и минимизируй паузы между действиями.",
-            risks: "Длинные паузы между компрессиями ухудшают кровообращение."
+            text: "Начни компрессии грудной клетки: глубина 5–6 сантиметров, темп 100–120 в минуту.",
+            explain: "Компрессии должны быть ритмичными, с полным расправлением грудной клетки между нажатиями.",
+            risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР.",
+            quiz: {
+              question: "Какая глубина компрессий используется в этом сценарии?",
+              answers: [
+                { text: "2–3 сантиметра", correct: false },
+                { text: "5–6 сантиметров", correct: true },
+                { text: "8–10 сантиметров", correct: false }
+              ],
+              correctText: "Верно. Для этого сценария ориентир — 5–6 сантиметров.",
+              wrongText: "Неверно. В этом сценарии правильный ориентир — 5–6 сантиметров.",
+              topic: "глубина компрессий"
+            }
           },
           {
             title: "Шаг 7",
-            text: "Продолжай СЛР до прибытия помощи, появления AED или восстановления признаков жизни.",
+            text: "Продолжай цикл помощи до прибытия помощи, появления AED или восстановления признаков жизни.",
             explain: "Не прекращай помощь без причины. Оцени состояние только при необходимости.",
             risks: "Преждевременная остановка СЛР резко снижает шанс на выживание."
           }
@@ -525,19 +665,19 @@
           {
             title: "Шаг 4",
             text: "Не касайся пострадавшего во время анализа ритма.",
-            explain: "Во время анализа никто не должен касаться пострадавшего, чтобы не искажать результат.",
+            explain: "Во время анализа никто не должен касаться пострадавшего.",
             risks: "При касании результат анализа может быть неправильным."
           },
           {
             title: "Шаг 5",
             text: "Если AED рекомендует разряд, убедись, что никто не касается пострадавшего, и нажми кнопку разряда.",
-            explain: "Перед разрядом громко предупреди окружающих: Отойдите, разряд.",
+            explain: "Перед разрядом громко предупреди окружающих.",
             risks: "При касании пострадавшего во время разряда можно травмировать окружающих."
           },
           {
             title: "Шаг 6",
             text: "Сразу после разряда или сообщения AED возобнови СЛР.",
-            explain: "Даже после разряда необходимо продолжать компрессии, пока AED не даст новую команду.",
+            explain: "Даже после разряда необходимо продолжать компрессии.",
             risks: "Пауза после разряда ухудшает эффективность реанимации."
           }
         ]
@@ -551,9 +691,17 @@
     let pendingScenarioKey = null;
     let audioActivated = false;
 
+    let quizState = {
+      total: 0,
+      correct: 0,
+      mistakes: [],
+      answeredCurrent: false
+    };
+
     const statusText = document.getElementById("statusText");
     const scenarioBadge = document.getElementById("scenarioBadge");
     const stepBadge = document.getElementById("stepBadge");
+    const scoreBadge = document.getElementById("scoreBadge");
     const stepTitle = document.getElementById("stepTitle");
     const stepText = document.getElementById("stepText");
     const hintBox = document.getElementById("hintBox");
@@ -561,6 +709,12 @@
     const welcomeBox = document.getElementById("welcomeBox");
     const welcomeTitle = document.getElementById("welcomeTitle");
     const welcomeText = document.getElementById("welcomeText");
+    const quizBox = document.getElementById("quizBox");
+    const quizQuestion = document.getElementById("quizQuestion");
+    const answersBox = document.getElementById("answersBox");
+    const quizFeedback = document.getElementById("quizFeedback");
+    const resultsBox = document.getElementById("resultsBox");
+    const resultsText = document.getElementById("resultsText");
 
     function log(message) {
       const time = new Date().toLocaleTimeString("ru-RU", {
@@ -606,6 +760,35 @@
       window.speechSynthesis.speak(msg);
     }
 
+    function resetResults() {
+      quizState = {
+        total: 0,
+        correct: 0,
+        mistakes: [],
+        answeredCurrent: false
+      };
+      updateScoreBadge();
+      hideQuiz();
+      hideResults();
+    }
+
+    function updateScoreBadge() {
+      scoreBadge.textContent = `Результат: ${quizState.correct} / ${quizState.total}`;
+    }
+
+    function hideQuiz() {
+      quizBox.classList.remove("visible");
+      quizFeedback.classList.remove("visible", "success", "error");
+      quizFeedback.textContent = "";
+      answersBox.innerHTML = "";
+      quizQuestion.textContent = "";
+    }
+
+    function hideResults() {
+      resultsBox.classList.remove("visible");
+      resultsText.textContent = "";
+    }
+
     function manualScenarioStart(key) {
       pendingScenarioKey = key;
       welcomeBox.classList.add("active");
@@ -633,6 +816,7 @@
       stopMetronome();
       currentScenarioKey = key;
       currentStepIndex = 0;
+      resetResults();
 
       clearActiveButtons();
       const btn = document.getElementById(`btn-${key}`);
@@ -657,11 +841,13 @@
         stepTitle.textContent = "Готов к запуску";
         stepText.textContent = "Сканируй QR или выбери сценарий кнопкой.";
         setHint("", false);
+        hideQuiz();
         return;
       }
 
       const scenario = scenarios[currentScenarioKey];
       const step = scenario.steps[currentStepIndex];
+      quizState.answeredCurrent = false;
 
       scenarioBadge.textContent = `Сценарий: ${scenario.name}`;
       stepBadge.textContent = `Шаг: ${currentStepIndex + 1} / ${scenario.steps.length}`;
@@ -672,11 +858,66 @@
       log(`Открыт ${scenario.name}, шаг ${currentStepIndex + 1}`);
       speak(step.text);
 
-      if (currentScenarioKey === "cpr" && currentStepIndex === 4) {
+      if (step.quiz) {
+        renderQuiz(step.quiz);
+      } else {
+        hideQuiz();
+      }
+
+      if (currentScenarioKey === "cpr" && currentStepIndex === 5) {
         startMetronome();
       } else {
         stopMetronome();
       }
+    }
+
+    function renderQuiz(quiz) {
+      quizBox.classList.add("visible");
+      quizQuestion.textContent = quiz.question;
+      answersBox.innerHTML = "";
+      quizFeedback.classList.remove("visible", "success", "error");
+      quizFeedback.textContent = "";
+
+      quiz.answers.forEach(answer => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = answer.text;
+        btn.onclick = () => answerQuiz(answer, quiz, btn);
+        answersBox.appendChild(btn);
+      });
+    }
+
+    function answerQuiz(answer, quiz, clickedBtn) {
+      if (quizState.answeredCurrent) return;
+      quizState.answeredCurrent = true;
+      quizState.total += 1;
+
+      const buttons = document.querySelectorAll(".answer-btn");
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (answer.correct) {
+        quizState.correct += 1;
+        clickedBtn.classList.add("correct");
+        quizFeedback.classList.add("visible", "success");
+        quizFeedback.textContent = quiz.correctText;
+        speak(quiz.correctText);
+        log(`Правильный ответ: ${quiz.topic}`);
+      } else {
+        clickedBtn.classList.add("wrong");
+        const correctAnswerText = quiz.answers.find(a => a.correct)?.text || "правильный вариант";
+        quizFeedback.classList.add("visible", "error");
+        quizFeedback.textContent = `${quiz.wrongText} Правильный ответ: ${correctAnswerText}.`;
+        speak(`${quiz.wrongText} Правильный ответ: ${correctAnswerText}.`);
+        quizState.mistakes.push(quiz.topic);
+        log(`Ошибка в вопросе: ${quiz.topic}`);
+        buttons.forEach(btn => {
+          if (btn.textContent === correctAnswerText) {
+            btn.classList.add("correct");
+          }
+        });
+      }
+
+      updateScoreBadge();
     }
 
     function nextStep() {
@@ -686,15 +927,40 @@
       }
 
       const scenario = scenarios[currentScenarioKey];
+      const step = scenario.steps[currentStepIndex];
+
+      if (step.quiz && !quizState.answeredCurrent) {
+        speak("Сначала ответь на вопрос этого шага.");
+        return;
+      }
+
       if (currentStepIndex < scenario.steps.length - 1) {
         currentStepIndex += 1;
         renderStep();
       } else {
-        speak(`Сценарий ${scenario.name} завершен.`);
-        statusText.textContent = `Сценарий ${scenario.name} завершен`;
-        setHint("Сценарий завершен. Можно выбрать другой сценарий.", true);
-        stopMetronome();
+        finishScenario();
       }
+    }
+
+    function finishScenario() {
+      const scenario = scenarios[currentScenarioKey];
+      stopMetronome();
+      speak(`Сценарий ${scenario.name} завершен.`);
+      statusText.textContent = `Сценарий ${scenario.name} завершен`;
+      setHint("Сценарий завершен. Можно выбрать другой сценарий.", true);
+      hideQuiz();
+
+      const mistakesText = quizState.mistakes.length
+        ? "Ошибки:\n- " + quizState.mistakes.join("\n- ")
+        : "Ошибок не было.";
+
+      const recommendation = quizState.mistakes.length
+        ? `Рекомендация:\nПовтори сценарий ${scenario.name}.`
+        : "Рекомендация:\nОтличный результат. Можно переходить к следующему сценарию.";
+
+      resultsText.textContent =
+        `Результат: ${quizState.correct} / ${quizState.total}\n\n${mistakesText}\n\n${recommendation}`;
+      resultsBox.classList.add("visible");
     }
 
     function goBack() {
@@ -705,6 +971,7 @@
 
       if (currentStepIndex > 0) {
         currentStepIndex -= 1;
+        hideResults();
         renderStep();
       } else {
         speak("Это первый шаг сценария.");
@@ -786,6 +1053,7 @@
         stepBadge.textContent = "Результат";
         setHint("Следи за дыханием и не оставляй пострадавшего без наблюдения.", true);
         speak("Пострадавший без сознания, но дышит. Вызови помощь и контролируй состояние.");
+        hideQuiz();
         return true;
       }
 
@@ -798,6 +1066,7 @@
         stepBadge.textContent = "Результат";
         setHint("Если состояние ухудшается, повторно оцени дыхание и сознание.", true);
         speak("Дыхание есть. Продолжай наблюдение и вызови помощь при необходимости.");
+        hideQuiz();
         return true;
       }
 
@@ -896,7 +1165,6 @@
       const scenario = params.get("scenario");
 
       if (!scenario) return;
-
       if (!scenarios[scenario]) return;
 
       pendingScenarioKey = scenario;
