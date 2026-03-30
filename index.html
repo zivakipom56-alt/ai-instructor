@@ -3,160 +3,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI First Aid Trainer</title>
+<title>First Aid Trainer 4.1</title>
 
 <style>
 body {
+  margin:0;
   font-family: Arial;
-  background: #0f172a;
-  color: white;
-  padding: 20px;
+  background:#05070b;
+  color:white;
+  padding:20px;
+}
+
+.container {
+  max-width:700px;
+  margin:auto;
 }
 
 .card {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 16px;
-  margin-bottom: 20px;
+  background:#0f1116;
+  padding:20px;
+  border-radius:20px;
+  margin-bottom:15px;
 }
 
 button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 10px;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border-radius:14px;
+  border:none;
+  font-size:16px;
+  font-weight:600;
 }
 
-.primary { background: #3b82f6; color: white; }
-.success { background: #22c55e; }
-.voice { background: #10b981; }
-.hidden { display: none; }
+.primary { background:#3b82f6; color:white; }
+.voice { background:#22c55e; color:black; }
+.mode { background:#1f2937; color:white; }
+
+.hidden { display:none; }
+
+.correct { color:#22c55e; font-weight:700; }
+.wrong { color:#ef4444; font-weight:700; }
 </style>
 </head>
 
 <body>
 
-<h2>🚑 AI тренажёр первой помощи</h2>
+<div class="container">
 
-<div class="card">
+<h2>🚑 Тренажёр первой помощи</h2>
+
+<!-- ВЫБОР СЦЕНАРИЯ -->
+<div id="scenarioScreen" class="card">
+  <h3>Выбери сценарий</h3>
+  <button onclick="selectScenario('cpr')">🫀 СЛР</button>
+  <button onclick="selectScenario('aed')">⚡ AED</button>
+  <button onclick="selectScenario('primary')">👀 Первичная оценка</button>
+</div>
+
+<!-- ВЫБОР РЕЖИМА -->
+<div id="modeScreen" class="card hidden">
+  <h3>Режим</h3>
+  <button class="mode" onclick="setMode('training')">Обучение</button>
+  <button class="mode" onclick="setMode('exam')">Экзамен</button>
+</div>
+
+<!-- ТРЕНАЖЕР -->
+<div id="trainer" class="card hidden">
+
+  <div id="progress"></div>
   <h3 id="question"></h3>
 
-  <button class="voice" onclick="startVoice()">🎤 Говорить</button>
+  <div id="answers"></div>
 
-  <button onclick="answer('включить AED')">Включить AED</button>
-  <button onclick="answer('убрать AED')">Убрать AED</button>
-  <button onclick="answer('ждать')">Ждать</button>
+  <button class="voice" onclick="startVoice()">🎤 Голос</button>
 
   <div id="feedback"></div>
+
+  <div id="explanation" class="hidden"></div>
+
+  <button class="primary hidden" id="nextBtn" onclick="nextStep()">Дальше</button>
+
 </div>
 
-<div class="card hidden" id="stepBlock">
-  <h3>📘 Правильное действие</h3>
-  <p id="stepText"></p>
+<!-- РЕЗУЛЬТАТ -->
+<div id="result" class="card hidden">
+  <h2 id="resultText"></h2>
+  <p id="level"></p>
+  <button onclick="restart()">Заново</button>
 </div>
 
-<button class="primary" onclick="nextStep()">Дальше</button>
+</div>
 
 <script>
 
-// 🔥 ВСТАВЬ СЮДА СВОЙ API KEY
-const API_KEY = "PASTE_YOUR_KEY_HERE";
+// сценарии
+const scenarios = {
 
-const steps = [
-  {
-    question: "Что нужно сделать первым после того, как AED оказался рядом?",
-    correct: "включить AED",
-    step: "Нужно включить AED и следовать голосовым инструкциям."
-  },
-  {
-    question: "Какая глубина компрессий?",
-    correct: "5-6 см",
-    step: "Глубина компрессий должна быть 5–6 см."
-  }
-];
-
-let currentStep = 0;
-
-function loadStep() {
-  document.getElementById("question").innerText = steps[currentStep].question;
-  document.getElementById("feedback").innerText = "";
-  document.getElementById("stepBlock").classList.add("hidden");
-}
-
-async function answer(userAnswer) {
-  const step = steps[currentStep];
-
-  const prompt = `
-Ты инструктор по первой помощи.
-
-Вопрос: ${step.question}
-Правильный ответ: ${step.correct}
-Ответ пользователя: ${userAnswer}
-
-Ответь строго в JSON:
-{
- "correct": true/false,
- "feedback": "короткое объяснение"
-}
-`;
-
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer " + API_KEY,
-      "Content-Type": "application/json"
+  aed: [
+    {
+      q:"Что сделать первым?",
+      options:["Включить AED","Ждать","Убрать AED"],
+      correct:["включить"],
+      exp:"Сначала нужно включить AED"
     },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }]
-    })
+    {
+      q:"Что делать при анализе?",
+      options:["Касаться","Не трогать","Делать СЛР"],
+      correct:["не трогать","не касаться"],
+      exp:"Нельзя касаться пациента"
+    }
+  ],
+
+  cpr: [
+    {
+      q:"С чего начать?",
+      options:["Проверить сознание","Делать компрессии","Уйти"],
+      correct:["проверить"],
+      exp:"Сначала проверяется сознание"
+    },
+    {
+      q:"Глубина компрессий?",
+      options:["2 см","5-6 см","10 см"],
+      correct:["5","6"],
+      exp:"Правильно: 5-6 см"
+    }
+  ],
+
+  primary: [
+    {
+      q:"Первое действие?",
+      options:["Проверить сознание","Звонить","Уйти"],
+      correct:["сознание"],
+      exp:"Начинаем с проверки сознания"
+    }
+  ]
+
+};
+
+let steps = [];
+let step = 0;
+let score = 0;
+let mode = "training";
+let answered = false;
+
+// выбор сценария
+function selectScenario(name){
+  steps = scenarios[name];
+  document.getElementById("scenarioScreen").classList.add("hidden");
+  document.getElementById("modeScreen").classList.remove("hidden");
+}
+
+// выбор режима
+function setMode(m){
+  mode = m;
+  document.getElementById("modeScreen").classList.add("hidden");
+  document.getElementById("trainer").classList.remove("hidden");
+  loadStep();
+}
+
+// загрузка шага
+function loadStep(){
+  answered = false;
+
+  const s = steps[step];
+
+  document.getElementById("question").innerText = s.q;
+  document.getElementById("feedback").innerText="";
+  document.getElementById("explanation").classList.add("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+
+  document.getElementById("progress").innerText =
+    `Шаг ${step+1}/${steps.length} | Баллы: ${score}`;
+
+  const answers = document.getElementById("answers");
+  answers.innerHTML="";
+
+  s.options.forEach(o=>{
+    const b=document.createElement("button");
+    b.innerText=o;
+    b.onclick=()=>check(o);
+    answers.appendChild(b);
   });
 
-  const data = await res.json();
-  const text = data.choices[0].message.content;
-
-  let result;
-  try {
-    result = JSON.parse(text);
-  } catch {
-    document.getElementById("feedback").innerText = "Ошибка AI";
-    return;
-  }
-
-  document.getElementById("feedback").innerText =
-    result.correct ? "✅ " + result.feedback : "❌ " + result.feedback;
-
-  // 🔥 ПОСЛЕ ответа показываем шаг
-  document.getElementById("stepText").innerText = step.step;
-  document.getElementById("stepBlock").classList.remove("hidden");
 }
 
-function nextStep() {
-  currentStep++;
-  if (currentStep >= steps.length) {
-    alert("Тренировка завершена");
-    currentStep = 0;
+// проверка
+function check(ans){
+  if(answered) return;
+  answered=true;
+
+  const s=steps[step];
+  const norm=ans.toLowerCase();
+
+  const correct=s.correct.some(c=>norm.includes(c));
+
+  const fb=document.getElementById("feedback");
+
+  if(correct){
+    score++;
+    fb.innerText="✅ Верно";
+    fb.className="correct";
+  } else {
+    fb.innerText="❌ Неверно";
+    fb.className="wrong";
+  }
+
+  if(mode==="training"){
+    const exp=document.getElementById("explanation");
+    exp.innerText=s.exp;
+    exp.classList.remove("hidden");
+  }
+
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+
+// дальше
+function nextStep(){
+  step++;
+  if(step>=steps.length){
+    showResult();
+    return;
   }
   loadStep();
 }
 
-// 🎤 Голос
-function startVoice() {
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.lang = "ru-RU";
+// результат
+function showResult(){
+  document.getElementById("trainer").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
 
-  recognition.onresult = function(event) {
-    const text = event.results[0][0].transcript;
-    answer(text);
-  };
+  document.getElementById("resultText").innerText =
+    `${score}/${steps.length}`;
 
-  recognition.start();
+  let lvl="";
+
+  if(score===steps.length) lvl="Профи";
+  else if(score>=steps.length/2) lvl="Норм";
+  else lvl="Нужно обучение";
+
+  document.getElementById("level").innerText=lvl;
 }
 
-// init
-loadStep();
+// голос
+function startVoice(){
+  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  rec.lang="ru-RU";
+
+  rec.onresult=e=>{
+    const text=e.results[0][0].transcript;
+    check(text);
+  };
+
+  rec.start();
+}
+
+// рестарт
+function restart(){
+  step=0;
+  score=0;
+  document.getElementById("result").classList.add("hidden");
+  document.getElementById("scenarioScreen").classList.remove("hidden");
+}
 
 </script>
 
