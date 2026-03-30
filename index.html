@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>First Aid Trainer 4.1</title>
+<title>AI-инструктор • Resusci Anne</title>
 
 <style>
 body {
   margin:0;
   font-family: Arial;
-  background:#05070b;
-  color:white;
+  background:#000;
+  color:#fff;
   padding:20px;
 }
 
@@ -21,8 +21,8 @@ body {
 
 .card {
   background:#0f1116;
-  padding:20px;
   border-radius:20px;
+  padding:20px;
   margin-bottom:15px;
 }
 
@@ -38,12 +38,22 @@ button {
 
 .primary { background:#3b82f6; color:white; }
 .voice { background:#22c55e; color:black; }
-.mode { background:#1f2937; color:white; }
+.warn { background:#f59e0b; }
+.danger { background:#ef4444; }
 
 .hidden { display:none; }
 
-.correct { color:#22c55e; font-weight:700; }
-.wrong { color:#ef4444; font-weight:700; }
+.correct { color:#22c55e; }
+.wrong { color:#ef4444; }
+
+.chip {
+  display:inline-block;
+  padding:8px 12px;
+  background:#1f2937;
+  border-radius:999px;
+  margin-right:5px;
+  margin-bottom:10px;
+}
 </style>
 </head>
 
@@ -51,42 +61,57 @@ button {
 
 <div class="container">
 
-<h2>🚑 Тренажёр первой помощи</h2>
+<h2>AI-инструктор • Resusci Anne</h2>
 
-<!-- ВЫБОР СЦЕНАРИЯ -->
-<div id="scenarioScreen" class="card">
-  <h3>Выбери сценарий</h3>
-  <button onclick="selectScenario('cpr')">🫀 СЛР</button>
-  <button onclick="selectScenario('aed')">⚡ AED</button>
-  <button onclick="selectScenario('primary')">👀 Первичная оценка</button>
+<!-- режим -->
+<div class="card">
+  <button onclick="setMode('training')">Обучение</button>
+  <button onclick="setMode('exam')">Экзамен</button>
 </div>
 
-<!-- ВЫБОР РЕЖИМА -->
-<div id="modeScreen" class="card hidden">
-  <h3>Режим</h3>
-  <button class="mode" onclick="setMode('training')">Обучение</button>
-  <button class="mode" onclick="setMode('exam')">Экзамен</button>
+<!-- сценарии -->
+<div class="card">
+  <h3>Сценарии</h3>
+  <button onclick="selectScenario('primary')">Первичная оценка</button>
+  <button onclick="selectScenario('cpr')">СЛР</button>
+  <button onclick="selectScenario('aed')">AED</button>
 </div>
 
-<!-- ТРЕНАЖЕР -->
-<div id="trainer" class="card hidden">
+<!-- статус -->
+<div class="card">
+  <div class="chip" id="scenarioChip"></div>
+  <div class="chip" id="stepChip"></div>
+  <div class="chip" id="scoreChip"></div>
+</div>
 
-  <div id="progress"></div>
-  <h3 id="question"></h3>
+<!-- шаг -->
+<div class="card">
+  <h2 id="stepTitle"></h2>
+  <p id="stepText"></p>
+
+  <button class="voice" onclick="startVoice()">🎤 Говорить</button>
+
+  <button onclick="repeat()">Повтори</button>
+  <button onclick="showExplain()">Объясни</button>
+  <button class="danger" onclick="showRisks()">Риски</button>
+
+  <button onclick="prev()">Назад</button>
+</div>
+
+<!-- ПРОВЕРКА -->
+<div class="card">
+  <h3>Проверка</h3>
+  <p id="question"></p>
 
   <div id="answers"></div>
 
-  <button class="voice" onclick="startVoice()">🎤 Голос</button>
-
   <div id="feedback"></div>
-
   <div id="explanation" class="hidden"></div>
 
-  <button class="primary hidden" id="nextBtn" onclick="nextStep()">Дальше</button>
-
+  <button id="nextBtn" class="primary hidden" onclick="next()">Дальше</button>
 </div>
 
-<!-- РЕЗУЛЬТАТ -->
+<!-- результат -->
 <div id="result" class="card hidden">
   <h2 id="resultText"></h2>
   <p id="level"></p>
@@ -97,95 +122,107 @@ button {
 
 <script>
 
-// сценарии
 const scenarios = {
 
-  aed: [
+  primary: [
     {
-      q:"Что сделать первым?",
-      options:["Включить AED","Ждать","Убрать AED"],
-      correct:["включить"],
-      exp:"Сначала нужно включить AED"
-    },
-    {
-      q:"Что делать при анализе?",
-      options:["Касаться","Не трогать","Делать СЛР"],
-      correct:["не трогать","не касаться"],
-      exp:"Нельзя касаться пациента"
+      step:"Проверь безопасность места",
+      explain:"Сначала убедись, что нет угроз",
+      risks:"Можно пострадать самому",
+      check:{
+        q:"Что сделать первым?",
+        options:["Проверить безопасность","Начать СЛР","Уйти"],
+        correct:["безопасность"]
+      }
     }
   ],
 
   cpr: [
     {
-      q:"С чего начать?",
-      options:["Проверить сознание","Делать компрессии","Уйти"],
-      correct:["проверить"],
-      exp:"Сначала проверяется сознание"
+      step:"Проверь сознание",
+      explain:"Нужно определить реакцию",
+      risks:"Можно потерять время",
+      check:{
+        q:"С чего начать?",
+        options:["Проверить сознание","Делать компрессии"],
+        correct:["сознание"]
+      }
     },
     {
-      q:"Глубина компрессий?",
-      options:["2 см","5-6 см","10 см"],
-      correct:["5","6"],
-      exp:"Правильно: 5-6 см"
+      step:"Начни компрессии",
+      explain:"Дави 5-6 см",
+      risks:"Неправильная техника",
+      check:{
+        q:"Глубина?",
+        options:["2 см","5-6 см"],
+        correct:["5","6"]
+      }
     }
   ],
 
-  primary: [
+  aed: [
     {
-      q:"Первое действие?",
-      options:["Проверить сознание","Звонить","Уйти"],
-      correct:["сознание"],
-      exp:"Начинаем с проверки сознания"
+      step:"Включи AED",
+      explain:"Он даст инструкции",
+      risks:"Потеря времени",
+      check:{
+        q:"Первое действие?",
+        options:["Включить AED","Ждать"],
+        correct:["включить"]
+      }
     }
   ]
 
 };
 
-let steps = [];
-let step = 0;
-let score = 0;
-let mode = "training";
-let answered = false;
+let scenario="primary";
+let steps=[];
+let step=0;
+let score=0;
+let mode="training";
+let answered=false;
 
 // выбор сценария
-function selectScenario(name){
-  steps = scenarios[name];
-  document.getElementById("scenarioScreen").classList.add("hidden");
-  document.getElementById("modeScreen").classList.remove("hidden");
+function selectScenario(s){
+  scenario=s;
+  steps=scenarios[s];
+  restart();
 }
 
-// выбор режима
+// режим
 function setMode(m){
-  mode = m;
-  document.getElementById("modeScreen").classList.add("hidden");
-  document.getElementById("trainer").classList.remove("hidden");
-  loadStep();
+  mode=m;
+  restart();
 }
 
 // загрузка шага
-function loadStep(){
-  answered = false;
+function load(){
+  const s=steps[step];
 
-  const s = steps[step];
+  document.getElementById("scenarioChip").innerText="Сценарий: "+scenario;
+  document.getElementById("stepChip").innerText=`Шаг ${step+1}/${steps.length}`;
+  document.getElementById("scoreChip").innerText=`Баллы: ${score}`;
 
-  document.getElementById("question").innerText = s.q;
-  document.getElementById("feedback").innerText="";
-  document.getElementById("explanation").classList.add("hidden");
-  document.getElementById("nextBtn").classList.add("hidden");
+  document.getElementById("stepTitle").innerText="Шаг "+(step+1);
+  document.getElementById("stepText").innerText=s.step;
 
-  document.getElementById("progress").innerText =
-    `Шаг ${step+1}/${steps.length} | Баллы: ${score}`;
+  document.getElementById("question").innerText=s.check.q;
 
-  const answers = document.getElementById("answers");
+  const answers=document.getElementById("answers");
   answers.innerHTML="";
 
-  s.options.forEach(o=>{
+  s.check.options.forEach(o=>{
     const b=document.createElement("button");
     b.innerText=o;
     b.onclick=()=>check(o);
     answers.appendChild(b);
   });
 
+  document.getElementById("feedback").innerText="";
+  document.getElementById("explanation").classList.add("hidden");
+  document.getElementById("nextBtn").classList.add("hidden");
+
+  answered=false;
 }
 
 // проверка
@@ -196,7 +233,7 @@ function check(ans){
   const s=steps[step];
   const norm=ans.toLowerCase();
 
-  const correct=s.correct.some(c=>norm.includes(c));
+  const correct=s.check.correct.some(c=>norm.includes(c));
 
   const fb=document.getElementById("feedback");
 
@@ -211,7 +248,7 @@ function check(ans){
 
   if(mode==="training"){
     const exp=document.getElementById("explanation");
-    exp.innerText=s.exp;
+    exp.innerText=s.explain;
     exp.classList.remove("hidden");
   }
 
@@ -219,22 +256,26 @@ function check(ans){
 }
 
 // дальше
-function nextStep(){
+function next(){
   step++;
   if(step>=steps.length){
-    showResult();
+    finish();
     return;
   }
-  loadStep();
+  load();
+}
+
+// назад
+function prev(){
+  if(step>0) step--;
+  load();
 }
 
 // результат
-function showResult(){
-  document.getElementById("trainer").classList.add("hidden");
+function finish(){
   document.getElementById("result").classList.remove("hidden");
 
-  document.getElementById("resultText").innerText =
-    `${score}/${steps.length}`;
+  document.getElementById("resultText").innerText=`${score}/${steps.length}`;
 
   let lvl="";
 
@@ -243,6 +284,32 @@ function showResult(){
   else lvl="Нужно обучение";
 
   document.getElementById("level").innerText=lvl;
+}
+
+// рестарт
+function restart(){
+  step=0;
+  score=0;
+  document.getElementById("result").classList.add("hidden");
+  load();
+}
+
+// объяснение
+function showExplain(){
+  const s=steps[step];
+  alert(s.explain);
+}
+
+// повтор
+function repeat(){
+  const s=steps[step];
+  alert(s.step);
+}
+
+// риски
+function showRisks(){
+  const s=steps[step];
+  alert(s.risks);
 }
 
 // голос
@@ -258,13 +325,8 @@ function startVoice(){
   rec.start();
 }
 
-// рестарт
-function restart(){
-  step=0;
-  score=0;
-  document.getElementById("result").classList.add("hidden");
-  document.getElementById("scenarioScreen").classList.remove("hidden");
-}
+// init
+selectScenario("primary");
 
 </script>
 
