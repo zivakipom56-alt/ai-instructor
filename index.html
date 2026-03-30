@@ -161,7 +161,7 @@
       font-weight: 700;
       cursor: pointer;
       text-align: left;
-      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
     }
 
     .scenario-btn:hover,
@@ -171,14 +171,6 @@
       transform: translateY(-1px);
       border-color: #3a3a3a;
       background: #1b1b1b;
-    }
-
-    .action-btn:disabled,
-    .answer-btn:disabled,
-    .result-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
     }
 
     .scenario-btn small {
@@ -241,6 +233,7 @@
       border: 1px solid rgba(79, 131, 241, 0.25);
       color: #e3ecff;
       line-height: 1.5;
+      white-space: pre-line;
     }
 
     .hint.visible {
@@ -360,9 +353,10 @@
       background: rgba(184, 79, 91, 0.18);
     }
 
-    .answer-btn.revealed-correct {
-      border-color: var(--success);
-      background: rgba(46, 159, 91, 0.1);
+    .answer-btn.disabled {
+      opacity: 0.8;
+      cursor: default;
+      pointer-events: none;
     }
 
     .quiz-feedback {
@@ -372,6 +366,7 @@
       border-radius: 14px;
       line-height: 1.5;
       font-size: 15px;
+      white-space: pre-line;
     }
 
     .quiz-feedback.visible {
@@ -421,4 +416,953 @@
       margin-bottom: 14px;
       padding: 8px 12px;
       border-radius: 999px;
-      font-size: 14px
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .results-level.basic {
+      color: #ffd98a;
+      border-color: rgba(216, 162, 58, 0.35);
+      background: rgba(216, 162, 58, 0.1);
+    }
+
+    .results-level.good {
+      color: #cfe1ff;
+      border-color: rgba(79, 131, 241, 0.35);
+      background: rgba(79, 131, 241, 0.12);
+    }
+
+    .results-level.excellent {
+      color: #dff7e8;
+      border-color: rgba(46, 159, 91, 0.35);
+      background: rgba(46, 159, 91, 0.12);
+    }
+
+    .results-text {
+      line-height: 1.6;
+      color: #e8f8ee;
+      white-space: pre-line;
+      margin-bottom: 16px;
+    }
+
+    .results-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .result-btn.primary {
+      background: var(--accent);
+      color: #08110d;
+      border-color: transparent;
+    }
+
+    .result-btn.secondary {
+      background: var(--accent-2);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 12px;
+      }
+
+      .hero-title {
+        font-size: 26px;
+      }
+
+      .hero-subtitle {
+        font-size: 15px;
+      }
+
+      .step-title {
+        font-size: 24px;
+      }
+
+      .step-text {
+        font-size: 18px;
+      }
+
+      .actions,
+      .results-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .big-start {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="hero">
+      <div class="hero-title">AI-инструктор 4.0 · Resusci Anne</div>
+      <div class="hero-subtitle">Обучающий режим: QR-сценарии, голос, пошаговое сопровождение, проверка знаний без спойлеров и итоговый результат.</div>
+      <div class="status">
+        <span class="dot"></span>
+        <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="welcome" id="welcomeBox">
+          <div class="welcome-title" id="welcomeTitle">Сценарий распознан</div>
+          <div class="welcome-text" id="welcomeText">Нажми кнопку ниже, чтобы включить звук и начать сценарий.</div>
+          <button class="big-start" onclick="activateScenario()">▶️ Включить звук и начать</button>
+        </div>
+
+        <h2>Сценарии</h2>
+        <div class="scenario-list">
+          <button class="scenario-btn" id="btn-triage" onclick="manualScenarioStart('triage')">
+            Первичная оценка
+            <small>Проверка безопасности, сознания и дыхания с обучающими вопросами и итоговым результатом.</small>
+          </button>
+
+          <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
+            СЛР
+            <small>Пошаговое сопровождение, обязательные ответы на вопросы и финальная оценка.</small>
+          </button>
+
+          <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
+            AED
+            <small>Работа с автоматическим наружным дефибриллятором, вопросы по шагам и проверка понимания.</small>
+          </button>
+        </div>
+
+        <div class="step-box">
+          <div class="step-meta">
+            <div class="badge" id="scenarioBadge">Сценарий: не выбран</div>
+            <div class="badge" id="stepBadge">Шаг: —</div>
+            <div class="badge" id="scoreBadge">Результат: 0 / 0</div>
+          </div>
+
+          <div class="step-title" id="stepTitle">Готов к запуску</div>
+          <div class="step-text" id="stepText">Сканируй QR или выбери сценарий кнопкой.</div>
+          <div class="hint" id="hintBox"></div>
+        </div>
+
+        <div class="quiz-box" id="quizBox">
+          <div class="quiz-title">Проверка</div>
+          <div class="quiz-question" id="quizQuestion"></div>
+          <div class="answers" id="answersBox"></div>
+          <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+
+        <div class="results-box" id="resultsBox">
+          <div class="results-title">Сценарий завершён</div>
+          <div class="results-score" id="resultsScore"></div>
+          <div class="results-level" id="resultsLevel"></div>
+          <div class="results-text" id="resultsText"></div>
+          <div class="results-actions">
+            <button class="result-btn primary" onclick="restartCurrentScenario()">🔁 Пройти заново</button>
+            <button class="result-btn secondary" onclick="resetToHome()">📋 Выбрать другой сценарий</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="action-btn voice" onclick="listen()">🎤 Говорить</button>
+          <button class="action-btn primary" onclick="nextStep()">Дальше</button>
+          <button class="action-btn" onclick="explain()">Объясни</button>
+          <button class="action-btn warn" onclick="repeatStep()">Повтори</button>
+          <button class="action-btn danger" onclick="risks()">Риски</button>
+          <button class="action-btn" onclick="goBack()">Назад</button>
+        </div>
+
+        <div class="footer-note">
+          Голосовые команды: “первичная оценка”, “слр”, “aed”, “дальше”, “объясни”, “повтори”, “риски”, “назад”, “не дышит”, “дышит”, “без сознания”.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Что сказать</h3>
+        <div class="mini-tools">
+          <div class="tool-note">“Первичная оценка”</div>
+          <div class="tool-note">“СЛР”</div>
+          <div class="tool-note">“AED”</div>
+          <div class="tool-note">“Дальше”</div>
+          <div class="tool-note">“Объясни”</div>
+          <div class="tool-note">“Риски”</div>
+          <div class="tool-note">“Не дышит” / “Дышит”</div>
+        </div>
+
+        <h3>Лог ассистента</h3>
+        <div class="log" id="logBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = {
+      triage: {
+        name: "Первичная оценка",
+        intro: "Запускаю сценарий: Первичная оценка.",
+        steps: [
+          {
+            title: "Шаг 1",
+            text: "Осмотрись и оцени обстановку.",
+            explain: "Перед началом помощи убедись, что тебе и пострадавшему ничего не угрожает. Сначала всегда оценивается безопасность места.",
+            risks: "Если не проверить обстановку, можно пострадать самому.",
+            quiz: {
+              question: "Что проверяем первым?",
+              answers: [
+                { text: "Пульс", correct: false },
+                { text: "Безопасность места", correct: true },
+                { text: "Документы пострадавшего", correct: false }
+              ],
+              correctText: "Верно. Сначала оценивается безопасность места.",
+              wrongText: "Неверно. Сначала нужно убедиться в безопасности места.",
+              topic: "безопасность места"
+            }
+          },
+          {
+            title: "Шаг 2",
+            text: "Проверь, реагирует ли пострадавший.",
+            explain: "Аккуратно потряси за плечи и громко спроси: «Вы меня слышите?» Это помогает понять, есть ли сознание.",
+            risks: "Если не проверить сознание, можно выбрать неправильный алгоритм помощи."
+          },
+          {
+            title: "Шаг 3",
+            text: "Оцени дыхание пострадавшего.",
+            explain: "Оцени дыхание быстро, без лишней задержки. В учебном алгоритме ориентир — примерно 10 секунд.",
+            risks: "Долгая или неверная оценка дыхания может задержать начало правильных действий.",
+            quiz: {
+              question: "Сколько времени в этом сценарии отводится на проверку дыхания?",
+              answers: [
+                { text: "5 секунд", correct: false },
+                { text: "10 секунд", correct: true },
+                { text: "30 секунд", correct: false }
+              ],
+              correctText: "Верно. Для оценки дыхания берется ориентир 10 секунд.",
+              wrongText: "Неверно. В этом сценарии ориентир — 10 секунд.",
+              topic: "проверка дыхания"
+            }
+          },
+          {
+            title: "Шаг 4",
+            text: "Определи дальнейший маршрут действий.",
+            explain: "На этом шаге нужно сообщить результат оценки: не дышит, дышит или без сознания, но дышит. От этого зависит следующий алгоритм.",
+            risks: "Неправильная оценка состояния приведет к неверному сценарию.",
+            quiz: {
+              question: "Если пострадавший без сознания, но дышит, что делать дальше?",
+              answers: [
+                { text: "Начать СЛР", correct: false },
+                { text: "Вызвать помощь и контролировать состояние", correct: true },
+                { text: "Игнорировать дыхание", correct: false }
+              ],
+              correctText: "Верно. Нужно вызвать помощь и наблюдать за состоянием.",
+              wrongText: "Неверно. В этой ситуации нужно вызвать помощь и контролировать состояние.",
+              topic: "дальнейшие действия при наличии дыхания"
+            }
+          }
+        ]
+      },
+
+      cpr: {
+        name: "СЛР",
+        intro: "Запускаю сценарий: сердечно-легочная реанимация с обучением.",
+        steps: [
+          {
+            title: "Шаг 1",
+            text: "Осмотрись и оцени обстановку.",
+            explain: "Убедись, что проводить помощь безопасно для тебя и пострадавшего.",
+            risks: "В опасной зоне оказание помощи может привести к дополнительным пострадавшим."
+          },
+          {
+            title: "Шаг 2",
+            text: "Проверь реакцию пострадавшего.",
+            explain: "Потряси за плечи и громко обратись к пострадавшему, чтобы понять, реагирует ли он.",
+            risks: "Без проверки сознания нельзя правильно выбрать дальнейшие действия."
+          },
+          {
+            title: "Шаг 3",
+            text: "Оцени дыхание и признаки жизни.",
+            explain: "Формулировка может отличаться в зависимости от программы обучения, но логика шага — быстро распознать критическое состояние и не задерживать начало помощи. Проверка дыхания проводится быстро, обычно в пределах 10 секунд.",
+            risks: "Затягивание оценки состояния уменьшает шансы на эффективную помощь.",
+            quiz: {
+              question: "Сколько времени по учебному алгоритму отводится на проверку дыхания?",
+              answers: [
+                { text: "3 секунды", correct: false },
+                { text: "10 секунд", correct: true },
+                { text: "30 секунд", correct: false }
+              ],
+              correctText: "Верно. Проверка дыхания проводится быстро, обычно в пределах 10 секунд.",
+              wrongText: "Неверно. В этом сценарии правильный ориентир — 10 секунд.",
+              topic: "проверка дыхания"
+            }
+          },
+          {
+            title: "Шаг 4",
+            text: "Организуй вызов помощи.",
+            explain: "Вызови помощь сам или попроси принести AED. Чем раньше вызвана помощь и подготовлен AED, тем выше шанс на успешную реанимацию.",
+            risks: "Задержка вызова помощи уменьшает шансы на выживание."
+          },
+          {
+            title: "Шаг 5",
+            text: "Определи, нужно ли начинать СЛР.",
+            explain: "Если пострадавший без сознания, не дышит нормально и отсутствуют признаки жизни — немедленно начинай СЛР.",
+            risks: "Промедление перед началом СЛР ухудшает прогноз.",
+            quiz: {
+              question: "Что делать, если пострадавший без сознания и не дышит нормально?",
+              answers: [
+                { text: "Положить на бок и ждать", correct: false },
+                { text: "Начать СЛР", correct: true },
+                { text: "Отложить помощь до приезда специалистов", correct: false }
+              ],
+              correctText: "Верно. В рамках этого сценария правильное действие — немедленно начать СЛР.",
+              wrongText: "Неверно. Здесь нужно немедленно начать СЛР.",
+              topic: "начало СЛР"
+            }
+          },
+          {
+            title: "Шаг 6",
+            text: "Выполняй компрессии грудной клетки.",
+            explain: "Компрессии должны быть ритмичными, глубиной 5–6 сантиметров, в темпе 100–120 в минуту, с полным расправлением грудной клетки между нажатиями.",
+            risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР.",
+            quiz: {
+              question: "Какая глубина компрессий используется в этом сценарии?",
+              answers: [
+                { text: "2–3 сантиметра", correct: false },
+                { text: "5–6 сантиметров", correct: true },
+                { text: "8–10 сантиметров", correct: false }
+              ],
+              correctText: "Верно. Для этого сценария ориентир — 5–6 сантиметров.",
+              wrongText: "Неверно. В этом сценарии правильный ориентир — 5–6 сантиметров.",
+              topic: "глубина компрессий"
+            }
+          },
+          {
+            title: "Шаг 7",
+            text: "Продолжай помощь по алгоритму.",
+            explain: "Продолжай цикл помощи до прибытия помощи, появления AED или восстановления признаков жизни.",
+            risks: "Преждевременная остановка СЛР резко снижает шанс на выживание."
+          }
+        ]
+      },
+
+      aed: {
+        name: "AED",
+        intro: "Запускаю сценарий: работа с автоматическим наружным дефибриллятором.",
+        steps: [
+          {
+            title: "Шаг 1",
+            text: "Подготовь AED к работе.",
+            explain: "После того как AED оказался рядом, его нужно сразу включить. Устройство начнет давать голосовые подсказки.",
+            risks: "Если AED не включен сразу, помощь задерживается.",
+            quiz: {
+              question: "Что нужно сделать первым после того, как AED оказался рядом?",
+              answers: [
+                { text: "Включить AED", correct: true },
+                { text: "Убрать AED в сторону", correct: false },
+                { text: "Ждать указаний окружающих", correct: false }
+              ],
+              correctText: "Верно. Сначала AED нужно включить.",
+              wrongText: "Неверно. В этой ситуации сначала нужно включить AED.",
+              topic: "включение AED"
+            }
+          },
+          {
+            title: "Шаг 2",
+            text: "Подготовь грудную клетку пострадавшего.",
+            explain: "Грудная клетка должна быть открыта, чтобы электроды AED можно было наклеить на доступную поверхность.",
+            risks: "Неправильная подготовка снижает эффективность анализа и разряда."
+          },
+          {
+            title: "Шаг 3",
+            text: "Размести электроды AED.",
+            explain: "Наклей электроды согласно схеме на них. Обычно один электрод размещается справа вверху грудной клетки, второй — слева сбоку ниже.",
+            risks: "Неверное положение электродов может помешать анализу ритма."
+          },
+          {
+            title: "Шаг 4",
+            text: "Дай устройству провести анализ.",
+            explain: "Во время анализа никто не должен касаться пострадавшего.",
+            risks: "При касании результат анализа может быть неправильным.",
+            quiz: {
+              question: "Можно ли касаться пострадавшего во время анализа AED?",
+              answers: [
+                { text: "Да, если делать это аккуратно", correct: false },
+                { text: "Нет", correct: true }
+              ],
+              correctText: "Верно. Во время анализа касаться пострадавшего нельзя.",
+              wrongText: "Неверно. Во время анализа касаться пострадавшего нельзя.",
+              topic: "касание во время анализа"
+            }
+          },
+          {
+            title: "Шаг 5",
+            text: "Подготовься к возможному разряду.",
+            explain: "Если AED рекомендует разряд, убедись, что никто не касается пострадавшего, и нажми кнопку разряда. Перед этим громко предупреди окружающих.",
+            risks: "При касании пострадавшего во время разряда можно травмировать окружающих."
+          },
+          {
+            title: "Шаг 6",
+            text: "Продолжи помощь после команды AED.",
+            explain: "Сразу после разряда или сообщения AED нужно возобновить СЛР.",
+            risks: "Пауза после разряда ухудшает эффективность реанимации.",
+            quiz: {
+              question: "Что делать после разряда AED?",
+              answers: [
+                { text: "Ждать без действий", correct: false },
+                { text: "Продолжить СЛР", correct: true }
+              ],
+              correctText: "Верно. После разряда нужно продолжить СЛР.",
+              wrongText: "Неверно. После разряда нужно продолжить СЛР.",
+              topic: "действия после разряда"
+            }
+          }
+        ]
+      }
+    };
+
+    let currentScenarioKey = null;
+    let currentStepIndex = -1;
+    let lastSpokenText = "";
+    let metronomeInterval = null;
+    let pendingScenarioKey = null;
+    let audioActivated = false;
+
+    let quizState = {
+      total: 0,
+      correct: 0,
+      mistakes: [],
+      answeredCurrent: false
+    };
+
+    const statusText = document.getElementById("statusText");
+    const scenarioBadge = document.getElementById("scenarioBadge");
+    const stepBadge = document.getElementById("stepBadge");
+    const scoreBadge = document.getElementById("scoreBadge");
+    const stepTitle = document.getElementById("stepTitle");
+    const stepText = document.getElementById("stepText");
+    const hintBox = document.getElementById("hintBox");
+    const logBox = document.getElementById("logBox");
+    const welcomeBox = document.getElementById("welcomeBox");
+    const welcomeTitle = document.getElementById("welcomeTitle");
+    const welcomeText = document.getElementById("welcomeText");
+    const quizBox = document.getElementById("quizBox");
+    const quizQuestion = document.getElementById("quizQuestion");
+    const answersBox = document.getElementById("answersBox");
+    const quizFeedback = document.getElementById("quizFeedback");
+    const resultsBox = document.getElementById("resultsBox");
+    const resultsScore = document.getElementById("resultsScore");
+    const resultsLevel = document.getElementById("resultsLevel");
+    const resultsText = document.getElementById("resultsText");
+
+    function log(message) {
+      const time = new Date().toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      const div = document.createElement("div");
+      div.className = "log-entry";
+      div.textContent = `[${time}] ${message}`;
+      logBox.prepend(div);
+    }
+
+    function speak(text) {
+      lastSpokenText = text;
+      log(`Ассистент: ${text}`);
+
+      if (!audioActivated) return;
+
+      window.speechSynthesis.cancel();
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = "ru-RU";
+      msg.rate = 1.0;
+      msg.pitch = 1.0;
+      window.speechSynthesis.speak(msg);
+    }
+
+    function setHint(text = "", visible = false) {
+      hintBox.textContent = text;
+      hintBox.classList.toggle("visible", visible);
+    }
+
+    function clearActiveButtons() {
+      document.querySelectorAll(".scenario-btn").forEach(btn => btn.classList.remove("active"));
+    }
+
+    function primeAudio() {
+      if (audioActivated) return;
+      audioActivated = true;
+      const msg = new SpeechSynthesisUtterance("Звук включен.");
+      msg.lang = "ru-RU";
+      msg.volume = 0.01;
+      window.speechSynthesis.speak(msg);
+    }
+
+    function resetResults() {
+      quizState = {
+        total: 0,
+        correct: 0,
+        mistakes: [],
+        answeredCurrent: false
+      };
+      updateScoreBadge();
+      hideQuiz();
+      hideResults();
+    }
+
+    function updateScoreBadge() {
+      scoreBadge.textContent = `Результат: ${quizState.correct} / ${quizState.total}`;
+    }
+
+    function hideQuiz() {
+      quizBox.classList.remove("visible");
+      quizFeedback.classList.remove("visible", "success", "error");
+      quizFeedback.textContent = "";
+      answersBox.innerHTML = "";
+      quizQuestion.textContent = "";
+    }
+
+    function hideResults() {
+      resultsBox.classList.remove("visible");
+      resultsScore.textContent = "";
+      resultsLevel.textContent = "";
+      resultsLevel.className = "results-level";
+      resultsText.textContent = "";
+    }
+
+    function manualScenarioStart(key) {
+      pendingScenarioKey = key;
+      welcomeBox.classList.add("active");
+      welcomeTitle.textContent = `Сценарий: ${scenarios[key].name}`;
+      welcomeText.textContent = "Нажми кнопку ниже, чтобы включить звук и сразу начать этот сценарий.";
+      statusText.textContent = `Выбран сценарий: ${scenarios[key].name}`;
+      log(`Сценарий выбран вручную: ${scenarios[key].name}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function activateScenario() {
+      primeAudio();
+
+      if (!pendingScenarioKey) {
+        speak("Сценарий не выбран.");
+        return;
+      }
+
+      welcomeBox.classList.remove("active");
+      startScenario(pendingScenarioKey, true);
+      pendingScenarioKey = null;
+    }
+
+    function startScenario(key, withIntro = false) {
+      stopMetronome();
+      currentScenarioKey = key;
+      currentStepIndex = 0;
+      resetResults();
+
+      clearActiveButtons();
+      const btn = document.getElementById(`btn-${key}`);
+      if (btn) btn.classList.add("active");
+
+      const name = scenarios[key].name;
+      statusText.textContent = `Запущен сценарий: ${name}`;
+
+      if (withIntro) {
+        speak(scenarios[key].intro);
+      }
+
+      renderStep();
+    }
+
+    function renderStep() {
+      hideResults();
+
+      if (!currentScenarioKey || currentStepIndex < 0) {
+        scenarioBadge.textContent = "Сценарий: не выбран";
+        stepBadge.textContent = "Шаг: —";
+        stepTitle.textContent = "Готов к запуску";
+        stepText.textContent = "Сканируй QR или выбери сценарий кнопкой.";
+        setHint("", false);
+        hideQuiz();
+        updateScoreBadge();
+        return;
+      }
+
+      const scenario = scenarios[currentScenarioKey];
+      const step = scenario.steps[currentStepIndex];
+
+      scenarioBadge.textContent = `Сценарий: ${scenario.name}`;
+      stepBadge.textContent = `Шаг: ${currentStepIndex + 1} / ${scenario.steps.length}`;
+      stepTitle.textContent = step.title;
+      stepText.textContent = step.text;
+      setHint("", false);
+
+      quizState.answeredCurrent = false;
+
+      if (step.quiz) {
+        showQuiz(step.quiz, step.explain);
+        statusText.textContent = `Шаг ${currentStepIndex + 1}: сначала ответь на вопрос`;
+        speak(`${step.title}. ${step.text}. Ответь на вопрос на экране.`);
+      } else {
+        hideQuiz();
+        statusText.textContent = `Шаг ${currentStepIndex + 1} открыт`;
+        speak(`${step.title}. ${step.text}`);
+      }
+
+      if (currentScenarioKey === "cpr" && currentStepIndex === 5) {
+        startMetronome();
+      } else {
+        stopMetronome();
+      }
+
+      updateScoreBadge();
+    }
+
+    function showQuiz(quiz, explainText) {
+      quizBox.classList.add("visible");
+      quizQuestion.textContent = quiz.question;
+      answersBox.innerHTML = "";
+      quizFeedback.classList.remove("visible", "success", "error");
+      quizFeedback.textContent = "";
+
+      quiz.answers.forEach(answer => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = answer.text;
+        btn.onclick = () => answerQuiz(answer.correct, btn, quiz, explainText);
+        answersBox.appendChild(btn);
+      });
+    }
+
+    function answerQuiz(isCorrect, selectedBtn, quiz, explainText) {
+      if (quizState.answeredCurrent) return;
+
+      quizState.answeredCurrent = true;
+      quizState.total += 1;
+
+      const buttons = answersBox.querySelectorAll(".answer-btn");
+      buttons.forEach(btn => {
+        btn.classList.add("disabled");
+        btn.disabled = true;
+      });
+
+      if (isCorrect) {
+        quizState.correct += 1;
+        selectedBtn.classList.add("correct");
+        quizFeedback.classList.add("visible", "success");
+        quizFeedback.textContent = `${quiz.correctText}\n\nОбъяснение: ${explainText}`;
+        speak(quiz.correctText);
+        setHint(`Объяснение: ${explainText}`, true);
+      } else {
+        selectedBtn.classList.add("wrong");
+
+        buttons.forEach((btn, index) => {
+          if (quiz.answers[index].correct) {
+            btn.classList.add("correct");
+          }
+        });
+
+        quizState.mistakes.push(quiz.topic);
+        quizFeedback.classList.add("visible", "error");
+        quizFeedback.textContent = `${quiz.wrongText}\n\nОбъяснение: ${explainText}`;
+        speak(quiz.wrongText);
+        setHint(`Объяснение: ${explainText}`, true);
+      }
+
+      updateScoreBadge();
+      statusText.textContent = "Ответ принят. Можно идти дальше.";
+    }
+
+    function getLevel() {
+      if (quizState.total === 0) {
+        return {
+          label: "Без оценки",
+          className: "basic"
+        };
+      }
+
+      const percent = Math.round((quizState.correct / quizState.total) * 100);
+
+      if (percent >= 85) {
+        return {
+          label: "Отличный уровень",
+          className: "excellent"
+        };
+      }
+
+      if (percent >= 60) {
+        return {
+          label: "Хороший уровень",
+          className: "good"
+        };
+      }
+
+      return {
+        label: "Базовый уровень",
+        className: "basic"
+      };
+    }
+
+    function finishScenario() {
+      const scenario = scenarios[currentScenarioKey];
+      stopMetronome();
+      speak(`Сценарий ${scenario.name} завершен.`);
+      statusText.textContent = `Сценарий ${scenario.name} завершен`;
+      setHint("Сценарий завершен. Можно пройти его заново или выбрать другой.", true);
+      hideQuiz();
+
+      const level = getLevel();
+      resultsScore.textContent = `Результат: ${quizState.correct} / ${quizState.total}`;
+      resultsLevel.textContent = level.label;
+      resultsLevel.className = `results-level ${level.className}`;
+
+      const mistakesText = quizState.mistakes.length
+        ? "Ошибки:\n- " + quizState.mistakes.join("\n- ")
+        : "Ошибок не было.";
+
+      const recommendation = quizState.mistakes.length
+        ? `Рекомендация:\nПовтори сценарий ${scenario.name} и обрати внимание на ошибки.`
+        : "Рекомендация:\nОтличная работа. Можно переходить к следующему сценарию.";
+
+      resultsText.textContent = `${mistakesText}\n\n${recommendation}`;
+      resultsBox.classList.add("visible");
+    }
+
+    function nextStep() {
+      if (!currentScenarioKey) {
+        speak("Сначала выбери сценарий.");
+        return;
+      }
+
+      const scenario = scenarios[currentScenarioKey];
+      const step = scenario.steps[currentStepIndex];
+
+      if (step.quiz && !quizState.answeredCurrent) {
+        speak("Сначала ответь на вопрос этого шага.");
+        return;
+      }
+
+      if (currentStepIndex < scenario.steps.length - 1) {
+        currentStepIndex += 1;
+        renderStep();
+      } else {
+        finishScenario();
+      }
+    }
+
+    function goBack() {
+      if (!currentScenarioKey) {
+        speak("Сценарий еще не выбран.");
+        return;
+      }
+
+      if (currentStepIndex > 0) {
+        currentStepIndex -= 1;
+        renderStep();
+      } else {
+        speak("Это первый шаг сценария.");
+      }
+    }
+
+    function explain() {
+      if (!currentScenarioKey) {
+        speak("Сначала выбери сценарий.");
+        return;
+      }
+
+      const step = scenarios[currentScenarioKey].steps[currentStepIndex];
+      setHint(`Объяснение: ${step.explain}`, true);
+      speak(step.explain);
+    }
+
+    function risks() {
+      if (!currentScenarioKey) {
+        speak("Сначала выбери сценарий.");
+        return;
+      }
+
+      const step = scenarios[currentScenarioKey].steps[currentStepIndex];
+      setHint(`Риски: ${step.risks}`, true);
+      speak(step.risks);
+    }
+
+    function repeatStep() {
+      if (!lastSpokenText) {
+        speak("Пока нечего повторять.");
+        return;
+      }
+      speak(lastSpokenText);
+    }
+
+    function startMetronome() {
+      stopMetronome();
+      let count = 0;
+
+      metronomeInterval = setInterval(() => {
+        count += 1;
+        log(`Метроном СЛР: удар ${count}`);
+      }, 600);
+    }
+
+    function stopMetronome() {
+      if (metronomeInterval) {
+        clearInterval(metronomeInterval);
+        metronomeInterval = null;
+      }
+    }
+
+    function handleAssessmentResult(transcript) {
+      if (!currentScenarioKey) return false;
+      if (currentScenarioKey !== "triage") return false;
+
+      if (transcript.includes("не дышит")) {
+        speak("Понял. Пострадавший не дышит. В учебной логике следующий сценарий — СЛР.");
+        return true;
+      }
+
+      if (transcript.includes("дышит")) {
+        speak("Понял. Дыхание есть. Нужно вызвать помощь и контролировать состояние.");
+        return true;
+      }
+
+      if (transcript.includes("без сознания")) {
+        speak("Понял. Пострадавший без сознания. Оцени дыхание и действуй по алгоритму.");
+        return true;
+      }
+
+      return false;
+    }
+
+    function handleVoiceCommand(transcript) {
+      log(`Пользователь: ${transcript}`);
+      statusText.textContent = `Ты сказал: ${transcript}`;
+
+      if (transcript.includes("первичная оценка")) {
+        startScenario("triage", true);
+        return;
+      }
+
+      if (transcript === "слр" || transcript.includes("с л р")) {
+        startScenario("cpr", true);
+        return;
+      }
+
+      if (transcript.includes("aed") || transcript.includes("аед")) {
+        startScenario("aed", true);
+        return;
+      }
+
+      if (handleAssessmentResult(transcript)) {
+        return;
+      }
+
+      if (transcript.includes("дальше")) {
+        nextStep();
+        return;
+      }
+
+      if (transcript.includes("объясни")) {
+        explain();
+        return;
+      }
+
+      if (transcript.includes("повтори")) {
+        repeatStep();
+        return;
+      }
+
+      if (transcript.includes("риски")) {
+        risks();
+        return;
+      }
+
+      if (transcript.includes("назад")) {
+        goBack();
+        return;
+      }
+
+      speak("Команда не распознана. Скажи: СЛР, AED, первичная оценка, дальше, объясни или риски.");
+    }
+
+    function listen() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        speak("На этом устройстве распознавание речи в браузере не поддерживается.");
+        statusText.textContent = "Распознавание речи не поддерживается";
+        return;
+      }
+
+      primeAudio();
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "ru-RU";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      statusText.textContent = "Слушаю...";
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript.trim().toLowerCase();
+        handleVoiceCommand(transcript);
+      };
+
+      recognition.onerror = function(event) {
+        statusText.textContent = `Ошибка распознавания: ${event.error}`;
+        log(`Ошибка распознавания: ${event.error}`);
+      };
+
+      recognition.onend = function() {
+        if (statusText.textContent === "Слушаю...") {
+          statusText.textContent = "Ожидание команды";
+        }
+      };
+    }
+
+    function loadScenarioFromQR() {
+      const params = new URLSearchParams(window.location.search);
+      const scenario = params.get("scenario");
+
+      if (!scenario) return;
+      if (!scenarios[scenario]) return;
+
+      pendingScenarioKey = scenario;
+      const name = scenarios[scenario].name;
+
+      welcomeBox.classList.add("active");
+      welcomeTitle.textContent = `QR: ${name}`;
+      welcomeText.textContent = `Сценарий ${name} загружен через QR. Нажми кнопку ниже, чтобы включить звук и начать.`;
+      statusText.textContent = `Сценарий распознан по QR: ${name}`;
+      log(`Сценарий загружен через QR: ${scenario}`);
+    }
+
+    function restartCurrentScenario() {
+      if (!currentScenarioKey) return;
+      startScenario(currentScenarioKey, true);
+    }
+
+    function resetToHome() {
+      stopMetronome();
+      currentScenarioKey = null;
+      currentStepIndex = -1;
+      pendingScenarioKey = null;
+      clearActiveButtons();
+      resetResults();
+      welcomeBox.classList.remove("active");
+      statusText.textContent = "Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.";
+      renderStep();
+      log("Возврат к выбору сценария.");
+    }
+
+    renderStep();
+    log("Система готова. Ожидается выбор сценария.");
+    loadScenarioFromQR();
+  </script>
+</body>
+</html>
