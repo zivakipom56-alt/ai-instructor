@@ -2,1125 +2,1580 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-инструктор 4.2 | Resusci Anne</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>AI-инструктор 4.2 — Resusci Anne Demo (без AI)</title>
   <style>
     :root {
-      --bg: #050505;
-      --card: #101010;
-      --card-2: #171717;
-      --text: #ffffff;
-      --muted: #bdbdbd;
-      --accent: #6fd39a;
-      --accent-2: #4f83f1;
-      --warn: #d8a23a;
-      --danger: #b84f5b;
-      --success: #2e9f5b;
-      --border: #262626;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+      --bg: #0b1220;
+      --bg-soft: #121b2f;
+      --panel: #16233d;
+      --panel-2: #1c2b49;
+      --text: #eef4ff;
+      --muted: #a9b7d0;
+      --accent: #4ea1ff;
+      --accent-2: #67e8f9;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 10px 28px rgba(0,0,0,.28);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --border: 1px solid rgba(255,255,255,.08);
     }
 
     * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top left, rgba(78,161,255,.18), transparent 25%),
+        radial-gradient(circle at top right, rgba(103,232,249,.12), transparent 24%),
+        linear-gradient(180deg, #09101c 0%, #0d1627 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+      min-height: 100%;
+    }
 
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      min-height: 100vh;
+      padding: 14px;
     }
 
     .app {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 18px;
     }
 
-    .hero {
-      margin-bottom: 18px;
-      padding: 18px;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: linear-gradient(180deg, #0f0f0f 0%, #090909 100%);
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #061120;
       box-shadow: var(--shadow);
     }
 
-    .hero-title {
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 1.12;
-      margin-bottom: 8px;
+    .brand h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.2;
     }
 
-    .hero-subtitle {
+    .brand p {
+      margin: 2px 0 0;
       color: var(--muted);
-      font-size: 16px;
-      line-height: 1.45;
-      margin-bottom: 14px;
+      font-size: .92rem;
     }
 
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 8px;
     }
 
-    .toolbar-btn {
-      border: 1px solid var(--border);
-      background: var(--card-2);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .toolbar-btn.active {
-      background: var(--accent-2);
-      border-color: transparent;
-    }
-
-    .toolbar-btn.demo-on {
-      background: var(--accent);
-      color: #08110d;
-      border-color: transparent;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 10px 14px;
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 4px;
-      margin-bottom: 14px;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(111, 211, 154, 0.7);
-    }
-
-    .progress-wrap {
-      margin-top: 6px;
-    }
-
-    .progress-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 10px;
-      background: #1b1b1b;
-      border-radius: 999px;
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       overflow: hidden;
-      border: 1px solid #262626;
-    }
-
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      transition: width 0.25s ease;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 1.35fr 0.65fr;
-      gap: 18px;
+      grid-template-columns: 340px 1fr;
+      gap: 14px;
     }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: var(--shadow);
+    .sidebar {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .card h2, .card h3 {
-      margin: 0 0 14px 0;
+    .content {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 72vh;
     }
 
-    .welcome {
-      display: none;
-      margin-bottom: 18px;
-      padding: 20px;
-      border-radius: 20px;
-      border: 1px solid rgba(111, 211, 154, 0.25);
-      background: rgba(111, 211, 154, 0.08);
-    }
-
-    .welcome.active { display: block; }
-
-    .welcome-title {
-      font-size: 24px;
-      font-weight: 800;
+    .section-title {
+      font-size: .95rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
       margin-bottom: 8px;
     }
 
-    .welcome-text {
-      color: #e8f8ee;
-      line-height: 1.5;
-      margin-bottom: 14px;
+    .mode-switch,
+    .scenario-list,
+    .stats-grid,
+    .quick-actions,
+    .demo-controls {
+      display: grid;
+      gap: 8px;
     }
 
-    .big-start {
-      width: 100%;
-      border: 0;
-      border-radius: 18px;
-      padding: 18px 20px;
-      font-size: 21px;
-      font-weight: 800;
-      cursor: pointer;
-      background: var(--accent);
-      color: #08110d;
+    .mode-switch {
+      grid-template-columns: 1fr 1fr;
     }
-
-    .big-start:hover { filter: brightness(1.03); }
 
     .scenario-list {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .quick-actions,
+    .demo-controls {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    button,
+    .btn {
+      appearance: none;
+      border: 0;
+      outline: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--text);
+      background: linear-gradient(180deg, #22365d, #1a2b4b);
+      border: 1px solid rgba(255,255,255,.08);
+      font-weight: 650;
+      transition: transform .12s ease, filter .12s ease, background .2s ease;
+      min-height: 48px;
+    }
+
+    button:hover,
+    .btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    button:active,
+    .btn:active {
+      transform: translateY(0);
+      filter: brightness(.98);
+    }
+
+    button.active {
+      background: linear-gradient(180deg, #3a6fc7, #2a539b);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, #293249, #1f2737);
+    }
+
+    .btn-good {
+      background: linear-gradient(180deg, #1f8f49, #166534);
+    }
+
+    .btn-warn {
+      background: linear-gradient(180deg, #b27a0a, #8c5f08);
+    }
+
+    .btn-danger {
+      background: linear-gradient(180deg, #c43a3a, #8f2424);
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .metric {
+      background: linear-gradient(180deg, #1a2743, #121d35);
+      border-radius: 14px;
+      padding: 12px;
+      border: var(--border);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: .84rem;
+      margin-bottom: 6px;
+    }
+
+    .metric .value {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      background: rgba(255,255,255,.08);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+
+    .hero {
       display: grid;
-      gap: 12px;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+    }
+
+    .hero-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: .92rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--text);
+    }
+
+    .pill.good { background: rgba(34,197,94,.14); color: #c8f9d8; }
+    .pill.warn { background: rgba(245,158,11,.14); color: #ffe1a7; }
+    .pill.danger { background: rgba(239,68,68,.14); color: #ffd1d1; }
+    .pill.info { background: rgba(78,161,255,.14); color: #d6e9ff; }
+
+    .instruction-wrap {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .instruction-step {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .instruction-desc {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+
+    .step-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .hint-box {
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(103,232,249,.08);
+      border: 1px solid rgba(103,232,249,.16);
+      color: #d9fdff;
+      line-height: 1.45;
+      font-size: .95rem;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .check-item.done {
+      background: rgba(34,197,94,.08);
+      border-color: rgba(34,197,94,.18);
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      background: rgba(255,255,255,.08);
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    .check-item.done .check-icon {
+      background: rgba(34,197,94,.22);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-item {
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .timeline-item.current {
+      background: rgba(78,161,255,.12);
+      border-color: rgba(78,161,255,.26);
+      color: var(--text);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .breath-card {
+      position: sticky;
+      top: 14px;
+    }
+
+    .breath-circle-wrap {
+      display: grid;
+      place-items: center;
+      padding: 8px 0 4px;
+    }
+
+    .breath-circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at center, rgba(103,232,249,.18), rgba(78,161,255,.08) 55%, rgba(255,255,255,.03) 70%),
+        linear-gradient(180deg, #203456, #14213b);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 0 26px rgba(103,232,249,.08), 0 10px 30px rgba(0,0,0,.25);
+      transform: scale(1);
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+
+    .breath-circle.inhale {
+      transform: scale(1.07);
+      box-shadow: inset 0 0 30px rgba(103,232,249,.16), 0 10px 32px rgba(0,0,0,.28);
+    }
+
+    .breath-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .breath-sub {
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .breath-counter {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .bottom-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .glasses-mode .sidebar {
+      order: 2;
+    }
+
+    .glasses-mode .content {
+      order: 1;
+    }
+
+    .glasses-mode .hero {
+      grid-template-columns: 1fr;
+    }
+
+    .glasses-mode .instruction-wrap {
+      grid-template-columns: 1fr;
+    }
+
+    .glasses-overlay {
+      display: none;
+      margin-bottom: 14px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(103,232,249,.18);
+      background:
+        linear-gradient(180deg, rgba(8,12,20,.9), rgba(10,14,24,.88)),
+        radial-gradient(circle at 80% 15%, rgba(103,232,249,.12), transparent 22%);
+      position: relative;
+      min-height: 210px;
+    }
+
+    .glasses-mode .glasses-overlay {
+      display: block;
+    }
+
+    .glasses-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: #d7f7ff;
+      font-size: .92rem;
+      background: rgba(255,255,255,.03);
+    }
+
+    .glasses-screen {
+      position: relative;
+      min-height: 180px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .glasses-fov {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: .25;
+      pointer-events: none;
+    }
+
+    .glasses-card {
+      position: relative;
+      width: min(420px, 92%);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(8, 16, 29, .86);
+      border: 1px solid rgba(103,232,249,.22);
+      box-shadow: 0 10px 40px rgba(0,0,0,.34);
+      backdrop-filter: blur(8px);
+    }
+
+    .glasses-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .glasses-card p {
+      margin: 0;
+      color: #dce8ff;
+      line-height: 1.45;
+    }
+
+    .glasses-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-top: 10px;
     }
 
-    .scenario-btn,
-    .action-btn,
-    .answer-btn,
-    .result-btn {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--card-2);
-      color: var(--text);
-      border-radius: 18px;
-      padding: 16px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      text-align: left;
-      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    .glasses-mini .pill {
+      font-size: .82rem;
+      padding: 7px 10px;
     }
 
-    .scenario-btn:hover,
-    .action-btn:hover,
-    .answer-btn:hover,
-    .result-btn:hover {
-      transform: translateY(-1px);
-      border-color: #3a3a3a;
-      background: #1b1b1b;
+    .scenario-btn {
+      text-align: left;
     }
 
     .scenario-btn small {
       display: block;
-      margin-top: 6px;
       color: var(--muted);
-      font-size: 13px;
       font-weight: 500;
-      line-height: 1.4;
+      margin-top: 5px;
     }
 
-    .scenario-btn.active {
-      border-color: var(--accent-2);
-      box-shadow: inset 0 0 0 1px rgba(79, 131, 241, 0.35);
-    }
-
-    .step-box {
-      margin-top: 16px;
-      background: linear-gradient(180deg, #121212 0%, #0d0d0d 100%);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      min-height: 240px;
-    }
-
-    .step-meta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .badge {
-      background: #171717;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 12px;
+    .muted {
       color: var(--muted);
-      font-size: 14px;
     }
 
-    .step-title {
-      font-size: 30px;
+    .mini-title {
+      font-size: 1rem;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin: 0 0 10px;
     }
 
-    .step-text {
-      font-size: 21px;
-      line-height: 1.55;
-      color: #f3f3f3;
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .82rem;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+      border-bottom-width: 2px;
+      padding: 2px 7px;
+      border-radius: 8px;
     }
 
-    .phase-label {
-      margin-top: 14px;
-      font-size: 13px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    .hidden {
+      display: none !important;
     }
 
-    .hint {
-      display: none;
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      line-height: 1.5;
-      white-space: pre-line;
-      border: 1px solid transparent;
-    }
+    @media (max-width: 980px) {
+      .grid,
+      .hero,
+      .instruction-wrap,
+      .bottom-panels {
+        grid-template-columns: 1fr;
+      }
 
-    .hint.visible { display: block; }
-    .hint.info {
-      background: rgba(79, 131, 241, 0.1);
-      border-color: rgba(79, 131, 241, 0.25);
-      color: #e3ecff;
-    }
-    .hint.success {
-      background: rgba(46, 159, 91, 0.12);
-      border-color: rgba(46, 159, 91, 0.28);
-      color: #dff7e8;
-    }
-    .hint.error {
-      background: rgba(184, 79, 91, 0.12);
-      border-color: rgba(184, 79, 91, 0.28);
-      color: #ffe0e5;
-    }
-    .hint.warn {
-      background: rgba(216, 162, 58, 0.12);
-      border-color: rgba(216, 162, 58, 0.28);
-      color: #ffe9bc;
-    }
+      .breath-card {
+        position: static;
+      }
 
-    .big-status {
-      display: none;
-      margin-top: 16px;
-      padding: 18px;
-      border-radius: 18px;
-      font-size: 22px;
-      font-weight: 800;
-      text-align: center;
-      border: 1px solid transparent;
-    }
+      .sidebar {
+        order: 2;
+      }
 
-    .big-status.visible { display: block; }
-    .big-status.success {
-      background: rgba(46, 159, 91, 0.12);
-      border-color: rgba(46, 159, 91, 0.28);
-      color: #dff7e8;
-    }
-    .big-status.error {
-      background: rgba(184, 79, 91, 0.12);
-      border-color: rgba(184, 79, 91, 0.28);
-      color: #ffe0e5;
-    }
-    .big-status.info {
-      background: rgba(79, 131, 241, 0.1);
-      border-color: rgba(79, 131, 241, 0.25);
-      color: #e3ecff;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .action-btn.primary {
-      background: var(--accent-2);
-      border-color: transparent;
-    }
-
-    .action-btn.voice {
-      background: var(--accent);
-      color: #08110d;
-      border-color: transparent;
-    }
-
-    .action-btn.warn {
-      background: #2d2107;
-      border-color: #694b0a;
-      color: #ffd98a;
-    }
-
-    .action-btn.danger {
-      background: #2d1115;
-      border-color: #69303a;
-      color: #ffc0c7;
-    }
-
-    .mini-tools {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .tool-note {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      color: var(--muted);
-      line-height: 1.4;
-      font-size: 14px;
-    }
-
-    .log {
-      background: #0b0b0b;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      min-height: 180px;
-      max-height: 320px;
-      overflow: auto;
-      font-size: 14px;
-      line-height: 1.5;
-      color: #ddd;
-    }
-
-    .log.hidden {
-      display: none;
-    }
-
-    .log-entry {
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed #232323;
-    }
-
-    .footer-note {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .quiz-box {
-      display: none;
-      margin-top: 18px;
-      padding: 18px;
-      border-radius: 18px;
-      border: 1px solid rgba(79, 131, 241, 0.25);
-      background: rgba(79, 131, 241, 0.08);
-    }
-
-    .quiz-box.visible { display: block; }
-
-    .quiz-title {
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .quiz-question {
-      color: #f0f6ff;
-      line-height: 1.5;
-      margin-bottom: 14px;
-      font-size: 18px;
-    }
-
-    .answers {
-      display: grid;
-      gap: 10px;
-    }
-
-    .answer-btn.correct {
-      border-color: var(--success);
-      background: rgba(46, 159, 91, 0.18);
-    }
-
-    .answer-btn.wrong {
-      border-color: var(--danger);
-      background: rgba(184, 79, 91, 0.18);
-    }
-
-    .answer-btn.disabled {
-      opacity: 0.85;
-      cursor: default;
-      pointer-events: none;
-    }
-
-    .quiz-feedback {
-      display: none;
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 14px;
-      line-height: 1.5;
-      font-size: 15px;
-      white-space: pre-line;
-    }
-
-    .quiz-feedback.visible { display: block; }
-    .quiz-feedback.success {
-      background: rgba(46, 159, 91, 0.12);
-      border: 1px solid rgba(46, 159, 91, 0.28);
-      color: #dff7e8;
-    }
-    .quiz-feedback.error {
-      background: rgba(184, 79, 91, 0.12);
-      border: 1px solid rgba(184, 79, 91, 0.28);
-      color: #ffe0e5;
-    }
-
-    .results-box {
-      display: none;
-      margin-top: 18px;
-      padding: 22px;
-      border-radius: 20px;
-      border: 1px solid rgba(111, 211, 154, 0.25);
-      background: linear-gradient(180deg, rgba(111, 211, 154, 0.1) 0%, rgba(79, 131, 241, 0.06) 100%);
-    }
-
-    .results-box.visible { display: block; }
-
-    .results-title {
-      font-size: 26px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-
-    .results-score {
-      font-size: 30px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      color: #ffffff;
-    }
-
-    .results-level {
-      display: inline-block;
-      margin-bottom: 14px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 700;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .results-level.basic {
-      color: #ffd98a;
-      border-color: rgba(216, 162, 58, 0.35);
-      background: rgba(216, 162, 58, 0.1);
-    }
-
-    .results-level.good {
-      color: #cfe1ff;
-      border-color: rgba(79, 131, 241, 0.35);
-      background: rgba(79, 131, 241, 0.12);
-    }
-
-    .results-level.excellent {
-      color: #dff7e8;
-      border-color: rgba(46, 159, 91, 0.35);
-      background: rgba(46, 159, 91, 0.12);
-    }
-
-    .results-text {
-      line-height: 1.6;
-      color: #e8f8ee;
-      white-space: pre-line;
-      margin-bottom: 16px;
-    }
-
-    .results-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .result-btn.primary {
-      background: var(--accent);
-      color: #08110d;
-      border-color: transparent;
-    }
-
-    .result-btn.secondary {
-      background: var(--accent-2);
-      color: #ffffff;
-      border-color: transparent;
-    }
-
-    .glasses-mode .grid {
-      grid-template-columns: 1fr;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .glasses-mode #sideCard {
-      display: none;
-    }
-
-    .glasses-mode .scenario-list {
-      display: none;
-    }
-
-    .glasses-mode .actions {
-      grid-template-columns: 1fr;
-    }
-
-    .glasses-mode .hero-title {
-      font-size: 28px;
-    }
-
-    .glasses-mode .step-title {
-      font-size: 36px;
-    }
-
-    .glasses-mode .step-text {
-      font-size: 28px;
-      line-height: 1.45;
-    }
-
-    .glasses-mode .card {
-      padding: 16px;
-    }
-
-    .glasses-mode .toolbar {
-      gap: 8px;
-    }
-
-    .glasses-mode .toolbar-btn {
-      font-size: 13px;
-      padding: 10px 12px;
-    }
-
-    .glasses-mode .footer-note {
-      font-size: 12px;
-    }
-
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
+      .content {
+        order: 1;
+      }
     }
 
     @media (max-width: 640px) {
-      .app { padding: 12px; }
-      .hero-title { font-size: 26px; }
-      .hero-subtitle { font-size: 15px; }
-      .step-title { font-size: 24px; }
-      .step-text { font-size: 18px; }
-      .actions, .results-actions { grid-template-columns: 1fr; }
-      .big-start { font-size: 19px; }
-      .toolbar { flex-direction: column; }
+      body { padding: 10px; }
+      .stats-grid,
+      .mode-switch,
+      .quick-actions,
+      .demo-controls {
+        grid-template-columns: 1fr;
+      }
+      .instruction-step {
+        font-size: 1.2rem;
+      }
+      .hero-title {
+        font-size: 1.3rem;
+      }
+      .breath-circle {
+        width: 170px;
+        height: 170px;
+      }
+      button, .btn {
+        min-height: 46px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app" id="appRoot">
-    <div class="hero">
-      <div class="hero-title">AI-инструктор 4.2 · Resusci Anne</div>
-      <div class="hero-subtitle">Режимы телефон / очки, пошаговое обучение, один шаг = одна карточка, таймер дыхания, демо-режим, проверка и финальный результат.</div>
-
+  <div class="app" id="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-badge">4.2</div>
+        <div>
+          <h1>AI-инструктор 4.2 — Resusci Anne Demo</h1>
+          <p>Без AI · Телефон / очки · Демо-режим · Таймер дыхания · Прогресс · Работающие кнопки</p>
+        </div>
+      </div>
       <div class="toolbar">
-        <button class="toolbar-btn active" id="modePhoneBtn" onclick="setMode('phone')">📱 Телефон</button>
-        <button class="toolbar-btn" id="modeGlassesBtn" onclick="setMode('glasses')">🕶 Очки</button>
-        <button class="toolbar-btn" id="demoBtn" onclick="toggleDemo()">🎬 Демо выкл</button>
-        <button class="toolbar-btn" id="logBtn" onclick="toggleLog()">🧾 Скрыть лог</button>
-      </div>
-
-      <div class="status">
-        <span class="dot"></span>
-        <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
-      </div>
-
-      <div class="progress-wrap">
-        <div class="progress-head">
-          <span id="progressLabel">Прогресс: 0%</span>
-          <span id="phaseLabelTop">Этап: ожидание</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
+        <button id="resetAllBtn" class="btn-secondary">Сбросить всё</button>
+        <button id="openDemoBtn" class="btn-good">Запустить демо</button>
       </div>
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <div class="welcome" id="welcomeBox">
-          <div class="welcome-title" id="welcomeTitle">Сценарий распознан</div>
-          <div class="welcome-text" id="welcomeText">Нажми кнопку ниже, чтобы включить звук и начать сценарий.</div>
-          <button class="big-start" onclick="activateScenario()">▶️ Включить звук и начать</button>
-        </div>
-
-        <h2 id="scenarioSectionTitle">Сценарии</h2>
-        <div class="scenario-list" id="scenarioList">
-          <button class="scenario-btn" id="btn-triage" onclick="manualScenarioStart('triage')">
-            Первичная оценка
-            <small>Проверка безопасности, сознания и дыхания. Есть таймер дыхания и контроль понимания.</small>
-          </button>
-
-          <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
-            СЛР
-            <small>Пошаговое сопровождение, вопросы, метроном компрессий и финальная оценка.</small>
-          </button>
-
-          <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
-            AED
-            <small>Работа с автоматическим наружным дефибриллятором, анализ, разряд и продолжение СЛР.</small>
-          </button>
-        </div>
-
-        <div class="step-box">
-          <div class="step-meta">
-            <div class="badge" id="scenarioBadge">Сценарий: не выбран</div>
-            <div class="badge" id="stepBadge">Шаг: —</div>
-            <div class="badge" id="scoreBadge">Результат: 0 / 0</div>
-          </div>
-
-          <div class="step-title" id="stepTitle">Готов к запуску</div>
-          <div class="step-text" id="stepText">Сканируй QR или выбери сценарий кнопкой.</div>
-          <div class="phase-label" id="phaseLabel">Этап: ожидание</div>
-
-          <div class="big-status" id="bigStatus"></div>
-          <div class="hint" id="hintBox"></div>
-        </div>
-
-        <div class="quiz-box" id="quizBox">
-          <div class="quiz-title">Проверка</div>
-          <div class="quiz-question" id="quizQuestion"></div>
-          <div class="answers" id="answersBox"></div>
-          <div class="quiz-feedback" id="quizFeedback"></div>
-        </div>
-
-        <div class="results-box" id="resultsBox">
-          <div class="results-title">Сценарий завершён</div>
-          <div class="results-score" id="resultsScore"></div>
-          <div class="results-level" id="resultsLevel"></div>
-          <div class="results-text" id="resultsText"></div>
-          <div class="results-actions">
-            <button class="result-btn primary" onclick="restartCurrentScenario()">🔁 Пройти заново</button>
-            <button class="result-btn secondary" onclick="resetToHome()">📋 Выбрать другой сценарий</button>
+    <div class="grid" id="layout">
+      <aside class="panel sidebar">
+        <div>
+          <div class="section-title">Режим отображения</div>
+          <div class="mode-switch">
+            <button id="phoneModeBtn" class="active">Телефон</button>
+            <button id="glassesModeBtn">Очки</button>
           </div>
         </div>
 
-        <div class="actions">
-          <button class="action-btn voice" onclick="listen()">🎤 Говорить</button>
-          <button class="action-btn primary" onclick="nextStep()">Дальше</button>
-          <button class="action-btn" onclick="explain()">Объясни</button>
-          <button class="action-btn warn" onclick="repeatStep()">Повтори</button>
-          <button class="action-btn danger" onclick="risks()">Риски</button>
-          <button class="action-btn" onclick="goBack()">Назад</button>
+        <div>
+          <div class="section-title">Сценарии Resusci Anne</div>
+          <div class="scenario-list" id="scenarioList"></div>
         </div>
 
-        <div class="footer-note">
-          Голосовые команды: “первичная оценка”, “слр”, “aed”, “дальше”, “объясни”, “повтори”, “риски”, “назад”, “не дышит”, “дышит”, “без сознания”.
+        <div>
+          <div class="section-title">Статус занятия</div>
+          <div class="stats-grid">
+            <div class="metric">
+              <div class="label">Шаг</div>
+              <div class="value" id="metricStep">1 / 1</div>
+            </div>
+            <div class="metric">
+              <div class="label">Прогресс</div>
+              <div class="value" id="metricProgress">0%</div>
+            </div>
+            <div class="metric">
+              <div class="label">Баллы</div>
+              <div class="value" id="metricScore">0</div>
+            </div>
+            <div class="metric">
+              <div class="label">Режим</div>
+              <div class="value" id="metricMode">Телефон</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="card" id="sideCard">
-        <h3>Что сказать</h3>
-        <div class="mini-tools">
-          <div class="tool-note">“Первичная оценка”</div>
-          <div class="tool-note">“СЛР”</div>
-          <div class="tool-note">“AED”</div>
-          <div class="tool-note">“Дальше”</div>
-          <div class="tool-note">“Объясни”</div>
-          <div class="tool-note">“Риски”</div>
-          <div class="tool-note">“Не дышит” / “Дышит”</div>
+        <div>
+          <div class="section-title">Быстрые действия</div>
+          <div class="quick-actions">
+            <button id="prevBtn" class="btn-secondary">← Назад</button>
+            <button id="nextBtn" class="btn-good">Далее →</button>
+            <button id="markDoneBtn">Отметить шаг</button>
+            <button id="toggleChecklistBtn" class="btn-secondary">Чек-лист</button>
+          </div>
         </div>
 
-        <h3>Лог ассистента</h3>
-        <div class="log" id="logBox"></div>
-      </div>
+        <div>
+          <div class="section-title">Демо-режим</div>
+          <div class="demo-controls">
+            <button id="demoStartBtn" class="btn-good">Старт демо</button>
+            <button id="demoPauseBtn" class="btn-secondary">Пауза</button>
+            <button id="demoStopBtn" class="btn-danger">Стоп</button>
+            <button id="demoFasterBtn" class="btn-warn">Быстрее x1.5</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="mini-title">Подсказка</div>
+          <div class="footer-note">
+            Это демонстрационный интерфейс для показа логики пошагового инструктора.  
+            Всё работает локально в браузере без AI и без сервера.
+          </div>
+        </div>
+      </aside>
+
+      <main class="panel content">
+        <div class="glasses-overlay" id="glassesOverlay">
+          <div class="glasses-header">
+            <span>AR-оверлей инструктора</span>
+            <span id="glassesStatus">Готов</span>
+          </div>
+          <div class="glasses-screen">
+            <div class="glasses-fov"></div>
+            <div class="glasses-card">
+              <h3 id="glassesStepTitle">Шаг</h3>
+              <p id="glassesStepText">Текст шага</p>
+              <div class="glasses-mini">
+                <span class="pill info" id="glassesScenarioPill">Сценарий</span>
+                <span class="pill warn" id="glassesProgressPill">Прогресс 0%</span>
+                <span class="pill good" id="glassesBreathPill">Дыхание: выкл</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="hero">
+          <div class="card">
+            <h2 class="hero-title" id="heroTitle">Загрузка сценария...</h2>
+            <p class="hero-sub" id="heroSub">
+              Здесь будет описание выбранного сценария.
+            </p>
+
+            <div class="status-strip">
+              <span class="pill info" id="statusScenario">Сценарий: —</span>
+              <span class="pill" id="statusMode">Режим: телефон</span>
+              <span class="pill warn" id="statusDemo">Демо: выкл</span>
+              <span class="pill good" id="statusBreath">Таймер дыхания: выкл</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">Общий прогресс</div>
+            <div class="progress-wrap">
+              <div class="progress-meta">
+                <span id="progressText">0 из 0 шагов завершено</span>
+                <span id="progressPercent">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+
+            <div style="height:12px"></div>
+
+            <div class="section-title">Управление</div>
+            <div class="controls">
+              <button id="restartScenarioBtn" class="btn-secondary">Начать сценарий заново</button>
+              <button id="completeScenarioBtn" class="btn-good">Завершить сценарий</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="instruction-wrap">
+          <div class="card">
+            <div class="section-title">Текущий шаг</div>
+            <div class="instruction-step" id="stepTitle">Шаг</div>
+            <div class="instruction-desc" id="stepDesc">Описание шага</div>
+
+            <div class="step-badges" id="stepBadges"></div>
+
+            <div class="hint-box" id="stepHint">
+              Подсказка шага
+            </div>
+
+            <div style="height:14px"></div>
+
+            <div class="controls">
+              <button id="stepActionBtn">Выполнено</button>
+              <button id="toggleBreathBtn" class="btn-secondary">Запустить дыхание</button>
+              <button id="voiceHintBtn" class="btn-secondary">Озвучить шаг</button>
+            </div>
+          </div>
+
+          <div class="card breath-card">
+            <div class="section-title">Таймер дыхания</div>
+            <div class="breath-circle-wrap">
+              <div class="breath-circle" id="breathCircle">
+                <div>
+                  <div class="breath-title" id="breathTitle">Ожидание</div>
+                  <div class="breath-sub" id="breathSub">Таймер не запущен</div>
+                </div>
+              </div>
+            </div>
+            <div class="breath-counter" id="breathCounter">Цикл: 0 / 2</div>
+
+            <div style="height:12px"></div>
+
+            <div class="controls">
+              <button id="breathStartBtn" class="btn-good">Старт</button>
+              <button id="breathPauseBtn" class="btn-secondary">Пауза</button>
+              <button id="breathResetBtn" class="btn-danger">Сброс</button>
+            </div>
+
+            <div style="height:12px"></div>
+            <div class="footer-note">
+              Для демо используется простой цикл:  
+              <span class="kbd">Вдох 2 сек</span> → <span class="kbd">Выдох 2 сек</span>  
+              Счёт: 2 вдоха.
+            </div>
+          </div>
+        </section>
+
+        <section class="bottom-panels">
+          <div class="card">
+            <div class="section-title">Чек-лист сценария</div>
+            <div class="checklist" id="checklist"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">Лента шагов</div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+        </section>
+      </main>
     </div>
   </div>
 
   <script>
-    const scenarios = {
-      triage: {
+    const scenarios = [
+      {
+        id: "primary",
         name: "Первичная оценка",
-        intro: "Запускаю сценарий: Первичная оценка.",
+        short: "Проверка безопасности, сознания и дыхания",
+        description: "Быстрый сценарий начала оказания первой помощи на манекене Resusci Anne. Подходит для показа логики пошагового сопровождения.",
+        scorePerStep: 10,
         steps: [
           {
-            title: "Шаг 1",
-            text: "Осмотрись и оцени обстановку.",
-            explain: "Перед началом помощи убедись, что тебе и пострадавшему ничего не угрожает. Сначала всегда оценивается безопасность места.",
-            risks: "Если не проверить обстановку, можно пострадать самому.",
-            quiz: {
-              question: "Что проверяем первым?",
-              answers: [
-                { text: "Пульс", correct: false },
-                { text: "Безопасность места", correct: true },
-                { text: "Документы пострадавшего", correct: false }
-              ],
-              correctText: "Верно. Сначала оценивается безопасность места.",
-              wrongText: "Неверно. Сначала нужно убедиться в безопасности места.",
-              topic: "безопасность места"
-            }
+            title: "Оцените безопасность места",
+            desc: "Осмотритесь и убедитесь, что подход к пострадавшему безопасен для вас и окружающих.\nНе начинайте помощь, если есть угроза жизни спасателя.",
+            hint: "Сначала безопасность, потом контакт с пострадавшим.",
+            badges: ["Старт", "Безопасность", "Важно"],
+            checklist: "Место безопасно"
           },
           {
-            title: "Шаг 2",
-            text: "Проверь, реагирует ли пострадавший.",
-            explain: "Аккуратно потряси за плечи и громко спроси: «Вы меня слышите?» Это помогает понять, есть ли сознание.",
-            risks: "Если не проверить сознание, можно выбрать неправильный алгоритм помощи."
+            title: "Проверьте реакцию пострадавшего",
+            desc: "Обратитесь к человеку громко. Осторожно потрясите за плечи и спросите: «Вы меня слышите?»",
+            hint: "Не трясите сильно. Достаточно безопасного голосового и тактильного контакта.",
+            badges: ["Контакт", "Сознание"],
+            checklist: "Проверена реакция"
           },
           {
-            title: "Шаг 3",
-            text: "Оцени дыхание пострадавшего.",
-            explain: "Оцени дыхание быстро, без лишней задержки. В учебном алгоритме ориентир — примерно 10 секунд.",
-            risks: "Долгая или неверная оценка дыхания может задержать начало правильных действий.",
-            timer: "breathing",
-            quiz: {
-              question: "Сколько времени в этом сценарии отводится на проверку дыхания?",
-              answers: [
-                { text: "5 секунд", correct: false },
-                { text: "10 секунд", correct: true },
-                { text: "30 секунд", correct: false }
-              ],
-              correctText: "Верно. Для оценки дыхания берется ориентир 10 секунд.",
-              wrongText: "Неверно. В этом сценарии ориентир — 10 секунд.",
-              topic: "проверка дыхания"
-            }
+            title: "Позовите на помощь",
+            desc: "Если реакции нет, позовите окружающих и попросите вызвать экстренную помощь.",
+            hint: "В демо можно показать, как система выводит следующий шаг сразу после оценки сознания.",
+            badges: ["Помощь", "Команда"],
+            checklist: "Помощь вызвана"
           },
           {
-            title: "Шаг 4",
-            text: "Определи дальнейший маршрут действий.",
-            explain: "На этом шаге нужно сообщить результат оценки: не дышит, дышит или без сознания, но дышит. От этого зависит следующий алгоритм.",
-            risks: "Неправильная оценка состояния приведет к неверному сценарию.",
-            quiz: {
-              question: "Если пострадавший без сознания, но дышит, что делать дальше?",
-              answers: [
-                { text: "Начать СЛР", correct: false },
-                { text: "Вызвать помощь и контролировать состояние", correct: true },
-                { text: "Игнорировать дыхание", correct: false }
-              ],
-              correctText: "Верно. Нужно вызвать помощь и наблюдать за состоянием.",
-              wrongText: "Неверно. В этой ситуации нужно вызвать помощь и контролировать состояние.",
-              topic: "дальнейшие действия при наличии дыхания"
-            }
+            title: "Откройте дыхательные пути",
+            desc: "Осторожно запрокиньте голову и приподнимите подбородок, чтобы открыть дыхательные пути.",
+            hint: "Это подготовка к проверке дыхания.",
+            badges: ["ABC", "Дыхательные пути"],
+            checklist: "Дыхательные пути открыты"
+          },
+          {
+            title: "Оцените дыхание 10 секунд",
+            desc: "Смотрите на движения грудной клетки, слушайте дыхание и ощущайте выдох щекой в течение 10 секунд.",
+            hint: "Нормальное дыхание — ключевой критерий перед переходом к СЛР.",
+            badges: ["Дыхание", "10 секунд"],
+            checklist: "Дыхание оценено"
           }
         ]
       },
-
-      cpr: {
+      {
+        id: "cpr",
         name: "СЛР",
-        intro: "Запускаю сценарий: сердечно-легочная реанимация с обучением.",
+        short: "Компрессии и вдохи на Resusci Anne",
+        description: "Демо-режим сердечно-лёгочной реанимации: компрессии грудной клетки и 2 вдоха. Включён таймер дыхания для наглядного показа.",
+        scorePerStep: 15,
         steps: [
           {
-            title: "Шаг 1",
-            text: "Осмотрись и оцени обстановку.",
-            explain: "Убедись, что проводить помощь безопасно для тебя и пострадавшего.",
-            risks: "В опасной зоне оказание помощи может привести к дополнительным пострадавшим."
+            title: "Положение рук",
+            desc: "Разместите основание ладони в центре грудной клетки. Вторую руку сверху. Локти выпрямлены.",
+            hint: "Покажите правильную стойку корпуса над манекеном.",
+            badges: ["СЛР", "Позиция", "Подготовка"],
+            checklist: "Руки поставлены правильно"
           },
           {
-            title: "Шаг 2",
-            text: "Проверь реакцию пострадавшего.",
-            explain: "Потряси за плечи и громко обратись к пострадавшему, чтобы понять, реагирует ли он.",
-            risks: "Без проверки сознания нельзя правильно выбрать дальнейшие действия."
+            title: "Начните компрессии",
+            desc: "Выполняйте 30 компрессий грудной клетки с уверенным вертикальным нажатием в стабильном ритме.",
+            hint: "В демо можно озвучить: «Давление вниз, полный возврат грудной клетки».",
+            badges: ["30 компрессий", "Ритм"],
+            checklist: "Компрессии выполнены"
           },
           {
-            title: "Шаг 3",
-            text: "Оцени дыхание и признаки жизни.",
-            explain: "Формулировка может отличаться в зависимости от программы обучения, но логика шага — быстро распознать критическое состояние и не задерживать начало помощи. Проверка дыхания проводится быстро, обычно в пределах 10 секунд.",
-            risks: "Затягивание оценки состояния уменьшает шансы на эффективную помощь.",
-            quiz: {
-              question: "Сколько времени по учебному алгоритму отводится на проверку дыхания?",
-              answers: [
-                { text: "3 секунды", correct: false },
-                { text: "10 секунд", correct: true },
-                { text: "30 секунд", correct: false }
-              ],
-              correctText: "Верно. Проверка дыхания проводится быстро, обычно в пределах 10 секунд.",
-              wrongText: "Неверно. В этом сценарии правильный ориентир — 10 секунд.",
-              topic: "проверка дыхания"
-            }
+            title: "Откройте дыхательные пути",
+            desc: "После компрессий снова откройте дыхательные пути: запрокидывание головы и подъём подбородка.",
+            hint: "Перед вдохами важно снова открыть дыхательные пути.",
+            badges: ["Подготовка к вдохам"],
+            checklist: "Подготовка к вдохам выполнена"
           },
           {
-            title: "Шаг 4",
-            text: "Организуй вызов помощи.",
-            explain: "Вызови помощь сам или попроси принести AED. Чем раньше вызвана помощь и подготовлен AED, тем выше шанс на успешную реанимацию.",
-            risks: "Задержка вызова помощи уменьшает шансы на выживание."
+            title: "Сделайте 2 вдоха",
+            desc: "Сделайте два плавных вдоха. Следите за подъёмом грудной клетки. Используйте таймер дыхания для визуального сопровождения.",
+            hint: "Не делайте слишком резких или слишком долгих вдохов.",
+            badges: ["2 вдоха", "Таймер"],
+            checklist: "2 вдоха выполнены",
+            breath: true
           },
           {
-            title: "Шаг 5",
-            text: "Определи, нужно ли начинать СЛР.",
-            explain: "Если пострадавший без сознания, не дышит нормально и отсутствуют признаки жизни — немедленно начинай СЛР.",
-            risks: "Промедление перед началом СЛР ухудшает прогноз.",
-            quiz: {
-              question: "Что делать, если пострадавший без сознания и не дышит нормально?",
-              answers: [
-                { text: "Положить на бок и ждать", correct: false },
-                { text: "Начать СЛР", correct: true },
-                { text: "Отложить помощь до приезда специалистов", correct: false }
-              ],
-              correctText: "Верно. В рамках этого сценария правильное действие — немедленно начать СЛР.",
-              wrongText: "Неверно. Здесь нужно немедленно начать СЛР.",
-              topic: "начало СЛР"
-            }
-          },
-          {
-            title: "Шаг 6",
-            text: "Выполняй компрессии грудной клетки.",
-            explain: "Компрессии должны быть ритмичными, глубиной 5–6 сантиметров, в темпе 100–120 в минуту, с полным расправлением грудной клетки между нажатиями.",
-            risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР.",
-            metronome: true,
-            quiz: {
-              question: "Какая глубина компрессий используется в этом сценарии?",
-              answers: [
-                { text: "2–3 сантиметра", correct: false },
-                { text: "5–6 сантиметров", correct: true },
-                { text: "8–10 сантиметров", correct: false }
-              ],
-              correctText: "Верно. Для этого сценария ориентир — 5–6 сантиметров.",
-              wrongText: "Неверно. В этом сценарии правильный ориентир — 5–6 сантиметров.",
-              topic: "глубина компрессий"
-            }
-          },
-          {
-            title: "Шаг 7",
-            text: "Продолжай помощь по алгоритму.",
-            explain: "Продолжай цикл помощи до прибытия помощи, появления AED или восстановления признаков жизни.",
-            risks: "Преждевременная остановка СЛР резко снижает шанс на выживание."
+            title: "Продолжайте цикл 30:2",
+            desc: "Продолжайте чередование компрессий и вдохов до появления признаков жизни или прибытия помощи.",
+            hint: "Демо завершает сценарий на этом шаге как общий итог.",
+            badges: ["30:2", "Продолжение"],
+            checklist: "Цикл понятен"
           }
         ]
       },
-
-      aed: {
-        name: "AED",
-        intro: "Запускаю сценарий: работа с автоматическим наружным дефибриллятором.",
+      {
+        id: "aed",
+        name: "AED / АНД",
+        short: "Работа с автоматическим наружным дефибриллятором",
+        description: "Пошаговое сопровождение применения AED в демонстрационном формате для Resusci Anne.",
+        scorePerStep: 12,
         steps: [
           {
-            title: "Шаг 1",
-            text: "Подготовь AED к работе.",
-            explain: "После того как AED оказался рядом, его нужно сразу включить. Устройство начнет давать голосовые подсказки.",
-            risks: "Если AED не включен сразу, помощь задерживается.",
-            quiz: {
-              question: "Что нужно сделать первым после того, как AED оказался рядом?",
-              answers: [
-                { text: "Включить AED", correct: true },
-                { text: "Убрать AED в сторону", correct: false },
-                { text: "Ждать указаний окружающих", correct: false }
-              ],
-              correctText: "Верно. Сначала AED нужно включить.",
-              wrongText: "Неверно. В этой ситуации сначала нужно включить AED.",
-              topic: "включение AED"
-            }
+            title: "Подготовьте AED",
+            desc: "Принесите AED и включите устройство. Следуйте голосовым подсказкам аппарата.",
+            hint: "На этом шаге важно показать, что инструктор ведёт пользователя без перегруза.",
+            badges: ["AED", "Старт"],
+            checklist: "AED включён"
           },
           {
-            title: "Шаг 2",
-            text: "Подготовь грудную клетку пострадавшего.",
-            explain: "Грудная клетка должна быть открыта, чтобы электроды AED можно было наклеить на доступную поверхность.",
-            risks: "Неправильная подготовка снижает эффективность анализа и разряда."
+            title: "Оголите грудную клетку",
+            desc: "Подготовьте грудную клетку для наклеивания электродов. Поверхность должна быть доступна и сухая.",
+            hint: "В реальном обучении можно добавить замечания по влаге и волосам на груди.",
+            badges: ["Подготовка", "Электроды"],
+            checklist: "Грудная клетка подготовлена"
           },
           {
-            title: "Шаг 3",
-            text: "Размести электроды AED.",
-            explain: "Наклей электроды согласно схеме на них. Обычно один электрод размещается справа вверху грудной клетки, второй — слева сбоку ниже.",
-            risks: "Неверное положение электродов может помешать анализу ритма."
+            title: "Наклейте электроды",
+            desc: "Разместите электроды согласно схемам на наклейках: один сверху справа, второй слева снизу.",
+            hint: "Схемы на электродах обычно понятны даже новичку.",
+            badges: ["Расположение", "Электроды"],
+            checklist: "Электроды наклеены"
           },
           {
-            title: "Шаг 4",
-            text: "Дай устройству провести анализ.",
-            explain: "Во время анализа никто не должен касаться пострадавшего.",
-            risks: "При касании результат анализа может быть неправильным.",
-            quiz: {
-              question: "Можно ли касаться пострадавшего во время анализа AED?",
-              answers: [
-                { text: "Да, если делать это аккуратно", correct: false },
-                { text: "Нет", correct: true }
-              ],
-              correctText: "Верно. Во время анализа касаться пострадавшего нельзя.",
-              wrongText: "Неверно. Во время анализа касаться пострадавшего нельзя.",
-              topic: "касание во время анализа"
-            }
+            title: "Не касайтесь пострадавшего",
+            desc: "Во время анализа ритма никто не должен касаться пострадавшего.",
+            hint: "Команда вслух: «Отойти всем!»",
+            badges: ["Безопасность", "Анализ"],
+            checklist: "Контакт прекращён"
           },
           {
-            title: "Шаг 5",
-            text: "Подготовься к возможному разряду.",
-            explain: "Если AED рекомендует разряд, убедись, что никто не касается пострадавшего, и нажми кнопку разряда. Перед этим громко предупреди окружающих.",
-            risks: "При касании пострадавшего во время разряда можно травмировать окружающих."
-          },
-          {
-            title: "Шаг 6",
-            text: "Продолжи помощь после команды AED.",
-            explain: "Сразу после разряда или сообщения AED нужно возобновить СЛР.",
-            risks: "Пауза после разряда ухудшает эффективность реанимации.",
-            quiz: {
-              question: "Что делать после разряда AED?",
-              answers: [
-                { text: "Ждать без действий", correct: false },
-                { text: "Продолжить СЛР", correct: true }
-              ],
-              correctText: "Верно. После разряда нужно продолжить СЛР.",
-              wrongText: "Неверно. После разряда нужно продолжить СЛР.",
-              topic: "действия после разряда"
-            }
+            title: "Выполните разряд и продолжите СЛР",
+            desc: "Если AED рекомендует разряд — убедитесь, что никто не касается пострадавшего, выполните разряд и сразу вернитесь к СЛР.",
+            hint: "После разряда не теряйте время — сразу возобновляйте компрессии.",
+            badges: ["Разряд", "Продолжение СЛР"],
+            checklist: "Разряд и переход к СЛР понятны"
           }
         ]
       }
+    ];
+
+    const state = {
+      mode: "phone",
+      scenarioIndex: 0,
+      stepIndex: 0,
+      completedSteps: {},
+      score: 0,
+      demo: {
+        running: false,
+        paused: false,
+        speed: 1,
+        timerId: null
+      },
+      breath: {
+        running: false,
+        paused: false,
+        timerId: null,
+        phase: "idle",
+        cycle: 0,
+        totalCycles: 2,
+        secondsLeft: 0
+      }
     };
 
-    let currentScenarioKey = null;
-    let currentStepIndex = -1;
-    let lastSpokenText = "";
-    let metronomeInterval = null;
-    let pendingScenarioKey = null;
-    let audioActivated = false;
-    let uiMode = "phone";
-    let demoMode = false;
-    let demoTimeout = null;
-    let breathingTimerInterval = null;
-    let stepPhase = "instruction";
-    let isLogHidden = false;
+    const el = {
+      app: document.getElementById("app"),
+      layout: document.getElementById("layout"),
 
-    let quizState = {
-      total: 0,
-      correct: 0,
-      mistakes: [],
-      answeredCurrent: false
+      scenarioList: document.getElementById("scenarioList"),
+
+      phoneModeBtn: document.getElementById("phoneModeBtn"),
+      glassesModeBtn: document.getElementById("glassesModeBtn"),
+
+      heroTitle: document.getElementById("heroTitle"),
+      heroSub: document.getElementById("heroSub"),
+
+      statusScenario: document.getElementById("statusScenario"),
+      statusMode: document.getElementById("statusMode"),
+      statusDemo: document.getElementById("statusDemo"),
+      statusBreath: document.getElementById("statusBreath"),
+
+      progressText: document.getElementById("progressText"),
+      progressPercent: document.getElementById("progressPercent"),
+      progressFill: document.getElementById("progressFill"),
+
+      metricStep: document.getElementById("metricStep"),
+      metricProgress: document.getElementById("metricProgress"),
+      metricScore: document.getElementById("metricScore"),
+      metricMode: document.getElementById("metricMode"),
+
+      stepTitle: document.getElementById("stepTitle"),
+      stepDesc: document.getElementById("stepDesc"),
+      stepBadges: document.getElementById("stepBadges"),
+      stepHint: document.getElementById("stepHint"),
+
+      checklist: document.getElementById("checklist"),
+      timeline: document.getElementById("timeline"),
+
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      markDoneBtn: document.getElementById("markDoneBtn"),
+      toggleChecklistBtn: document.getElementById("toggleChecklistBtn"),
+      restartScenarioBtn: document.getElementById("restartScenarioBtn"),
+      completeScenarioBtn: document.getElementById("completeScenarioBtn"),
+      stepActionBtn: document.getElementById("stepActionBtn"),
+      toggleBreathBtn: document.getElementById("toggleBreathBtn"),
+      voiceHintBtn: document.getElementById("voiceHintBtn"),
+
+      openDemoBtn: document.getElementById("openDemoBtn"),
+      resetAllBtn: document.getElementById("resetAllBtn"),
+      demoStartBtn: document.getElementById("demoStartBtn"),
+      demoPauseBtn: document.getElementById("demoPauseBtn"),
+      demoStopBtn: document.getElementById("demoStopBtn"),
+      demoFasterBtn: document.getElementById("demoFasterBtn"),
+
+      breathCircle: document.getElementById("breathCircle"),
+      breathTitle: document.getElementById("breathTitle"),
+      breathSub: document.getElementById("breathSub"),
+      breathCounter: document.getElementById("breathCounter"),
+      breathStartBtn: document.getElementById("breathStartBtn"),
+      breathPauseBtn: document.getElementById("breathPauseBtn"),
+      breathResetBtn: document.getElementById("breathResetBtn"),
+
+      glassesOverlay: document.getElementById("glassesOverlay"),
+      glassesStatus: document.getElementById("glassesStatus"),
+      glassesStepTitle: document.getElementById("glassesStepTitle"),
+      glassesStepText: document.getElementById("glassesStepText"),
+      glassesScenarioPill: document.getElementById("glassesScenarioPill"),
+      glassesProgressPill: document.getElementById("glassesProgressPill"),
+      glassesBreathPill: document.getElementById("glassesBreathPill")
     };
 
-    const appRoot = document.getElementById("appRoot");
-    const statusText = document.getElementById("statusText");
-    const scenarioBadge = document.getElementById("scenarioBadge");
-    const stepBadge = document.getElementById("stepBadge");
-    const scoreBadge = document.getElementById("scoreBadge");
-    const stepTitle = document.getElementById("stepTitle");
-    const stepText = document.getElementById("stepText");
-    const hintBox = document.getElementById("hintBox");
-    const logBox = document.getElementById("logBox");
-    const welcomeBox = document.getElementById("welcomeBox");
-    const welcomeTitle = document.getElementById("welcomeTitle");
-    const welcomeText = document.getElementById("welcomeText");
-    const quizBox = document.getElementById("quizBox");
-    const quizQuestion = document.getElementById("quizQuestion");
-    const answersBox = document.getElementById("answersBox");
-    const quizFeedback = document.getElementById("quizFeedback");
-    const resultsBox = document.getElementById("resultsBox");
-    const resultsScore = document.getElementById("resultsScore");
-    const resultsLevel = document.getElementById("resultsLevel");
-    const resultsText = document.getElementById("resultsText");
-    const bigStatus = document.getElementById("bigStatus");
-    const progressFill = document.getElementById("progressFill");
-    const progressLabel = document.getElementById("progressLabel");
-    const phaseLabel = document.getElementById("phaseLabel");
-    const phaseLabelTop = document.getElementById("phaseLabelTop");
-    const modePhoneBtn = document.getElementById("modePhoneBtn");
-    const modeGlassesBtn = document.getElementById("modeGlassesBtn");
-    const demoBtn = document.getElementById("demoBtn");
-    const logBtn = document.getElementById("logBtn");
+    function getCurrentScenario() {
+      return scenarios[state.scenarioIndex];
+    }
 
-    function log(message) {
-      const time = new Date().toLocaleTimeString("ru-RU", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
+    function getCurrentStep() {
+      const scenario = getCurrentScenario();
+      return scenario.steps[state.stepIndex];
+    }
+
+    function getScenarioProgress(scenarioId) {
+      const scenario = scenarios.find(s => s.id === scenarioId);
+      const done = state.completedSteps[scenarioId] || [];
+      const total = scenario.steps.length;
+      const completed = done.filter(Boolean).length;
+      return {
+        completed,
+        total,
+        percent: Math.round((completed / total) * 100)
+      };
+    }
+
+    function ensureScenarioState(scenarioId) {
+      if (!state.completedSteps[scenarioId]) {
+        state.completedSteps[scenarioId] = Array(
+          scenarios.find(s => s.id === scenarioId).steps.length
+        ).fill(false);
+      }
+    }
+
+    function renderScenarioButtons() {
+      el.scenarioList.innerHTML = "";
+
+      scenarios.forEach((scenario, index) => {
+        ensureScenarioState(scenario.id);
+        const progress = getScenarioProgress(scenario.id);
+
+        const btn = document.createElement("button");
+        btn.className = "scenario-btn" + (index === state.scenarioIndex ? " active" : "");
+        btn.innerHTML = `
+          ${scenario.name}
+          <small>${scenario.short} · ${progress.completed}/${progress.total} · ${progress.percent}%</small>
+        `;
+        btn.addEventListener("click", () => {
+          selectScenario(index);
+        });
+
+        el.scenarioList.appendChild(btn);
+      });
+    }
+
+    function renderHeader() {
+      const scenario = getCurrentScenario();
+      const progress = getScenarioProgress(scenario.id);
+
+      el.heroTitle.textContent = scenario.name;
+      el.heroSub.textContent = scenario.description;
+
+      el.statusScenario.textContent = `Сценарий: ${scenario.name}`;
+      el.statusMode.textContent = `Режим: ${state.mode === "phone" ? "телефон" : "очки"}`;
+      el.statusDemo.textContent = `Демо: ${state.demo.running ? (state.demo.paused ? "пауза" : "вкл") : "выкл"}`;
+      el.statusDemo.className = "pill warn";
+      el.statusBreath.textContent = `Таймер дыхания: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
+      el.statusBreath.className = "pill good";
+
+      el.progressText.textContent = `${progress.completed} из ${progress.total} шагов завершено`;
+      el.progressPercent.textContent = `${progress.percent}%`;
+      el.progressFill.style.width = `${progress.percent}%`;
+
+      el.metricStep.textContent = `${state.stepIndex + 1} / ${scenario.steps.length}`;
+      el.metricProgress.textContent = `${progress.percent}%`;
+      el.metricScore.textContent = String(state.score);
+      el.metricMode.textContent = state.mode === "phone" ? "Телефон" : "Очки";
+    }
+
+    function renderStep() {
+      const scenario = getCurrentScenario();
+      const step = getCurrentStep();
+
+      el.stepTitle.textContent = step.title;
+      el.stepDesc.textContent = step.desc;
+      el.stepHint.textContent = step.hint || "Подсказка не задана.";
+
+      el.stepBadges.innerHTML = "";
+      (step.badges || []).forEach(badge => {
+        const span = document.createElement("span");
+        span.className = "pill info";
+        span.textContent = badge;
+        el.stepBadges.appendChild(span);
       });
 
-      const div = document.createElement("div");
-      div.className = "log-entry";
-      div.textContent = `[${time}] ${message}`;
-      logBox.prepend(div);
+      const isDone = state.completedSteps[scenario.id][state.stepIndex];
+      el.stepActionBtn.textContent = isDone ? "Шаг уже выполнен" : "Выполнено";
+      el.stepActionBtn.disabled = isDone;
+      el.markDoneBtn.disabled = isDone;
+
+      const stepUsesBreath = !!step.breath;
+      el.toggleBreathBtn.textContent = state.breath.running ? "Остановить дыхание" : "Запустить дыхание";
+      el.toggleBreathBtn.classList.toggle("btn-secondary", !stepUsesBreath);
+      updateGlassesOverlay();
     }
 
-    function speak(text) {
-      lastSpokenText = text;
-      log(`Ассистент: ${text}`);
+    function renderChecklist() {
+      const scenario = getCurrentScenario();
+      const completed = state.completedSteps[scenario.id];
 
-      if (!audioActivated) return;
-
-      window.speechSynthesis.cancel();
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang = "ru-RU";
-      msg.rate = uiMode === "glasses" ? 0.95 : 1.0;
-      msg.pitch = 1.0;
-      window.speechSynthesis.speak(msg);
+      el.checklist.innerHTML = "";
+      scenario.steps.forEach((step, index) => {
+        const item = document.createElement("div");
+        item.className = "check-item" + (completed[index] ? " done" : "");
+        item.innerHTML = `
+          <div class="check-icon">${completed[index] ? "✓" : index + 1}</div>
+          <div>
+            <div><strong>${step.checklist || step.title}</strong></div>
+            <div class="muted">${step.title}</div>
+          </div>
+        `;
+        item.addEventListener("click", () => {
+          state.stepIndex = index;
+          renderAll();
+        });
+        el.checklist.appendChild(item);
+      });
     }
 
-    function setHint(text = "", visible = false, type = "info") {
-      hintBox.textContent = text;
-      hintBox.className = `hint ${type}`;
-      if (visible) {
-        hintBox.classList.add("visible");
-      } else {
-        hintBox.classList.remove("visible");
+    function renderTimeline() {
+      const scenario = getCurrentScenario();
+      const completed = state.completedSteps[scenario.id];
+
+      el.timeline.innerHTML = "";
+      scenario.steps.forEach((step, index) => {
+        const item = document.createElement("div");
+        let classes = "timeline-item";
+        if (index === state.stepIndex) classes += " current";
+        if (completed[index] && index !== state.stepIndex) classes += "";
+        item.className = classes;
+        item.innerHTML = `
+          <strong>${index + 1}. ${step.title}</strong><br>
+          ${completed[index] ? "Статус: выполнено" : index === state.stepIndex ? "Статус: текущий шаг" : "Статус: ожидание"}
+        `;
+        item.addEventListener("click", () => {
+          state.stepIndex = index;
+          renderAll();
+        });
+        el.timeline.appendChild(item);
+      });
+    }
+
+    function updateGlassesOverlay() {
+      const scenario = getCurrentScenario();
+      const step = getCurrentStep();
+      const progress = getScenarioProgress(scenario.id);
+
+      el.glassesStepTitle.textContent = step.title;
+      el.glassesStepText.textContent = step.desc;
+      el.glassesScenarioPill.textContent = scenario.name;
+      el.glassesProgressPill.textContent = `Прогресс ${progress.percent}%`;
+      el.glassesBreathPill.textContent = `Дыхание: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
+      el.glassesStatus.textContent = state.demo.running ? (state.demo.paused ? "Демо: пауза" : "Демо: идёт") : "Готов";
+    }
+
+    function renderMode() {
+      const glasses = state.mode === "glasses";
+      el.layout.classList.toggle("glasses-mode", glasses);
+      el.phoneModeBtn.classList.toggle("active", !glasses);
+      el.glassesModeBtn.classList.toggle("active", glasses);
+    }
+
+    function renderAll() {
+      renderScenarioButtons();
+      renderMode();
+      renderHeader();
+      renderStep();
+      renderChecklist();
+      renderTimeline();
+      updateGlassesOverlay();
+    }
+
+    function selectScenario(index) {
+      stopDemo();
+      stopBreath(false);
+      state.scenarioIndex = index;
+      state.stepIndex = 0;
+      renderAll();
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      renderAll();
+    }
+
+    function markCurrentStepDone() {
+      const scenario = getCurrentScenario();
+      ensureScenarioState(scenario.id);
+
+      if (!state.completedSteps[scenario.id][state.stepIndex]) {
+        state.completedSteps[scenario.id][state.stepIndex] = true;
+        state.score += scenario.scorePerStep;
+      }
+
+      renderAll();
+    }
+
+    function nextStep() {
+      const scenario = getCurrentScenario();
+      if (state.stepIndex < scenario.steps.length - 1) {
+        state.stepIndex += 1;
+        renderAll();
       }
     }
 
-    function showBigStatus(text, type = "info") {
-      bigStatus.textContent = text;
-      bigStatus.className = `big-status visible ${type}`;
+    function prevStep() {
+      if (state.stepIndex > 0) {
+        state.stepIndex -= 1;
+        renderAll();
+      }
     }
 
-    function hideBigStatus() {
-      bigStatus.className = "big-status";
-      bigStatus.textContent = "";
+    function restartScenario() {
+      stopDemo();
+      stopBreath(false);
+      const scenario = getCurrentScenario();
+      state.completedSteps[scenario.id] = Array(scenario.steps.length).fill(false);
+      state.stepIndex = 0;
+      state.score = recalcScore();
+      renderAll();
     }
 
-    function clearActiveButtons() {
-      document.querySelectorAll(".scenario-btn").forEach(btn => btn.classList.remove("active"));
+    function completeScenario() {
+      const scenario = getCurrentScenario();
+      ensureScenarioState(scenario.id);
+      scenario.steps.forEach((_, i) => {
+        if (!state.completedSteps[scenario.id][i]) {
+          state.completedSteps[scenario.id][i] = true;
+          state.score += scenario.scorePerStep;
+        }
+      });
+      state.stepIndex = scenario.steps.length - 1;
+      renderAll();
     }
 
-    function primeAudio() {
-      if (audioActivated) return;
-      audioActivated = true;
-      const msg = new SpeechSynthesisUtterance("Звук включен.");
-      msg.lang = "ru-RU";
-      msg.volume = 0.01;
-      window.speechSynthesis.speak(msg);
+    function recalcScore() {
+      let total = 0;
+      scenarios.forEach(scenario => {
+        ensureScenarioState(scenario.id);
+        state.completedSteps[scenario.id].forEach(done => {
+          if (done) total += scenario.scorePerStep;
+        });
+      });
+      return total;
     }
 
-    function playTone(type = "success") {
-      try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
+    function resetAll() {
+      stopDemo();
+      stopBreath(false);
+      state.mode = "phone";
+      state.scenarioIndex = 0;
+      state.stepIndex = 0;
+      state.score = 0;
+      state.demo.speed = 1;
+      scenarios.forEach(s => {
+        state.completedSteps[s.id] = Array(s.steps.length).fill(false);
+      });
+      renderAll();
+    }
 
-        const ctx = new AudioContextClass();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+    function speakCurrentStep() {
+      const step = getCurrentStep();
+      const text = `${step.title}. ${step.desc}`;
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "ru-RU";
+        utter.rate = 1;
+        window.speechSynthesis.speak(utter);
+      } else {
+        alert("Озвучивание не поддерживается в этом браузере.");
+      }
+    }
 
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+    function toggleChecklist() {
+      const isHidden = el.checklist.parentElement.classList.contains("hidden");
+      el.checklist.parentElement.classList.toggle("hidden", !isHidden);
+      el.toggleChecklistBtn.textContent = isHidden ? "Скрыть чек-лист" : "Чек-лист";
+    }
 
-        if (type === "success") {
-          osc.frequency.value = 660;
-        } else if (type === "error") {
-          osc.frequency.value = 220;
-        } else {
-          osc.frequency.value = 440;
+    function scheduleDemoStep() {
+      clearTimeout(state.demo.timerId);
+      if (!state.demo.running || state.demo.paused) return;
+
+      const step = getCurrentStep();
+      const baseDelay = step.breath ? 6500 : 3800;
+      const delay = Math.max(1200, baseDelay / state.demo.speed);
+
+      state.demo.timerId = setTimeout(() => {
+        markCurrentStepDone();
+
+        if (step.breath && !state.breath.running) {
+          startBreath();
         }
 
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+        const scenario = getCurrentScenario();
+        if (state.stepIndex < scenario.steps.length - 1) {
+          state.stepIndex += 1;
+          renderAll();
+          scheduleDemoStep();
+        } else {
+          stopDemo(false);
+          renderAll();
+        }
+      }, delay);
+    }
 
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
+    function startDemo() {
+      state.demo.running = true;
+      state.demo.paused = false;
+      el.statusDemo.textContent = "Демо: вкл";
+      scheduleDemoStep();
+      renderAll();
+    }
 
-        osc.onended = () => ctx.close();
-      } catch (e) {
-        log("Не удалось воспроизвести короткий звуковой сигнал.");
+    function pauseDemo() {
+      if (!state.demo.running) return;
+      state.demo.paused = !state.demo.paused;
+      if (state.demo.paused) {
+        clearTimeout(state.demo.timerId);
+      } else {
+        scheduleDemoStep();
+      }
+      renderAll();
+    }
+
+    function stopDemo(resetFlags = true) {
+      clearTimeout(state.demo.timerId);
+      if (resetFlags) {
+        state.demo.running = false;
+        state.demo.paused = false;
+      } else {
+        state.demo.running = false;
+        state.demo.paused = false;
+      }
+      renderAll();
+    }
+
+    function fasterDemo() {
+      state.demo.speed = state.demo.speed === 1 ? 1.5 : state.demo.speed === 1.5 ? 2 : 1;
+      el.demoFasterBtn.textContent = `Быстрее x${state.demo.speed}`;
+      if (state.demo.running && !state.demo.paused) {
+        scheduleDemoStep();
       }
     }
 
-    function resetResults() {
-      quizState = {
-        total: 0,
-        correct: 0,
-        mistakes: [],
-        answeredCurrent: false
+    function updateBreathUI() {
+      if (!state.breath.running) {
+        el.breathTitle.textContent = "Ожидание";
+        el.breathSub.textContent = "Таймер не запущен";
+        el.breathCounter.textContent = `Цикл: ${state.breath.cycle} / ${state.breath.totalCycles}`;
+        el.breathCircle.classList.remove("inhale");
+      } else {
+        const phaseName = state.breath.phase === "inhale" ? "Вдох" : "Выдох";
+        el.breathTitle.textContent = phaseName;
+        el.breathSub.textContent = `${state.breath.secondsLeft} сек`;
+        el.breathCounter.textContent = `Цикл: ${state.breath.cycle} / ${state.breath.totalCycles}`;
+        el.breathCircle.classList.toggle("inhale", state.breath.phase === "inhale");
+      }
+
+      el.statusBreath.textContent = `Таймер дыхания: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
+      el.glassesBreathPill.textContent = `Дыхание: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
+      el.toggleBreathBtn.textContent = state.breath.running ? "Остановить дыхание" : "Запустить дыхание";
+    }
+
+    function breathTick() {
+      clearTimeout(state.breath.timerId);
+      if (!state.breath.running || state.breath.paused) return;
+
+      updateBreathUI();
+
+      state.breath.timerId = setTimeout(() => {
+        if (!state.breath.running || state.breath.paused) return;
+
+        state.breath.secondsLeft -= 1;
+
+        if (state.breath.secondsLeft <= 0) {
+          if (state.breath.phase === "inhale") {
+            state.breath.phase = "exhale";
+            state.breath.secondsLeft = 2;
+          } else {
+            state.breath.cycle += 1;
+            if (state.breath.cycle >= state.breath.totalCycles) {
+              stopBreath(false);
+              return;
+            }
+            state.breath.phase = "inhale";
+            state.breath.secondsLeft = 2;
+          }
+        }
+
+        breathTick();
+      }, 1000);
+
+      updateBreathUI();
+    }
+
+    function startBreath() {
+      if (state.breath.running && !state.breath.paused) return;
+      state.breath.running = true;
+      state.breath.paused = false;
+
+      if (state.breath.phase === "idle") {
+        state.breath.phase = "inhale";
+        state.breath.secondsLeft = 2;
+        state.breath.cycle = 0;
+      }
+
+      breathTick();
+      renderAll();
+    }
+
+    function pauseBreath() {
+      if (!state.breath.running) return;
+      state.breath.paused = !state.breath.paused;
+      if (!state.breath.paused) {
+        breathTick();
+      } else {
+        clearTimeout(state.breath.timerId);
+      }
+      updateBreathUI();
+      renderAll();
+    }
+
+    function stopBreath(reset = true) {
+      clearTimeout(state.breath.timerId);
+      state.breath.running = false;
+      state.breath.paused = false;
+
+      if (reset) {
+        state.breath.phase = "idle";
+        state.breath.cycle = 0;
+        state.breath.secondsLeft = 0;
+      } else {
+        state.breath.phase = "idle";
+        state.breath.secondsLeft = 0;
+      }
+
+      updateBreathUI();
+      renderAll();
+    }
+
+    function toggleBreath() {
+      if (state.breath.running) {
+        stopBreath(true);
+      } else {
+        startBreath();
+      }
+    }
+
+    function bindEvents() {
+      el.phoneModeBtn.addEventListener("click", () => setMode("phone"));
+      el.glassesModeBtn.addEventListener("click", () => setMode("glasses"));
+
+      el.prevBtn.addEventListener("click", prevStep);
+      el.nextBtn.addEventListener("click", nextStep);
+      el.markDoneBtn.addEventListener("click", markCurrentStepDone);
+      el.stepActionBtn.addEventListener("click", markCurrentStepDone);
+
+      el.toggleChecklistBtn.addEventListener("click", () => {
+        const card = el.checklist.closest(".card");
+        card.classList.toggle("hidden");
+        el.toggleChecklistBtn.textContent = card.classList.contains("hidden") ? "Показать чек-лист" : "Чек-лист";
+      });
+
+      el.restartScenarioBtn.addEventListener("click", restartScenario);
+      el.completeScenarioBtn.addEventListener("click", completeScenario);
+
+      el.toggleBreathBtn.addEventListener("click", toggleBreath);
+      el.breathStartBtn.addEventListener("click", startBreath);
+      el.breathPauseBtn.addEventListener("click", pauseBreath);
+      el.breathResetBtn.addEventListener("click", () => stopBreath(true));
+
+      el.voiceHintBtn.addEventListener("click", speakCurrentStep);
+
+      el.openDemoBtn.addEventListener("click", startDemo);
+      el.demoStartBtn.addEventListener("click", startDemo);
+      el.demoPauseBtn.addEventListener("click", pauseDemo);
+      el.demoStopBtn.addEventListener("click", () => stopDemo(true));
+      el.demoFasterBtn.addEventListener("click", fasterDemo);
+
+      el.resetAllBtn.addEventListener("click", resetAll);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") nextStep();
+        if (e.key === "ArrowLeft") prevStep();
+        if (e.key.toLowerCase() === "d") startDemo();
+        if (e.key.toLowerCase() === "b") toggleBreath();
+        if (e.key.toLowerCase() === "m") markCurrentStepDone();
+      });
+    }
+
+    function init() {
+      scenarios.forEach(s => ensureScenarioState(s.id));
+      bindEvents();
+      renderAll();
+      updateBreathUI();
+    }
+
+    init();
+  </script>
+</body>
+</html>
