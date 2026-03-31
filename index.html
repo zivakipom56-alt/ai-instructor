@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-инструктор 4.0 | Resusci Anne</title>
+  <title>AI-инструктор 4.2 | Resusci Anne</title>
   <style>
     :root {
       --bg: #050505;
@@ -20,9 +20,7 @@
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,7 +31,7 @@
     }
 
     .app {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 18px;
     }
@@ -58,6 +56,36 @@
       color: var(--muted);
       font-size: 16px;
       line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar-btn {
+      border: 1px solid var(--border);
+      background: var(--card-2);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .toolbar-btn.active {
+      background: var(--accent-2);
+      border-color: transparent;
+    }
+
+    .toolbar-btn.demo-on {
+      background: var(--accent);
+      color: #08110d;
+      border-color: transparent;
     }
 
     .status {
@@ -70,7 +98,8 @@
       padding: 10px 14px;
       color: var(--muted);
       font-size: 14px;
-      margin-top: 14px;
+      margin-top: 4px;
+      margin-bottom: 14px;
     }
 
     .dot {
@@ -79,6 +108,35 @@
       border-radius: 50%;
       background: var(--accent);
       box-shadow: 0 0 12px rgba(111, 211, 154, 0.7);
+    }
+
+    .progress-wrap {
+      margin-top: 6px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #1b1b1b;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #262626;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.25s ease;
     }
 
     .grid {
@@ -95,8 +153,7 @@
       box-shadow: var(--shadow);
     }
 
-    .card h2,
-    .card h3 {
+    .card h2, .card h3 {
       margin: 0 0 14px 0;
     }
 
@@ -109,9 +166,7 @@
       background: rgba(111, 211, 154, 0.08);
     }
 
-    .welcome.active {
-      display: block;
-    }
+    .welcome.active { display: block; }
 
     .welcome-title {
       font-size: 24px;
@@ -137,9 +192,7 @@
       color: #08110d;
     }
 
-    .big-start:hover {
-      filter: brightness(1.03);
-    }
+    .big-start:hover { filter: brightness(1.03); }
 
     .scenario-list {
       display: grid;
@@ -193,7 +246,7 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 20px;
-      min-height: 220px;
+      min-height: 240px;
     }
 
     .step-meta {
@@ -213,15 +266,23 @@
     }
 
     .step-title {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       margin-bottom: 12px;
     }
 
     .step-text {
-      font-size: 20px;
+      font-size: 21px;
       line-height: 1.55;
       color: #f3f3f3;
+    }
+
+    .phase-label {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
     .hint {
@@ -229,15 +290,59 @@
       margin-top: 16px;
       padding: 14px 16px;
       border-radius: 16px;
-      background: rgba(79, 131, 241, 0.1);
-      border: 1px solid rgba(79, 131, 241, 0.25);
-      color: #e3ecff;
       line-height: 1.5;
       white-space: pre-line;
+      border: 1px solid transparent;
     }
 
-    .hint.visible {
-      display: block;
+    .hint.visible { display: block; }
+    .hint.info {
+      background: rgba(79, 131, 241, 0.1);
+      border-color: rgba(79, 131, 241, 0.25);
+      color: #e3ecff;
+    }
+    .hint.success {
+      background: rgba(46, 159, 91, 0.12);
+      border-color: rgba(46, 159, 91, 0.28);
+      color: #dff7e8;
+    }
+    .hint.error {
+      background: rgba(184, 79, 91, 0.12);
+      border-color: rgba(184, 79, 91, 0.28);
+      color: #ffe0e5;
+    }
+    .hint.warn {
+      background: rgba(216, 162, 58, 0.12);
+      border-color: rgba(216, 162, 58, 0.28);
+      color: #ffe9bc;
+    }
+
+    .big-status {
+      display: none;
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 18px;
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      border: 1px solid transparent;
+    }
+
+    .big-status.visible { display: block; }
+    .big-status.success {
+      background: rgba(46, 159, 91, 0.12);
+      border-color: rgba(46, 159, 91, 0.28);
+      color: #dff7e8;
+    }
+    .big-status.error {
+      background: rgba(184, 79, 91, 0.12);
+      border-color: rgba(184, 79, 91, 0.28);
+      color: #ffe0e5;
+    }
+    .big-status.info {
+      background: rgba(79, 131, 241, 0.1);
+      border-color: rgba(79, 131, 241, 0.25);
+      color: #e3ecff;
     }
 
     .actions {
@@ -299,6 +404,10 @@
       color: #ddd;
     }
 
+    .log.hidden {
+      display: none;
+    }
+
     .log-entry {
       margin-bottom: 10px;
       padding-bottom: 10px;
@@ -321,9 +430,7 @@
       background: rgba(79, 131, 241, 0.08);
     }
 
-    .quiz-box.visible {
-      display: block;
-    }
+    .quiz-box.visible { display: block; }
 
     .quiz-title {
       font-size: 22px;
@@ -354,7 +461,7 @@
     }
 
     .answer-btn.disabled {
-      opacity: 0.8;
+      opacity: 0.85;
       cursor: default;
       pointer-events: none;
     }
@@ -369,16 +476,12 @@
       white-space: pre-line;
     }
 
-    .quiz-feedback.visible {
-      display: block;
-    }
-
+    .quiz-feedback.visible { display: block; }
     .quiz-feedback.success {
       background: rgba(46, 159, 91, 0.12);
       border: 1px solid rgba(46, 159, 91, 0.28);
       color: #dff7e8;
     }
-
     .quiz-feedback.error {
       background: rgba(184, 79, 91, 0.12);
       border: 1px solid rgba(184, 79, 91, 0.28);
@@ -394,9 +497,7 @@
       background: linear-gradient(180deg, rgba(111, 211, 154, 0.1) 0%, rgba(79, 131, 241, 0.06) 100%);
     }
 
-    .results-box.visible {
-      display: block;
-    }
+    .results-box.visible { display: block; }
 
     .results-title {
       font-size: 26px;
@@ -405,7 +506,7 @@
     }
 
     .results-score {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       margin-bottom: 10px;
       color: #ffffff;
@@ -465,52 +566,96 @@
       border-color: transparent;
     }
 
+    .glasses-mode .grid {
+      grid-template-columns: 1fr;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .glasses-mode #sideCard {
+      display: none;
+    }
+
+    .glasses-mode .scenario-list {
+      display: none;
+    }
+
+    .glasses-mode .actions {
+      grid-template-columns: 1fr;
+    }
+
+    .glasses-mode .hero-title {
+      font-size: 28px;
+    }
+
+    .glasses-mode .step-title {
+      font-size: 36px;
+    }
+
+    .glasses-mode .step-text {
+      font-size: 28px;
+      line-height: 1.45;
+    }
+
+    .glasses-mode .card {
+      padding: 16px;
+    }
+
+    .glasses-mode .toolbar {
+      gap: 8px;
+    }
+
+    .glasses-mode .toolbar-btn {
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+
+    .glasses-mode .footer-note {
+      font-size: 12px;
+    }
+
     @media (max-width: 900px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+      .grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
-      .app {
-        padding: 12px;
-      }
-
-      .hero-title {
-        font-size: 26px;
-      }
-
-      .hero-subtitle {
-        font-size: 15px;
-      }
-
-      .step-title {
-        font-size: 24px;
-      }
-
-      .step-text {
-        font-size: 18px;
-      }
-
-      .actions,
-      .results-actions {
-        grid-template-columns: 1fr;
-      }
-
-      .big-start {
-        font-size: 19px;
-      }
+      .app { padding: 12px; }
+      .hero-title { font-size: 26px; }
+      .hero-subtitle { font-size: 15px; }
+      .step-title { font-size: 24px; }
+      .step-text { font-size: 18px; }
+      .actions, .results-actions { grid-template-columns: 1fr; }
+      .big-start { font-size: 19px; }
+      .toolbar { flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="app" id="appRoot">
     <div class="hero">
-      <div class="hero-title">AI-инструктор 4.0 · Resusci Anne</div>
-      <div class="hero-subtitle">Обучающий режим: QR-сценарии, голос, пошаговое сопровождение, проверка знаний без спойлеров и итоговый результат.</div>
+      <div class="hero-title">AI-инструктор 4.2 · Resusci Anne</div>
+      <div class="hero-subtitle">Режимы телефон / очки, пошаговое обучение, один шаг = одна карточка, таймер дыхания, демо-режим, проверка и финальный результат.</div>
+
+      <div class="toolbar">
+        <button class="toolbar-btn active" id="modePhoneBtn" onclick="setMode('phone')">📱 Телефон</button>
+        <button class="toolbar-btn" id="modeGlassesBtn" onclick="setMode('glasses')">🕶 Очки</button>
+        <button class="toolbar-btn" id="demoBtn" onclick="toggleDemo()">🎬 Демо выкл</button>
+        <button class="toolbar-btn" id="logBtn" onclick="toggleLog()">🧾 Скрыть лог</button>
+      </div>
+
       <div class="status">
         <span class="dot"></span>
         <span id="statusText">Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.</span>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-head">
+          <span id="progressLabel">Прогресс: 0%</span>
+          <span id="phaseLabelTop">Этап: ожидание</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
       </div>
     </div>
 
@@ -522,21 +667,21 @@
           <button class="big-start" onclick="activateScenario()">▶️ Включить звук и начать</button>
         </div>
 
-        <h2>Сценарии</h2>
-        <div class="scenario-list">
+        <h2 id="scenarioSectionTitle">Сценарии</h2>
+        <div class="scenario-list" id="scenarioList">
           <button class="scenario-btn" id="btn-triage" onclick="manualScenarioStart('triage')">
             Первичная оценка
-            <small>Проверка безопасности, сознания и дыхания с обучающими вопросами и итоговым результатом.</small>
+            <small>Проверка безопасности, сознания и дыхания. Есть таймер дыхания и контроль понимания.</small>
           </button>
 
           <button class="scenario-btn" id="btn-cpr" onclick="manualScenarioStart('cpr')">
             СЛР
-            <small>Пошаговое сопровождение, обязательные ответы на вопросы и финальная оценка.</small>
+            <small>Пошаговое сопровождение, вопросы, метроном компрессий и финальная оценка.</small>
           </button>
 
           <button class="scenario-btn" id="btn-aed" onclick="manualScenarioStart('aed')">
             AED
-            <small>Работа с автоматическим наружным дефибриллятором, вопросы по шагам и проверка понимания.</small>
+            <small>Работа с автоматическим наружным дефибриллятором, анализ, разряд и продолжение СЛР.</small>
           </button>
         </div>
 
@@ -549,6 +694,9 @@
 
           <div class="step-title" id="stepTitle">Готов к запуску</div>
           <div class="step-text" id="stepText">Сканируй QR или выбери сценарий кнопкой.</div>
+          <div class="phase-label" id="phaseLabel">Этап: ожидание</div>
+
+          <div class="big-status" id="bigStatus"></div>
           <div class="hint" id="hintBox"></div>
         </div>
 
@@ -584,7 +732,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" id="sideCard">
         <h3>Что сказать</h3>
         <div class="mini-tools">
           <div class="tool-note">“Первичная оценка”</div>
@@ -636,6 +784,7 @@
             text: "Оцени дыхание пострадавшего.",
             explain: "Оцени дыхание быстро, без лишней задержки. В учебном алгоритме ориентир — примерно 10 секунд.",
             risks: "Долгая или неверная оценка дыхания может задержать начало правильных действий.",
+            timer: "breathing",
             quiz: {
               question: "Сколько времени в этом сценарии отводится на проверку дыхания?",
               answers: [
@@ -729,6 +878,7 @@
             text: "Выполняй компрессии грудной клетки.",
             explain: "Компрессии должны быть ритмичными, глубиной 5–6 сантиметров, в темпе 100–120 в минуту, с полным расправлением грудной клетки между нажатиями.",
             risks: "Слишком слабые, редкие или неправильные компрессии снижают эффективность СЛР.",
+            metronome: true,
             quiz: {
               question: "Какая глубина компрессий используется в этом сценарии?",
               answers: [
@@ -831,6 +981,12 @@
     let metronomeInterval = null;
     let pendingScenarioKey = null;
     let audioActivated = false;
+    let uiMode = "phone";
+    let demoMode = false;
+    let demoTimeout = null;
+    let breathingTimerInterval = null;
+    let stepPhase = "instruction";
+    let isLogHidden = false;
 
     let quizState = {
       total: 0,
@@ -839,6 +995,7 @@
       answeredCurrent: false
     };
 
+    const appRoot = document.getElementById("appRoot");
     const statusText = document.getElementById("statusText");
     const scenarioBadge = document.getElementById("scenarioBadge");
     const stepBadge = document.getElementById("stepBadge");
@@ -858,6 +1015,15 @@
     const resultsScore = document.getElementById("resultsScore");
     const resultsLevel = document.getElementById("resultsLevel");
     const resultsText = document.getElementById("resultsText");
+    const bigStatus = document.getElementById("bigStatus");
+    const progressFill = document.getElementById("progressFill");
+    const progressLabel = document.getElementById("progressLabel");
+    const phaseLabel = document.getElementById("phaseLabel");
+    const phaseLabelTop = document.getElementById("phaseLabelTop");
+    const modePhoneBtn = document.getElementById("modePhoneBtn");
+    const modeGlassesBtn = document.getElementById("modeGlassesBtn");
+    const demoBtn = document.getElementById("demoBtn");
+    const logBtn = document.getElementById("logBtn");
 
     function log(message) {
       const time = new Date().toLocaleTimeString("ru-RU", {
@@ -881,14 +1047,29 @@
       window.speechSynthesis.cancel();
       const msg = new SpeechSynthesisUtterance(text);
       msg.lang = "ru-RU";
-      msg.rate = 1.0;
+      msg.rate = uiMode === "glasses" ? 0.95 : 1.0;
       msg.pitch = 1.0;
       window.speechSynthesis.speak(msg);
     }
 
-    function setHint(text = "", visible = false) {
+    function setHint(text = "", visible = false, type = "info") {
       hintBox.textContent = text;
-      hintBox.classList.toggle("visible", visible);
+      hintBox.className = `hint ${type}`;
+      if (visible) {
+        hintBox.classList.add("visible");
+      } else {
+        hintBox.classList.remove("visible");
+      }
+    }
+
+    function showBigStatus(text, type = "info") {
+      bigStatus.textContent = text;
+      bigStatus.className = `big-status visible ${type}`;
+    }
+
+    function hideBigStatus() {
+      bigStatus.className = "big-status";
+      bigStatus.textContent = "";
     }
 
     function clearActiveButtons() {
@@ -904,465 +1085,42 @@
       window.speechSynthesis.speak(msg);
     }
 
+    function playTone(type = "success") {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        const ctx = new AudioContextClass();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === "success") {
+          osc.frequency.value = 660;
+        } else if (type === "error") {
+          osc.frequency.value = 220;
+        } else {
+          osc.frequency.value = 440;
+        }
+
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+
+        osc.onended = () => ctx.close();
+      } catch (e) {
+        log("Не удалось воспроизвести короткий звуковой сигнал.");
+      }
+    }
+
     function resetResults() {
       quizState = {
         total: 0,
         correct: 0,
         mistakes: [],
         answeredCurrent: false
-      };
-      updateScoreBadge();
-      hideQuiz();
-      hideResults();
-    }
-
-    function updateScoreBadge() {
-      scoreBadge.textContent = `Результат: ${quizState.correct} / ${quizState.total}`;
-    }
-
-    function hideQuiz() {
-      quizBox.classList.remove("visible");
-      quizFeedback.classList.remove("visible", "success", "error");
-      quizFeedback.textContent = "";
-      answersBox.innerHTML = "";
-      quizQuestion.textContent = "";
-    }
-
-    function hideResults() {
-      resultsBox.classList.remove("visible");
-      resultsScore.textContent = "";
-      resultsLevel.textContent = "";
-      resultsLevel.className = "results-level";
-      resultsText.textContent = "";
-    }
-
-    function manualScenarioStart(key) {
-      pendingScenarioKey = key;
-      welcomeBox.classList.add("active");
-      welcomeTitle.textContent = `Сценарий: ${scenarios[key].name}`;
-      welcomeText.textContent = "Нажми кнопку ниже, чтобы включить звук и сразу начать этот сценарий.";
-      statusText.textContent = `Выбран сценарий: ${scenarios[key].name}`;
-      log(`Сценарий выбран вручную: ${scenarios[key].name}`);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function activateScenario() {
-      primeAudio();
-
-      if (!pendingScenarioKey) {
-        speak("Сценарий не выбран.");
-        return;
-      }
-
-      welcomeBox.classList.remove("active");
-      startScenario(pendingScenarioKey, true);
-      pendingScenarioKey = null;
-    }
-
-    function startScenario(key, withIntro = false) {
-      stopMetronome();
-      currentScenarioKey = key;
-      currentStepIndex = 0;
-      resetResults();
-
-      clearActiveButtons();
-      const btn = document.getElementById(`btn-${key}`);
-      if (btn) btn.classList.add("active");
-
-      const name = scenarios[key].name;
-      statusText.textContent = `Запущен сценарий: ${name}`;
-
-      if (withIntro) {
-        speak(scenarios[key].intro);
-      }
-
-      renderStep();
-    }
-
-    function renderStep() {
-      hideResults();
-
-      if (!currentScenarioKey || currentStepIndex < 0) {
-        scenarioBadge.textContent = "Сценарий: не выбран";
-        stepBadge.textContent = "Шаг: —";
-        stepTitle.textContent = "Готов к запуску";
-        stepText.textContent = "Сканируй QR или выбери сценарий кнопкой.";
-        setHint("", false);
-        hideQuiz();
-        updateScoreBadge();
-        return;
-      }
-
-      const scenario = scenarios[currentScenarioKey];
-      const step = scenario.steps[currentStepIndex];
-
-      scenarioBadge.textContent = `Сценарий: ${scenario.name}`;
-      stepBadge.textContent = `Шаг: ${currentStepIndex + 1} / ${scenario.steps.length}`;
-      stepTitle.textContent = step.title;
-      stepText.textContent = step.text;
-      setHint("", false);
-
-      quizState.answeredCurrent = false;
-
-      if (step.quiz) {
-        showQuiz(step.quiz, step.explain);
-        statusText.textContent = `Шаг ${currentStepIndex + 1}: сначала ответь на вопрос`;
-        speak(`${step.title}. ${step.text}. Ответь на вопрос на экране.`);
-      } else {
-        hideQuiz();
-        statusText.textContent = `Шаг ${currentStepIndex + 1} открыт`;
-        speak(`${step.title}. ${step.text}`);
-      }
-
-      if (currentScenarioKey === "cpr" && currentStepIndex === 5) {
-        startMetronome();
-      } else {
-        stopMetronome();
-      }
-
-      updateScoreBadge();
-    }
-
-    function showQuiz(quiz, explainText) {
-      quizBox.classList.add("visible");
-      quizQuestion.textContent = quiz.question;
-      answersBox.innerHTML = "";
-      quizFeedback.classList.remove("visible", "success", "error");
-      quizFeedback.textContent = "";
-
-      quiz.answers.forEach(answer => {
-        const btn = document.createElement("button");
-        btn.className = "answer-btn";
-        btn.textContent = answer.text;
-        btn.onclick = () => answerQuiz(answer.correct, btn, quiz, explainText);
-        answersBox.appendChild(btn);
-      });
-    }
-
-    function answerQuiz(isCorrect, selectedBtn, quiz, explainText) {
-      if (quizState.answeredCurrent) return;
-
-      quizState.answeredCurrent = true;
-      quizState.total += 1;
-
-      const buttons = answersBox.querySelectorAll(".answer-btn");
-      buttons.forEach(btn => {
-        btn.classList.add("disabled");
-        btn.disabled = true;
-      });
-
-      if (isCorrect) {
-        quizState.correct += 1;
-        selectedBtn.classList.add("correct");
-        quizFeedback.classList.add("visible", "success");
-        quizFeedback.textContent = `${quiz.correctText}\n\nОбъяснение: ${explainText}`;
-        speak(quiz.correctText);
-        setHint(`Объяснение: ${explainText}`, true);
-      } else {
-        selectedBtn.classList.add("wrong");
-
-        buttons.forEach((btn, index) => {
-          if (quiz.answers[index].correct) {
-            btn.classList.add("correct");
-          }
-        });
-
-        quizState.mistakes.push(quiz.topic);
-        quizFeedback.classList.add("visible", "error");
-        quizFeedback.textContent = `${quiz.wrongText}\n\nОбъяснение: ${explainText}`;
-        speak(quiz.wrongText);
-        setHint(`Объяснение: ${explainText}`, true);
-      }
-
-      updateScoreBadge();
-      statusText.textContent = "Ответ принят. Можно идти дальше.";
-    }
-
-    function getLevel() {
-      if (quizState.total === 0) {
-        return {
-          label: "Без оценки",
-          className: "basic"
-        };
-      }
-
-      const percent = Math.round((quizState.correct / quizState.total) * 100);
-
-      if (percent >= 85) {
-        return {
-          label: "Отличный уровень",
-          className: "excellent"
-        };
-      }
-
-      if (percent >= 60) {
-        return {
-          label: "Хороший уровень",
-          className: "good"
-        };
-      }
-
-      return {
-        label: "Базовый уровень",
-        className: "basic"
-      };
-    }
-
-    function finishScenario() {
-      const scenario = scenarios[currentScenarioKey];
-      stopMetronome();
-      speak(`Сценарий ${scenario.name} завершен.`);
-      statusText.textContent = `Сценарий ${scenario.name} завершен`;
-      setHint("Сценарий завершен. Можно пройти его заново или выбрать другой.", true);
-      hideQuiz();
-
-      const level = getLevel();
-      resultsScore.textContent = `Результат: ${quizState.correct} / ${quizState.total}`;
-      resultsLevel.textContent = level.label;
-      resultsLevel.className = `results-level ${level.className}`;
-
-      const mistakesText = quizState.mistakes.length
-        ? "Ошибки:\n- " + quizState.mistakes.join("\n- ")
-        : "Ошибок не было.";
-
-      const recommendation = quizState.mistakes.length
-        ? `Рекомендация:\nПовтори сценарий ${scenario.name} и обрати внимание на ошибки.`
-        : "Рекомендация:\nОтличная работа. Можно переходить к следующему сценарию.";
-
-      resultsText.textContent = `${mistakesText}\n\n${recommendation}`;
-      resultsBox.classList.add("visible");
-    }
-
-    function nextStep() {
-      if (!currentScenarioKey) {
-        speak("Сначала выбери сценарий.");
-        return;
-      }
-
-      const scenario = scenarios[currentScenarioKey];
-      const step = scenario.steps[currentStepIndex];
-
-      if (step.quiz && !quizState.answeredCurrent) {
-        speak("Сначала ответь на вопрос этого шага.");
-        return;
-      }
-
-      if (currentStepIndex < scenario.steps.length - 1) {
-        currentStepIndex += 1;
-        renderStep();
-      } else {
-        finishScenario();
-      }
-    }
-
-    function goBack() {
-      if (!currentScenarioKey) {
-        speak("Сценарий еще не выбран.");
-        return;
-      }
-
-      if (currentStepIndex > 0) {
-        currentStepIndex -= 1;
-        renderStep();
-      } else {
-        speak("Это первый шаг сценария.");
-      }
-    }
-
-    function explain() {
-      if (!currentScenarioKey) {
-        speak("Сначала выбери сценарий.");
-        return;
-      }
-
-      const step = scenarios[currentScenarioKey].steps[currentStepIndex];
-      setHint(`Объяснение: ${step.explain}`, true);
-      speak(step.explain);
-    }
-
-    function risks() {
-      if (!currentScenarioKey) {
-        speak("Сначала выбери сценарий.");
-        return;
-      }
-
-      const step = scenarios[currentScenarioKey].steps[currentStepIndex];
-      setHint(`Риски: ${step.risks}`, true);
-      speak(step.risks);
-    }
-
-    function repeatStep() {
-      if (!lastSpokenText) {
-        speak("Пока нечего повторять.");
-        return;
-      }
-      speak(lastSpokenText);
-    }
-
-    function startMetronome() {
-      stopMetronome();
-      let count = 0;
-
-      metronomeInterval = setInterval(() => {
-        count += 1;
-        log(`Метроном СЛР: удар ${count}`);
-      }, 600);
-    }
-
-    function stopMetronome() {
-      if (metronomeInterval) {
-        clearInterval(metronomeInterval);
-        metronomeInterval = null;
-      }
-    }
-
-    function handleAssessmentResult(transcript) {
-      if (!currentScenarioKey) return false;
-      if (currentScenarioKey !== "triage") return false;
-
-      if (transcript.includes("не дышит")) {
-        speak("Понял. Пострадавший не дышит. В учебной логике следующий сценарий — СЛР.");
-        return true;
-      }
-
-      if (transcript.includes("дышит")) {
-        speak("Понял. Дыхание есть. Нужно вызвать помощь и контролировать состояние.");
-        return true;
-      }
-
-      if (transcript.includes("без сознания")) {
-        speak("Понял. Пострадавший без сознания. Оцени дыхание и действуй по алгоритму.");
-        return true;
-      }
-
-      return false;
-    }
-
-    function handleVoiceCommand(transcript) {
-      log(`Пользователь: ${transcript}`);
-      statusText.textContent = `Ты сказал: ${transcript}`;
-
-      if (transcript.includes("первичная оценка")) {
-        startScenario("triage", true);
-        return;
-      }
-
-      if (transcript === "слр" || transcript.includes("с л р")) {
-        startScenario("cpr", true);
-        return;
-      }
-
-      if (transcript.includes("aed") || transcript.includes("аед")) {
-        startScenario("aed", true);
-        return;
-      }
-
-      if (handleAssessmentResult(transcript)) {
-        return;
-      }
-
-      if (transcript.includes("дальше")) {
-        nextStep();
-        return;
-      }
-
-      if (transcript.includes("объясни")) {
-        explain();
-        return;
-      }
-
-      if (transcript.includes("повтори")) {
-        repeatStep();
-        return;
-      }
-
-      if (transcript.includes("риски")) {
-        risks();
-        return;
-      }
-
-      if (transcript.includes("назад")) {
-        goBack();
-        return;
-      }
-
-      speak("Команда не распознана. Скажи: СЛР, AED, первичная оценка, дальше, объясни или риски.");
-    }
-
-    function listen() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-      if (!SpeechRecognition) {
-        speak("На этом устройстве распознавание речи в браузере не поддерживается.");
-        statusText.textContent = "Распознавание речи не поддерживается";
-        return;
-      }
-
-      primeAudio();
-
-      const recognition = new SpeechRecognition();
-      recognition.lang = "ru-RU";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      statusText.textContent = "Слушаю...";
-      recognition.start();
-
-      recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript.trim().toLowerCase();
-        handleVoiceCommand(transcript);
-      };
-
-      recognition.onerror = function(event) {
-        statusText.textContent = `Ошибка распознавания: ${event.error}`;
-        log(`Ошибка распознавания: ${event.error}`);
-      };
-
-      recognition.onend = function() {
-        if (statusText.textContent === "Слушаю...") {
-          statusText.textContent = "Ожидание команды";
-        }
-      };
-    }
-
-    function loadScenarioFromQR() {
-      const params = new URLSearchParams(window.location.search);
-      const scenario = params.get("scenario");
-
-      if (!scenario) return;
-      if (!scenarios[scenario]) return;
-
-      pendingScenarioKey = scenario;
-      const name = scenarios[scenario].name;
-
-      welcomeBox.classList.add("active");
-      welcomeTitle.textContent = `QR: ${name}`;
-      welcomeText.textContent = `Сценарий ${name} загружен через QR. Нажми кнопку ниже, чтобы включить звук и начать.`;
-      statusText.textContent = `Сценарий распознан по QR: ${name}`;
-      log(`Сценарий загружен через QR: ${scenario}`);
-    }
-
-    function restartCurrentScenario() {
-      if (!currentScenarioKey) return;
-      startScenario(currentScenarioKey, true);
-    }
-
-    function resetToHome() {
-      stopMetronome();
-      currentScenarioKey = null;
-      currentStepIndex = -1;
-      pendingScenarioKey = null;
-      clearActiveButtons();
-      resetResults();
-      welcomeBox.classList.remove("active");
-      statusText.textContent = "Манекен Resusci Anne распознан. Выбери сценарий или открой по QR.";
-      renderStep();
-      log("Возврат к выбору сценария.");
-    }
-
-    renderStep();
-    log("Система готова. Ожидается выбор сценария.");
-    loadScenarioFromQR();
-  </script>
-</body>
-</html>
