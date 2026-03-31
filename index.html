@@ -3,840 +3,900 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>AI-инструктор 4.2 — Resusci Anne Demo (без AI)</title>
+  <title>AI Instructor Mockup — Resusci Anne</title>
   <style>
     :root {
-      --bg: #0b1220;
-      --bg-soft: #121b2f;
-      --panel: #16233d;
-      --panel-2: #1c2b49;
+      --bg: #07111f;
+      --bg2: #0c1729;
+      --panel: rgba(18, 30, 52, 0.92);
+      --panel-soft: rgba(255, 255, 255, 0.04);
       --text: #eef4ff;
-      --muted: #a9b7d0;
-      --accent: #4ea1ff;
-      --accent-2: #67e8f9;
+      --muted: #9fb0ca;
+      --line: rgba(255,255,255,0.08);
+      --accent: #57a7ff;
+      --accent2: #6ef2ff;
       --good: #22c55e;
       --warn: #f59e0b;
       --danger: #ef4444;
-      --shadow: 0 10px 28px rgba(0,0,0,.28);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --border: 1px solid rgba(255,255,255,.08);
+      --shadow: 0 16px 40px rgba(0,0,0,0.35);
+      --radius: 22px;
+      --radius-sm: 16px;
     }
 
     * { box-sizing: border-box; }
+
     html, body {
       margin: 0;
       padding: 0;
-      background:
-        radial-gradient(circle at top left, rgba(78,161,255,.18), transparent 25%),
-        radial-gradient(circle at top right, rgba(103,232,249,.12), transparent 24%),
-        linear-gradient(180deg, #09101c 0%, #0d1627 100%);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
       min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(87,167,255,.18), transparent 24%),
+        radial-gradient(circle at top right, rgba(110,242,255,.10), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
     }
 
     body {
-      padding: 14px;
+      padding: 12px;
     }
 
     .app {
-      max-width: 1180px;
+      max-width: 1080px;
       margin: 0 auto;
+    }
+
+    .shell {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      backdrop-filter: blur(8px);
     }
 
     .topbar {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
     }
 
-    .brand-badge {
-      width: 46px;
-      height: 46px;
+    .logo {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
       border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       display: grid;
       place-items: center;
-      font-weight: 800;
-      color: #061120;
-      box-shadow: var(--shadow);
+      font-weight: 900;
+      color: #04111e;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 8px 22px rgba(87,167,255,.28);
     }
 
-    .brand h1 {
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-text h1 {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.02rem;
       line-height: 1.2;
     }
 
-    .brand p {
-      margin: 2px 0 0;
+    .brand-text p {
+      margin: 4px 0 0;
       color: var(--muted);
-      font-size: .92rem;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 14px;
-    }
-
-    .sidebar {
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .content {
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      min-height: 72vh;
-    }
-
-    .section-title {
-      font-size: .95rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      margin-bottom: 8px;
-    }
-
-    .mode-switch,
-    .scenario-list,
-    .stats-grid,
-    .quick-actions,
-    .demo-controls {
-      display: grid;
-      gap: 8px;
+      font-size: .9rem;
+      line-height: 1.3;
     }
 
     .mode-switch {
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .scenario-list {
-      grid-template-columns: 1fr;
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .quick-actions,
-    .demo-controls {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    button,
     .btn {
       appearance: none;
-      border: 0;
-      outline: none;
-      cursor: pointer;
-      border-radius: 14px;
-      padding: 12px 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       color: var(--text);
-      background: linear-gradient(180deg, #22365d, #1a2b4b);
-      border: 1px solid rgba(255,255,255,.08);
-      font-weight: 650;
-      transition: transform .12s ease, filter .12s ease, background .2s ease;
-      min-height: 48px;
+      min-height: 46px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease, background .2s ease, opacity .2s ease;
     }
 
-    button:hover,
     .btn:hover {
-      filter: brightness(1.08);
       transform: translateY(-1px);
+      filter: brightness(1.06);
     }
 
-    button:active,
     .btn:active {
       transform: translateY(0);
-      filter: brightness(.98);
     }
 
-    button.active {
-      background: linear-gradient(180deg, #3a6fc7, #2a539b);
-      border-color: rgba(255,255,255,.18);
+    .btn.active {
+      background: linear-gradient(180deg, rgba(87,167,255,.32), rgba(87,167,255,.18));
+      border-color: rgba(110,242,255,.28);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #4a8ee6, #316fc2);
+      border-color: rgba(255,255,255,.12);
     }
 
     .btn-secondary {
-      background: linear-gradient(180deg, #293249, #1f2737);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.03));
     }
 
     .btn-good {
-      background: linear-gradient(180deg, #1f8f49, #166534);
-    }
-
-    .btn-warn {
-      background: linear-gradient(180deg, #b27a0a, #8c5f08);
+      background: linear-gradient(180deg, #28a45a, #1d8045);
+      border-color: rgba(255,255,255,.12);
     }
 
     .btn-danger {
-      background: linear-gradient(180deg, #c43a3a, #8f2424);
+      background: linear-gradient(180deg, #ca4343, #a12f2f);
+      border-color: rgba(255,255,255,.12);
+    }
+
+    .btn-ghost {
+      background: transparent;
+    }
+
+    .main {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .screen {
+      display: none;
+      gap: 16px;
+    }
+
+    .screen.active {
+      display: grid;
     }
 
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      border: var(--border);
-      border-radius: 16px;
-      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      padding: 16px;
     }
 
-    .metric {
-      background: linear-gradient(180deg, #1a2743, #121d35);
-      border-radius: 14px;
-      padding: 12px;
-      border: var(--border);
+    .screen-title {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1.2;
     }
 
-    .metric .label {
+    .screen-sub {
+      margin: 0;
       color: var(--muted);
-      font-size: .84rem;
-      margin-bottom: 6px;
+      line-height: 1.5;
+      font-size: .98rem;
     }
 
-    .metric .value {
-      font-size: 1.25rem;
-      font-weight: 800;
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
 
-    .progress-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .scenario-card {
+      text-align: left;
+      min-height: 140px;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      cursor: pointer;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
     }
 
-    .progress-meta {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
+    .scenario-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(110,242,255,.25);
+      background: linear-gradient(180deg, rgba(87,167,255,.12), rgba(255,255,255,.03));
+    }
+
+    .scenario-card.active {
+      border-color: rgba(110,242,255,.32);
+      background: linear-gradient(180deg, rgba(87,167,255,.18), rgba(255,255,255,.03));
+      box-shadow: inset 0 0 0 1px rgba(110,242,255,.08);
+    }
+
+    .scenario-card .icon {
+      font-size: 1.7rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .scenario-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+    }
+
+    .scenario-card p {
+      margin: 0;
       color: var(--muted);
-      font-size: .92rem;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 14px;
-      background: rgba(255,255,255,.08);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      transition: width .25s ease;
+      line-height: 1.45;
+      font-size: .93rem;
     }
 
     .hero {
       display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 14px;
-    }
-
-    .hero-title {
-      font-size: 1.55rem;
-      font-weight: 800;
-      margin: 0 0 8px;
-    }
-
-    .hero-sub {
-      color: var(--muted);
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    .status-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: .92rem;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.06);
-      color: var(--text);
-    }
-
-    .pill.good { background: rgba(34,197,94,.14); color: #c8f9d8; }
-    .pill.warn { background: rgba(245,158,11,.14); color: #ffe1a7; }
-    .pill.danger { background: rgba(239,68,68,.14); color: #ffd1d1; }
-    .pill.info { background: rgba(78,161,255,.14); color: #d6e9ff; }
-
-    .instruction-wrap {
-      display: grid;
       grid-template-columns: 1fr 320px;
-      gap: 14px;
-      align-items: start;
+      gap: 16px;
+      align-items: stretch;
     }
 
-    .instruction-step {
-      font-size: 1.45rem;
-      font-weight: 800;
-      line-height: 1.3;
-      margin-bottom: 10px;
-    }
-
-    .instruction-desc {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 1rem;
-      margin-bottom: 12px;
-      white-space: pre-line;
-    }
-
-    .step-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .hint-box {
-      border-radius: 14px;
-      padding: 12px;
-      background: rgba(103,232,249,.08);
-      border: 1px solid rgba(103,232,249,.16);
-      color: #d9fdff;
-      line-height: 1.45;
-      font-size: .95rem;
-    }
-
-    .checklist {
-      display: grid;
-      gap: 10px;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .check-item.done {
-      background: rgba(34,197,94,.08);
-      border-color: rgba(34,197,94,.18);
-    }
-
-    .check-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      background: rgba(255,255,255,.08);
-      flex: 0 0 auto;
-      margin-top: 1px;
-    }
-
-    .check-item.done .check-icon {
-      background: rgba(34,197,94,.22);
-    }
-
-    .timeline {
-      display: grid;
-      gap: 10px;
-    }
-
-    .timeline-item {
-      padding: 11px 12px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-      color: var(--muted);
-      font-size: .94rem;
-    }
-
-    .timeline-item.current {
-      background: rgba(78,161,255,.12);
-      border-color: rgba(78,161,255,.26);
-      color: var(--text);
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .breath-card {
-      position: sticky;
-      top: 14px;
-    }
-
-    .breath-circle-wrap {
-      display: grid;
-      place-items: center;
-      padding: 8px 0 4px;
-    }
-
-    .breath-circle {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 18px;
-      background:
-        radial-gradient(circle at center, rgba(103,232,249,.18), rgba(78,161,255,.08) 55%, rgba(255,255,255,.03) 70%),
-        linear-gradient(180deg, #203456, #14213b);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 26px rgba(103,232,249,.08), 0 10px 30px rgba(0,0,0,.25);
-      transform: scale(1);
-      transition: transform .35s ease, box-shadow .35s ease;
-    }
-
-    .breath-circle.inhale {
-      transform: scale(1.07);
-      box-shadow: inset 0 0 30px rgba(103,232,249,.16), 0 10px 32px rgba(0,0,0,.28);
-    }
-
-    .breath-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .breath-sub {
-      color: var(--muted);
-      font-size: .92rem;
-    }
-
-    .breath-counter {
-      margin-top: 12px;
-      text-align: center;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .bottom-panels {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .footer-note {
-      color: var(--muted);
-      font-size: .9rem;
-      line-height: 1.45;
-    }
-
-    .glasses-mode .sidebar {
-      order: 2;
-    }
-
-    .glasses-mode .content {
-      order: 1;
-    }
-
-    .glasses-mode .hero {
-      grid-template-columns: 1fr;
-    }
-
-    .glasses-mode .instruction-wrap {
-      grid-template-columns: 1fr;
-    }
-
-    .glasses-overlay {
-      display: none;
-      margin-bottom: 14px;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(103,232,249,.18);
-      background:
-        linear-gradient(180deg, rgba(8,12,20,.9), rgba(10,14,24,.88)),
-        radial-gradient(circle at 80% 15%, rgba(103,232,249,.12), transparent 22%);
+    .assistant-card {
       position: relative;
-      min-height: 210px;
-    }
-
-    .glasses-mode .glasses-overlay {
-      display: block;
-    }
-
-    .glasses-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      color: #d7f7ff;
-      font-size: .92rem;
-      background: rgba(255,255,255,.03);
-    }
-
-    .glasses-screen {
-      position: relative;
-      min-height: 180px;
-      padding: 16px;
       overflow: hidden;
     }
 
-    .glasses-fov {
+    .assistant-card::before {
+      content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px);
-      background-size: 28px 28px;
-      opacity: .25;
+        radial-gradient(circle at 80% 15%, rgba(110,242,255,.10), transparent 25%),
+        radial-gradient(circle at 10% 0%, rgba(87,167,255,.10), transparent 22%);
       pointer-events: none;
     }
 
-    .glasses-card {
+    .assistant-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
       position: relative;
-      width: min(420px, 92%);
-      border-radius: 16px;
+      z-index: 1;
+    }
+
+    .assistant-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #04111e;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 24px rgba(87,167,255,.25);
+      flex: 0 0 44px;
+    }
+
+    .assistant-label {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .assistant-state {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .big-step {
+      position: relative;
+      z-index: 1;
+      font-size: 2rem;
+      line-height: 1.18;
+      font-weight: 900;
+      margin: 0 0 12px;
+      max-width: 760px;
+    }
+
+    .step-explain {
+      position: relative;
+      z-index: 1;
+      color: #d8e6ff;
+      font-size: 1.03rem;
+      line-height: 1.55;
+      margin: 0 0 14px;
+      max-width: 760px;
+      white-space: pre-line;
+    }
+
+    .hint-box {
+      position: relative;
+      z-index: 1;
+      border-radius: 18px;
       padding: 14px;
-      background: rgba(8, 16, 29, .86);
-      border: 1px solid rgba(103,232,249,.22);
-      box-shadow: 0 10px 40px rgba(0,0,0,.34);
-      backdrop-filter: blur(8px);
+      background: rgba(110,242,255,.07);
+      border: 1px solid rgba(110,242,255,.18);
+      color: #ddfbff;
+      line-height: 1.5;
+      margin-bottom: 14px;
     }
 
-    .glasses-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.15rem;
-    }
-
-    .glasses-card p {
-      margin: 0;
-      color: #dce8ff;
-      line-height: 1.45;
-    }
-
-    .glasses-mini {
+    .ai-actions {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 10px;
+      align-items: center;
     }
 
-    .glasses-mini .pill {
-      font-size: .82rem;
-      padding: 7px 10px;
+    .primary-cta {
+      min-height: 56px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 1rem;
     }
 
-    .scenario-btn {
-      text-align: left;
+    .secondary-inline {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .scenario-btn small {
-      display: block;
+    .side-panel {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-panel {
+      border-radius: 20px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .mini-title {
+      font-size: .84rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
       color: var(--muted);
-      font-weight: 500;
-      margin-top: 5px;
+      margin-bottom: 8px;
+    }
+
+    .progress-number {
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .25s ease;
+    }
+
+    .listen {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #66d9ff;
+      box-shadow: 0 0 0 0 rgba(102,217,255,.6);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(102,217,255,.55); }
+      70% { box-shadow: 0 0 0 14px rgba(102,217,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(102,217,255,0); }
+    }
+
+    .listen-text {
+      font-weight: 700;
     }
 
     .muted {
       color: var(--muted);
     }
 
-    .mini-title {
-      font-size: 1rem;
-      font-weight: 800;
-      margin: 0 0 10px;
+    .breath-area {
+      display: none;
+      grid-template-columns: 1fr 300px;
+      gap: 16px;
+      align-items: center;
     }
 
-    .kbd {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: .82rem;
-      background: rgba(255,255,255,.08);
+    .breath-area.active {
+      display: grid;
+    }
+
+    .breath-main {
+      border-radius: 22px;
+      padding: 16px;
+      border: 1px solid rgba(110,242,255,.18);
+      background: linear-gradient(180deg, rgba(87,167,255,.09), rgba(255,255,255,.02));
+    }
+
+    .breath-main h3 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+    }
+
+    .breath-main p {
+      margin: 0;
+      color: #d9e8ff;
+      line-height: 1.5;
+    }
+
+    .breath-visual-wrap {
+      display: grid;
+      place-items: center;
+    }
+
+    .breath-circle {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at center, rgba(110,242,255,.18), rgba(87,167,255,.09) 55%, rgba(255,255,255,.03) 70%),
+        linear-gradient(180deg, #1c3151, #12203a);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 0 28px rgba(110,242,255,.1), 0 14px 40px rgba(0,0,0,.28);
+      transform: scale(1);
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+
+    .breath-circle.inhale {
+      transform: scale(1.08);
+      box-shadow: inset 0 0 30px rgba(110,242,255,.18), 0 16px 40px rgba(0,0,0,.32);
+    }
+
+    .breath-label {
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .breath-time {
+      color: #d5e8ff;
+      font-size: 1rem;
+    }
+
+    .breath-meta {
+      margin-top: 12px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .glasses-view {
+      display: none;
+      border-radius: 24px;
+      border: 1px solid rgba(110,242,255,.16);
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(8,12,20,.96), rgba(8,12,20,.90)),
+        radial-gradient(circle at 82% 18%, rgba(110,242,255,.10), transparent 25%);
+    }
+
+    .glasses-view.active {
+      display: block;
+    }
+
+    .glasses-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: #d8f8ff;
+      font-size: .9rem;
+    }
+
+    .glasses-stage {
+      position: relative;
+      min-height: 230px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .glasses-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 30px 30px;
+      opacity: .2;
+      pointer-events: none;
+    }
+
+    .glass-card {
+      position: relative;
+      width: min(430px, 92%);
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(8, 16, 29, .88);
+      border: 1px solid rgba(110,242,255,.24);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .glass-card .label {
+      color: var(--muted);
+      font-size: .8rem;
+      margin-bottom: 6px;
+    }
+
+    .glass-card .title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .glass-card .desc {
+      color: #dce8ff;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .glass-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.08);
-      border-bottom-width: 2px;
-      padding: 2px 7px;
-      border-radius: 8px;
+      color: var(--text);
+      font-size: .84rem;
+    }
+
+    .pill.good {
+      background: rgba(34,197,94,.14);
+      color: #d8ffe5;
+    }
+
+    .pill.warn {
+      background: rgba(245,158,11,.14);
+      color: #ffe7bb;
+    }
+
+    .pill.info {
+      background: rgba(87,167,255,.14);
+      color: #d8ebff;
+    }
+
+    .end-screen {
+      text-align: center;
+      padding: 10px 0 6px;
+    }
+
+    .end-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #051321;
+      background: linear-gradient(135deg, #61d6ff, #6cffb8);
+      box-shadow: 0 16px 36px rgba(97,214,255,.18);
+    }
+
+    .end-title {
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+      font-weight: 900;
+    }
+
+    .end-sub {
+      margin: 0 auto 18px;
+      max-width: 640px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .end-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .metric .k {
+      color: var(--muted);
+      font-size: .86rem;
+      margin-bottom: 8px;
+    }
+
+    .metric .v {
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .hidden {
       display: none !important;
     }
 
-    @media (max-width: 980px) {
-      .grid,
+    @media (max-width: 940px) {
+      .scenario-grid,
       .hero,
-      .instruction-wrap,
-      .bottom-panels {
+      .breath-area,
+      .end-metrics {
         grid-template-columns: 1fr;
       }
 
-      .breath-card {
-        position: static;
-      }
-
-      .sidebar {
-        order: 2;
-      }
-
-      .content {
-        order: 1;
+      .big-step {
+        font-size: 1.6rem;
       }
     }
 
     @media (max-width: 640px) {
-      body { padding: 10px; }
-      .stats-grid,
-      .mode-switch,
-      .quick-actions,
-      .demo-controls {
+      body {
+        padding: 8px;
+      }
+
+      .topbar,
+      .main,
+      .card {
+        padding: 12px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .scenario-grid {
         grid-template-columns: 1fr;
       }
-      .instruction-step {
-        font-size: 1.2rem;
+
+      .big-step {
+        font-size: 1.35rem;
       }
-      .hero-title {
-        font-size: 1.3rem;
+
+      .step-explain {
+        font-size: .98rem;
       }
+
       .breath-circle {
-        width: 170px;
-        height: 170px;
+        width: 180px;
+        height: 180px;
       }
-      button, .btn {
-        min-height: 46px;
+
+      .end-title {
+        font-size: 1.35rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <div class="topbar">
-      <div class="brand">
-        <div class="brand-badge">4.2</div>
-        <div>
-          <h1>AI-инструктор 4.2 — Resusci Anne Demo</h1>
-          <p>Без AI · Телефон / очки · Демо-режим · Таймер дыхания · Прогресс · Работающие кнопки</p>
-        </div>
-      </div>
-      <div class="toolbar">
-        <button id="resetAllBtn" class="btn-secondary">Сбросить всё</button>
-        <button id="openDemoBtn" class="btn-good">Запустить демо</button>
-      </div>
-    </div>
-
-    <div class="grid" id="layout">
-      <aside class="panel sidebar">
-        <div>
-          <div class="section-title">Режим отображения</div>
-          <div class="mode-switch">
-            <button id="phoneModeBtn" class="active">Телефон</button>
-            <button id="glassesModeBtn">Очки</button>
+  <div class="app">
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">AI</div>
+          <div class="brand-text">
+            <h1>AI-инструктор · Resusci Anne</h1>
+            <p>Mockup без настоящего AI · телефон / очки · демо-режим · таймер дыхания</p>
           </div>
         </div>
 
-        <div>
-          <div class="section-title">Сценарии Resusci Anne</div>
-          <div class="scenario-list" id="scenarioList"></div>
+        <div class="mode-switch">
+          <button id="phoneBtn" class="btn active">Телефон</button>
+          <button id="glassesBtn" class="btn">Очки</button>
         </div>
+      </header>
 
-        <div>
-          <div class="section-title">Статус занятия</div>
-          <div class="stats-grid">
-            <div class="metric">
-              <div class="label">Шаг</div>
-              <div class="value" id="metricStep">1 / 1</div>
-            </div>
-            <div class="metric">
-              <div class="label">Прогресс</div>
-              <div class="value" id="metricProgress">0%</div>
-            </div>
-            <div class="metric">
-              <div class="label">Баллы</div>
-              <div class="value" id="metricScore">0</div>
-            </div>
-            <div class="metric">
-              <div class="label">Режим</div>
-              <div class="value" id="metricMode">Телефон</div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="section-title">Быстрые действия</div>
-          <div class="quick-actions">
-            <button id="prevBtn" class="btn-secondary">← Назад</button>
-            <button id="nextBtn" class="btn-good">Далее →</button>
-            <button id="markDoneBtn">Отметить шаг</button>
-            <button id="toggleChecklistBtn" class="btn-secondary">Чек-лист</button>
-          </div>
-        </div>
-
-        <div>
-          <div class="section-title">Демо-режим</div>
-          <div class="demo-controls">
-            <button id="demoStartBtn" class="btn-good">Старт демо</button>
-            <button id="demoPauseBtn" class="btn-secondary">Пауза</button>
-            <button id="demoStopBtn" class="btn-danger">Стоп</button>
-            <button id="demoFasterBtn" class="btn-warn">Быстрее x1.5</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="mini-title">Подсказка</div>
-          <div class="footer-note">
-            Это демонстрационный интерфейс для показа логики пошагового инструктора.  
-            Всё работает локально в браузере без AI и без сервера.
-          </div>
-        </div>
-      </aside>
-
-      <main class="panel content">
-        <div class="glasses-overlay" id="glassesOverlay">
-          <div class="glasses-header">
-            <span>AR-оверлей инструктора</span>
-            <span id="glassesStatus">Готов</span>
-          </div>
-          <div class="glasses-screen">
-            <div class="glasses-fov"></div>
-            <div class="glasses-card">
-              <h3 id="glassesStepTitle">Шаг</h3>
-              <p id="glassesStepText">Текст шага</p>
-              <div class="glasses-mini">
-                <span class="pill info" id="glassesScenarioPill">Сценарий</span>
-                <span class="pill warn" id="glassesProgressPill">Прогресс 0%</span>
-                <span class="pill good" id="glassesBreathPill">Дыхание: выкл</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <section class="hero">
+      <main class="main">
+        <!-- START SCREEN -->
+        <section id="startScreen" class="screen active">
           <div class="card">
-            <h2 class="hero-title" id="heroTitle">Загрузка сценария...</h2>
-            <p class="hero-sub" id="heroSub">
-              Здесь будет описание выбранного сценария.
+            <h2 class="screen-title">Выберите сценарий</h2>
+            <p class="screen-sub">
+              Интерфейс сделан так, как будто AI сам ведёт обучающегося: минимум кнопок, один понятный текущий шаг и короткие подсказки.
             </p>
-
-            <div class="status-strip">
-              <span class="pill info" id="statusScenario">Сценарий: —</span>
-              <span class="pill" id="statusMode">Режим: телефон</span>
-              <span class="pill warn" id="statusDemo">Демо: выкл</span>
-              <span class="pill good" id="statusBreath">Таймер дыхания: выкл</span>
-            </div>
           </div>
 
+          <div class="scenario-grid" id="scenarioGrid"></div>
+
           <div class="card">
-            <div class="section-title">Общий прогресс</div>
-            <div class="progress-wrap">
-              <div class="progress-meta">
-                <span id="progressText">0 из 0 шагов завершено</span>
-                <span id="progressPercent">0%</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
-            </div>
-
-            <div style="height:12px"></div>
-
-            <div class="section-title">Управление</div>
-            <div class="controls">
-              <button id="restartScenarioBtn" class="btn-secondary">Начать сценарий заново</button>
-              <button id="completeScenarioBtn" class="btn-good">Завершить сценарий</button>
+            <div class="row">
+              <button id="startScenarioBtn" class="btn btn-primary">Начать сценарий</button>
+              <button id="startDemoBtn" class="btn btn-good">Запустить демо</button>
             </div>
           </div>
         </section>
 
-        <section class="instruction-wrap">
-          <div class="card">
-            <div class="section-title">Текущий шаг</div>
-            <div class="instruction-step" id="stepTitle">Шаг</div>
-            <div class="instruction-desc" id="stepDesc">Описание шага</div>
-
-            <div class="step-badges" id="stepBadges"></div>
-
-            <div class="hint-box" id="stepHint">
-              Подсказка шага
+        <!-- TRAINING SCREEN -->
+        <section id="trainingScreen" class="screen">
+          <div id="glassesView" class="glasses-view">
+            <div class="glasses-top">
+              <span>AR-оверлей инструктора</span>
+              <span id="glassesTopStatus">AI ведёт</span>
             </div>
-
-            <div style="height:14px"></div>
-
-            <div class="controls">
-              <button id="stepActionBtn">Выполнено</button>
-              <button id="toggleBreathBtn" class="btn-secondary">Запустить дыхание</button>
-              <button id="voiceHintBtn" class="btn-secondary">Озвучить шаг</button>
-            </div>
-          </div>
-
-          <div class="card breath-card">
-            <div class="section-title">Таймер дыхания</div>
-            <div class="breath-circle-wrap">
-              <div class="breath-circle" id="breathCircle">
-                <div>
-                  <div class="breath-title" id="breathTitle">Ожидание</div>
-                  <div class="breath-sub" id="breathSub">Таймер не запущен</div>
+            <div class="glasses-stage">
+              <div class="glass-card">
+                <div class="label">Текущий шаг</div>
+                <div id="glassTitle" class="title">Проверьте дыхание</div>
+                <div id="glassDesc" class="desc">Краткая подсказка для очков.</div>
+                <div class="glass-pills">
+                  <span id="glassPillScenario" class="pill info">СЛР</span>
+                  <span id="glassPillProgress" class="pill warn">Шаг 1 из 5</span>
+                  <span id="glassPillBreath" class="pill good">Дыхание выкл</span>
                 </div>
               </div>
             </div>
-            <div class="breath-counter" id="breathCounter">Цикл: 0 / 2</div>
+          </div>
 
-            <div style="height:12px"></div>
+          <div class="hero">
+            <div class="card assistant-card">
+              <div class="assistant-row">
+                <div class="assistant-avatar">AI</div>
+                <div>
+                  <div class="assistant-label">Состояние инструктора</div>
+                  <div id="assistantState" class="assistant-state">Я готов вести вас по шагам</div>
+                </div>
+              </div>
 
-            <div class="controls">
-              <button id="breathStartBtn" class="btn-good">Старт</button>
-              <button id="breathPauseBtn" class="btn-secondary">Пауза</button>
-              <button id="breathResetBtn" class="btn-danger">Сброс</button>
+              <h2 id="bigStep" class="big-step">Текущий шаг</h2>
+              <p id="stepExplain" class="step-explain">Описание текущего шага</p>
+
+              <div id="hintBox" class="hint-box">
+                Подсказка шага
+              </div>
+
+              <div class="ai-actions">
+                <button id="mainActionBtn" class="btn btn-primary primary-cta">Понял, дальше</button>
+                <div class="secondary-inline">
+                  <button id="repeatBtn" class="btn btn-secondary">Повторить</button>
+                  <button id="hintBtn" class="btn btn-secondary">Подсказка</button>
+                  <button id="backBtn" class="btn btn-ghost">Назад</button>
+                </div>
+              </div>
             </div>
 
-            <div style="height:12px"></div>
-            <div class="footer-note">
-              Для демо используется простой цикл:  
-              <span class="kbd">Вдох 2 сек</span> → <span class="kbd">Выдох 2 сек</span>  
-              Счёт: 2 вдоха.
+            <div class="side-panel">
+              <div class="mini-panel">
+                <div class="mini-title">Прогресс</div>
+                <div id="progressNumber" class="progress-number">Шаг 1 из 5</div>
+                <div class="progress-bar">
+                  <div id="progressFill" class="progress-fill"></div>
+                </div>
+              </div>
+
+              <div class="mini-panel">
+                <div class="mini-title">Сценарий</div>
+                <div id="scenarioNameLive" style="font-size:1.1rem;font-weight:900;margin-bottom:8px;">СЛР</div>
+                <div id="scenarioDescLive" class="muted">Описание сценария</div>
+              </div>
+
+              <div class="mini-panel">
+                <div class="mini-title">AI-статус</div>
+                <div class="listen">
+                  <div class="dot"></div>
+                  <div id="listenText" class="listen-text">AI слушает / ведёт</div>
+                </div>
+              </div>
+
+              <div class="mini-panel">
+                <div class="mini-title">Демо</div>
+                <div class="row">
+                  <button id="demoToggleBtn" class="btn btn-good">Старт</button>
+                  <button id="demoStopBtn" class="btn btn-danger">Стоп</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="breathArea" class="breath-area">
+            <div class="breath-main">
+              <h3>AI запускает таймер дыхания</h3>
+              <p id="breathText">
+                Сейчас сделайте 2 спокойных вдоха. Следите за визуальным таймером.
+              </p>
+            </div>
+
+            <div class="breath-visual-wrap">
+              <div>
+                <div id="breathCircle" class="breath-circle">
+                  <div>
+                    <div id="breathLabel" class="breath-label">Ожидание</div>
+                    <div id="breathTime" class="breath-time">Таймер не запущен</div>
+                  </div>
+                </div>
+                <div id="breathMeta" class="breath-meta">Цикл 0 из 2</div>
+              </div>
             </div>
           </div>
         </section>
 
-        <section class="bottom-panels">
-          <div class="card">
-            <div class="section-title">Чек-лист сценария</div>
-            <div class="checklist" id="checklist"></div>
-          </div>
+        <!-- END SCREEN -->
+        <section id="endScreen" class="screen">
+          <div class="card end-screen">
+            <div class="end-icon">✓</div>
+            <h2 class="end-title">Сценарий завершён</h2>
+            <p id="endSub" class="end-sub">
+              Вы закончили демонстрационный сценарий. Здесь можно показать, как AI доводит пользователя до конца без перегруженного интерфейса.
+            </p>
 
-          <div class="card">
-            <div class="section-title">Лента шагов</div>
-            <div class="timeline" id="timeline"></div>
+            <div class="end-metrics">
+              <div class="metric">
+                <div class="k">Сценарий</div>
+                <div id="endScenario" class="v">СЛР</div>
+              </div>
+              <div class="metric">
+                <div class="k">Шагов пройдено</div>
+                <div id="endSteps" class="v">5 / 5</div>
+              </div>
+              <div class="metric">
+                <div class="k">Режим</div>
+                <div id="endMode" class="v">Телефон</div>
+              </div>
+            </div>
+
+            <div class="footer-actions">
+              <button id="restartBtn" class="btn btn-primary">Пройти заново</button>
+              <button id="toStartBtn" class="btn btn-secondary">К выбору сценария</button>
+            </div>
           </div>
         </section>
       </main>
@@ -847,134 +907,131 @@
     const scenarios = [
       {
         id: "primary",
+        icon: "🩺",
         name: "Первичная оценка",
-        short: "Проверка безопасности, сознания и дыхания",
-        description: "Быстрый сценарий начала оказания первой помощи на манекене Resusci Anne. Подходит для показа логики пошагового сопровождения.",
-        scorePerStep: 10,
+        description: "Проверка безопасности, сознания и дыхания перед дальнейшими действиями.",
         steps: [
           {
             title: "Оцените безопасность места",
-            desc: "Осмотритесь и убедитесь, что подход к пострадавшему безопасен для вас и окружающих.\nНе начинайте помощь, если есть угроза жизни спасателя.",
-            hint: "Сначала безопасность, потом контакт с пострадавшим.",
-            badges: ["Старт", "Безопасность", "Важно"],
-            checklist: "Место безопасно"
+            explain: "Осмотритесь и убедитесь, что вам ничего не угрожает. AI-инструктор всегда начинает с безопасности спасателя.",
+            hint: "Сначала безопасность, потом помощь пострадавшему.",
+            aiState: "Начните с оценки обстановки",
+            mainButton: "Понял, дальше"
           },
           {
             title: "Проверьте реакцию пострадавшего",
-            desc: "Обратитесь к человеку громко. Осторожно потрясите за плечи и спросите: «Вы меня слышите?»",
-            hint: "Не трясите сильно. Достаточно безопасного голосового и тактильного контакта.",
-            badges: ["Контакт", "Сознание"],
-            checklist: "Проверена реакция"
+            explain: "Обратитесь к пострадавшему громко и аккуратно коснитесь его за плечи, чтобы понять, есть ли реакция.",
+            hint: "Спросите: «Вы меня слышите?»",
+            aiState: "Проверьте сознание",
+            mainButton: "Реакция проверена"
           },
           {
             title: "Позовите на помощь",
-            desc: "Если реакции нет, позовите окружающих и попросите вызвать экстренную помощь.",
-            hint: "В демо можно показать, как система выводит следующий шаг сразу после оценки сознания.",
-            badges: ["Помощь", "Команда"],
-            checklist: "Помощь вызвана"
+            explain: "Если реакции нет, сразу позовите окружающих и попросите вызвать экстренные службы.",
+            hint: "Помощь нужно звать как можно раньше.",
+            aiState: "Подключите окружающих",
+            mainButton: "Помощь вызвана"
           },
           {
             title: "Откройте дыхательные пути",
-            desc: "Осторожно запрокиньте голову и приподнимите подбородок, чтобы открыть дыхательные пути.",
-            hint: "Это подготовка к проверке дыхания.",
-            badges: ["ABC", "Дыхательные пути"],
-            checklist: "Дыхательные пути открыты"
+            explain: "Запрокиньте голову и приподнимите подбородок, чтобы подготовиться к оценке дыхания.",
+            hint: "Это нужно перед проверкой дыхания.",
+            aiState: "Подготовьте дыхательные пути",
+            mainButton: "Готово"
           },
           {
             title: "Оцените дыхание 10 секунд",
-            desc: "Смотрите на движения грудной клетки, слушайте дыхание и ощущайте выдох щекой в течение 10 секунд.",
-            hint: "Нормальное дыхание — ключевой критерий перед переходом к СЛР.",
-            badges: ["Дыхание", "10 секунд"],
-            checklist: "Дыхание оценено"
+            explain: "Смотрите на грудную клетку, слушайте дыхание и ощущайте выдох щекой в течение 10 секунд.",
+            hint: "Нормальное дыхание определяет следующий этап помощи.",
+            aiState: "Оцените дыхание",
+            mainButton: "Дыхание оценено"
           }
         ]
       },
       {
         id: "cpr",
+        icon: "❤️",
         name: "СЛР",
-        short: "Компрессии и вдохи на Resusci Anne",
-        description: "Демо-режим сердечно-лёгочной реанимации: компрессии грудной клетки и 2 вдоха. Включён таймер дыхания для наглядного показа.",
-        scorePerStep: 15,
+        description: "Компрессии грудной клетки и 2 вдоха на Resusci Anne.",
         steps: [
           {
-            title: "Положение рук",
-            desc: "Разместите основание ладони в центре грудной клетки. Вторую руку сверху. Локти выпрямлены.",
-            hint: "Покажите правильную стойку корпуса над манекеном.",
-            badges: ["СЛР", "Позиция", "Подготовка"],
-            checklist: "Руки поставлены правильно"
+            title: "Расположите руки правильно",
+            explain: "Поставьте основание ладони в центр грудной клетки, вторую руку сверху. Локти держите прямыми.",
+            hint: "Корпус должен быть над руками — так давление будет правильным.",
+            aiState: "Подготовьтесь к компрессиям",
+            mainButton: "Положение принято"
           },
           {
-            title: "Начните компрессии",
-            desc: "Выполняйте 30 компрессий грудной клетки с уверенным вертикальным нажатием в стабильном ритме.",
-            hint: "В демо можно озвучить: «Давление вниз, полный возврат грудной клетки».",
-            badges: ["30 компрессий", "Ритм"],
-            checklist: "Компрессии выполнены"
+            title: "Начните 30 компрессий",
+            explain: "Выполняйте компрессии ритмично, с уверенным нажатием вниз и полным возвратом грудной клетки.",
+            hint: "Давите строго вертикально.",
+            aiState: "Выполняйте компрессии",
+            mainButton: "30 компрессий выполнены"
           },
           {
             title: "Откройте дыхательные пути",
-            desc: "После компрессий снова откройте дыхательные пути: запрокидывание головы и подъём подбородка.",
-            hint: "Перед вдохами важно снова открыть дыхательные пути.",
-            badges: ["Подготовка к вдохам"],
-            checklist: "Подготовка к вдохам выполнена"
+            explain: "После компрессий снова откройте дыхательные пути: запрокидывание головы и подъём подбородка.",
+            hint: "Это подготовка к вдохам.",
+            aiState: "Подготовьтесь к вдохам",
+            mainButton: "Готово"
           },
           {
             title: "Сделайте 2 вдоха",
-            desc: "Сделайте два плавных вдоха. Следите за подъёмом грудной клетки. Используйте таймер дыхания для визуального сопровождения.",
-            hint: "Не делайте слишком резких или слишком долгих вдохов.",
-            badges: ["2 вдоха", "Таймер"],
-            checklist: "2 вдоха выполнены",
+            explain: "Сейчас AI-инструктор запускает визуальный таймер. Сделайте 2 спокойных вдоха и контролируйте подъём грудной клетки.",
+            hint: "Не делайте слишком резких вдохов.",
+            aiState: "Я запускаю таймер дыхания",
+            mainButton: "2 вдоха выполнены",
             breath: true
           },
           {
             title: "Продолжайте цикл 30:2",
-            desc: "Продолжайте чередование компрессий и вдохов до появления признаков жизни или прибытия помощи.",
-            hint: "Демо завершает сценарий на этом шаге как общий итог.",
-            badges: ["30:2", "Продолжение"],
-            checklist: "Цикл понятен"
+            explain: "После двух вдохов продолжайте циклы компрессий и вдохов до прибытия помощи или появления признаков жизни.",
+            hint: "Смысл интерфейса — не перегружать, а вести по одному действию.",
+            aiState: "Продолжайте СЛР",
+            mainButton: "Цикл понятен"
           }
         ]
       },
       {
         id: "aed",
+        icon: "⚡",
         name: "AED / АНД",
-        short: "Работа с автоматическим наружным дефибриллятором",
-        description: "Пошаговое сопровождение применения AED в демонстрационном формате для Resusci Anne.",
-        scorePerStep: 12,
+        description: "Пошаговое применение автоматического наружного дефибриллятора.",
         steps: [
           {
-            title: "Подготовьте AED",
-            desc: "Принесите AED и включите устройство. Следуйте голосовым подсказкам аппарата.",
-            hint: "На этом шаге важно показать, что инструктор ведёт пользователя без перегруза.",
-            badges: ["AED", "Старт"],
-            checklist: "AED включён"
+            title: "Включите AED",
+            explain: "Поднесите устройство и включите его. Далее ориентируйтесь на подсказки аппарата и AI-инструктора.",
+            hint: "После включения устройство само даст команды.",
+            aiState: "Подготовьте AED",
+            mainButton: "AED включён"
           },
           {
-            title: "Оголите грудную клетку",
-            desc: "Подготовьте грудную клетку для наклеивания электродов. Поверхность должна быть доступна и сухая.",
-            hint: "В реальном обучении можно добавить замечания по влаге и волосам на груди.",
-            badges: ["Подготовка", "Электроды"],
-            checklist: "Грудная клетка подготовлена"
+            title: "Подготовьте грудную клетку",
+            explain: "Оголите грудную клетку и убедитесь, что поверхность сухая и доступна для электродов.",
+            hint: "Электроды должны хорошо прилегать.",
+            aiState: "Подготовьте место для электродов",
+            mainButton: "Подготовлено"
           },
           {
             title: "Наклейте электроды",
-            desc: "Разместите электроды согласно схемам на наклейках: один сверху справа, второй слева снизу.",
-            hint: "Схемы на электродах обычно понятны даже новичку.",
-            badges: ["Расположение", "Электроды"],
-            checklist: "Электроды наклеены"
+            explain: "Разместите электроды по схеме: один — сверху справа, второй — слева снизу.",
+            hint: "Смотрите на рисунки на самих электродах.",
+            aiState: "Разместите электроды",
+            mainButton: "Электроды наклеены"
           },
           {
             title: "Не касайтесь пострадавшего",
-            desc: "Во время анализа ритма никто не должен касаться пострадавшего.",
+            explain: "Во время анализа ритма никто не должен касаться пострадавшего.",
             hint: "Команда вслух: «Отойти всем!»",
-            badges: ["Безопасность", "Анализ"],
-            checklist: "Контакт прекращён"
+            aiState: "Идёт анализ ритма",
+            mainButton: "Все отошли"
           },
           {
-            title: "Выполните разряд и продолжите СЛР",
-            desc: "Если AED рекомендует разряд — убедитесь, что никто не касается пострадавшего, выполните разряд и сразу вернитесь к СЛР.",
-            hint: "После разряда не теряйте время — сразу возобновляйте компрессии.",
-            badges: ["Разряд", "Продолжение СЛР"],
-            checklist: "Разряд и переход к СЛР понятны"
+            title: "Выполните разряд и вернитесь к СЛР",
+            explain: "Если аппарат рекомендует разряд, убедитесь, что никто не касается пострадавшего, выполните разряд и сразу переходите обратно к СЛР.",
+            hint: "После разряда не теряйте время.",
+            aiState: "Завершите действие и вернитесь к СЛР",
+            mainButton: "Готово"
           }
         ]
       }
@@ -982,597 +1039,404 @@
 
     const state = {
       mode: "phone",
-      scenarioIndex: 0,
-      stepIndex: 0,
-      completedSteps: {},
-      score: 0,
-      demo: {
-        running: false,
-        paused: false,
-        speed: 1,
-        timerId: null
-      },
-      breath: {
-        running: false,
-        paused: false,
-        timerId: null,
-        phase: "idle",
-        cycle: 0,
-        totalCycles: 2,
-        secondsLeft: 0
-      }
+      currentScenarioIndex: 1,
+      currentStepIndex: 0,
+      selectedScenarioIndex: 1,
+      demoRunning: false,
+      demoPaused: false,
+      demoTimer: null,
+      breathRunning: false,
+      breathTimer: null,
+      breathPhase: "idle",
+      breathLeft: 0,
+      breathCycle: 0,
+      breathTotal: 2
     };
 
     const el = {
-      app: document.getElementById("app"),
-      layout: document.getElementById("layout"),
+      phoneBtn: document.getElementById("phoneBtn"),
+      glassesBtn: document.getElementById("glassesBtn"),
 
-      scenarioList: document.getElementById("scenarioList"),
+      startScreen: document.getElementById("startScreen"),
+      trainingScreen: document.getElementById("trainingScreen"),
+      endScreen: document.getElementById("endScreen"),
 
-      phoneModeBtn: document.getElementById("phoneModeBtn"),
-      glassesModeBtn: document.getElementById("glassesModeBtn"),
+      scenarioGrid: document.getElementById("scenarioGrid"),
+      startScenarioBtn: document.getElementById("startScenarioBtn"),
+      startDemoBtn: document.getElementById("startDemoBtn"),
 
-      heroTitle: document.getElementById("heroTitle"),
-      heroSub: document.getElementById("heroSub"),
+      glassesView: document.getElementById("glassesView"),
+      glassesTopStatus: document.getElementById("glassesTopStatus"),
+      glassTitle: document.getElementById("glassTitle"),
+      glassDesc: document.getElementById("glassDesc"),
+      glassPillScenario: document.getElementById("glassPillScenario"),
+      glassPillProgress: document.getElementById("glassPillProgress"),
+      glassPillBreath: document.getElementById("glassPillBreath"),
 
-      statusScenario: document.getElementById("statusScenario"),
-      statusMode: document.getElementById("statusMode"),
-      statusDemo: document.getElementById("statusDemo"),
-      statusBreath: document.getElementById("statusBreath"),
+      assistantState: document.getElementById("assistantState"),
+      bigStep: document.getElementById("bigStep"),
+      stepExplain: document.getElementById("stepExplain"),
+      hintBox: document.getElementById("hintBox"),
 
-      progressText: document.getElementById("progressText"),
-      progressPercent: document.getElementById("progressPercent"),
+      mainActionBtn: document.getElementById("mainActionBtn"),
+      repeatBtn: document.getElementById("repeatBtn"),
+      hintBtn: document.getElementById("hintBtn"),
+      backBtn: document.getElementById("backBtn"),
+
+      progressNumber: document.getElementById("progressNumber"),
       progressFill: document.getElementById("progressFill"),
-
-      metricStep: document.getElementById("metricStep"),
-      metricProgress: document.getElementById("metricProgress"),
-      metricScore: document.getElementById("metricScore"),
-      metricMode: document.getElementById("metricMode"),
-
-      stepTitle: document.getElementById("stepTitle"),
-      stepDesc: document.getElementById("stepDesc"),
-      stepBadges: document.getElementById("stepBadges"),
-      stepHint: document.getElementById("stepHint"),
-
-      checklist: document.getElementById("checklist"),
-      timeline: document.getElementById("timeline"),
-
-      prevBtn: document.getElementById("prevBtn"),
-      nextBtn: document.getElementById("nextBtn"),
-      markDoneBtn: document.getElementById("markDoneBtn"),
-      toggleChecklistBtn: document.getElementById("toggleChecklistBtn"),
-      restartScenarioBtn: document.getElementById("restartScenarioBtn"),
-      completeScenarioBtn: document.getElementById("completeScenarioBtn"),
-      stepActionBtn: document.getElementById("stepActionBtn"),
-      toggleBreathBtn: document.getElementById("toggleBreathBtn"),
-      voiceHintBtn: document.getElementById("voiceHintBtn"),
-
-      openDemoBtn: document.getElementById("openDemoBtn"),
-      resetAllBtn: document.getElementById("resetAllBtn"),
-      demoStartBtn: document.getElementById("demoStartBtn"),
-      demoPauseBtn: document.getElementById("demoPauseBtn"),
+      scenarioNameLive: document.getElementById("scenarioNameLive"),
+      scenarioDescLive: document.getElementById("scenarioDescLive"),
+      listenText: document.getElementById("listenText"),
+      demoToggleBtn: document.getElementById("demoToggleBtn"),
       demoStopBtn: document.getElementById("demoStopBtn"),
-      demoFasterBtn: document.getElementById("demoFasterBtn"),
 
+      breathArea: document.getElementById("breathArea"),
+      breathText: document.getElementById("breathText"),
       breathCircle: document.getElementById("breathCircle"),
-      breathTitle: document.getElementById("breathTitle"),
-      breathSub: document.getElementById("breathSub"),
-      breathCounter: document.getElementById("breathCounter"),
-      breathStartBtn: document.getElementById("breathStartBtn"),
-      breathPauseBtn: document.getElementById("breathPauseBtn"),
-      breathResetBtn: document.getElementById("breathResetBtn"),
+      breathLabel: document.getElementById("breathLabel"),
+      breathTime: document.getElementById("breathTime"),
+      breathMeta: document.getElementById("breathMeta"),
 
-      glassesOverlay: document.getElementById("glassesOverlay"),
-      glassesStatus: document.getElementById("glassesStatus"),
-      glassesStepTitle: document.getElementById("glassesStepTitle"),
-      glassesStepText: document.getElementById("glassesStepText"),
-      glassesScenarioPill: document.getElementById("glassesScenarioPill"),
-      glassesProgressPill: document.getElementById("glassesProgressPill"),
-      glassesBreathPill: document.getElementById("glassesBreathPill")
+      endSub: document.getElementById("endSub"),
+      endScenario: document.getElementById("endScenario"),
+      endSteps: document.getElementById("endSteps"),
+      endMode: document.getElementById("endMode"),
+      restartBtn: document.getElementById("restartBtn"),
+      toStartBtn: document.getElementById("toStartBtn")
     };
 
-    function getCurrentScenario() {
-      return scenarios[state.scenarioIndex];
+    function getScenario() {
+      return scenarios[state.currentScenarioIndex];
     }
 
-    function getCurrentStep() {
-      const scenario = getCurrentScenario();
-      return scenario.steps[state.stepIndex];
+    function getStep() {
+      return getScenario().steps[state.currentStepIndex];
     }
 
-    function getScenarioProgress(scenarioId) {
-      const scenario = scenarios.find(s => s.id === scenarioId);
-      const done = state.completedSteps[scenarioId] || [];
-      const total = scenario.steps.length;
-      const completed = done.filter(Boolean).length;
-      return {
-        completed,
-        total,
-        percent: Math.round((completed / total) * 100)
-      };
+    function showScreen(name) {
+      el.startScreen.classList.remove("active");
+      el.trainingScreen.classList.remove("active");
+      el.endScreen.classList.remove("active");
+
+      if (name === "start") el.startScreen.classList.add("active");
+      if (name === "training") el.trainingScreen.classList.add("active");
+      if (name === "end") el.endScreen.classList.add("active");
     }
 
-    function ensureScenarioState(scenarioId) {
-      if (!state.completedSteps[scenarioId]) {
-        state.completedSteps[scenarioId] = Array(
-          scenarios.find(s => s.id === scenarioId).steps.length
-        ).fill(false);
-      }
-    }
-
-    function renderScenarioButtons() {
-      el.scenarioList.innerHTML = "";
-
+    function renderScenarioGrid() {
+      el.scenarioGrid.innerHTML = "";
       scenarios.forEach((scenario, index) => {
-        ensureScenarioState(scenario.id);
-        const progress = getScenarioProgress(scenario.id);
-
-        const btn = document.createElement("button");
-        btn.className = "scenario-btn" + (index === state.scenarioIndex ? " active" : "");
-        btn.innerHTML = `
-          ${scenario.name}
-          <small>${scenario.short} · ${progress.completed}/${progress.total} · ${progress.percent}%</small>
+        const card = document.createElement("button");
+        card.className = "scenario-card" + (index === state.selectedScenarioIndex ? " active" : "");
+        card.innerHTML = `
+          <span class="icon">${scenario.icon}</span>
+          <h3>${scenario.name}</h3>
+          <p>${scenario.description}</p>
         `;
-        btn.addEventListener("click", () => {
-          selectScenario(index);
+        card.addEventListener("click", () => {
+          state.selectedScenarioIndex = index;
+          renderScenarioGrid();
         });
-
-        el.scenarioList.appendChild(btn);
+        el.scenarioGrid.appendChild(card);
       });
-    }
-
-    function renderHeader() {
-      const scenario = getCurrentScenario();
-      const progress = getScenarioProgress(scenario.id);
-
-      el.heroTitle.textContent = scenario.name;
-      el.heroSub.textContent = scenario.description;
-
-      el.statusScenario.textContent = `Сценарий: ${scenario.name}`;
-      el.statusMode.textContent = `Режим: ${state.mode === "phone" ? "телефон" : "очки"}`;
-      el.statusDemo.textContent = `Демо: ${state.demo.running ? (state.demo.paused ? "пауза" : "вкл") : "выкл"}`;
-      el.statusDemo.className = "pill warn";
-      el.statusBreath.textContent = `Таймер дыхания: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
-      el.statusBreath.className = "pill good";
-
-      el.progressText.textContent = `${progress.completed} из ${progress.total} шагов завершено`;
-      el.progressPercent.textContent = `${progress.percent}%`;
-      el.progressFill.style.width = `${progress.percent}%`;
-
-      el.metricStep.textContent = `${state.stepIndex + 1} / ${scenario.steps.length}`;
-      el.metricProgress.textContent = `${progress.percent}%`;
-      el.metricScore.textContent = String(state.score);
-      el.metricMode.textContent = state.mode === "phone" ? "Телефон" : "Очки";
-    }
-
-    function renderStep() {
-      const scenario = getCurrentScenario();
-      const step = getCurrentStep();
-
-      el.stepTitle.textContent = step.title;
-      el.stepDesc.textContent = step.desc;
-      el.stepHint.textContent = step.hint || "Подсказка не задана.";
-
-      el.stepBadges.innerHTML = "";
-      (step.badges || []).forEach(badge => {
-        const span = document.createElement("span");
-        span.className = "pill info";
-        span.textContent = badge;
-        el.stepBadges.appendChild(span);
-      });
-
-      const isDone = state.completedSteps[scenario.id][state.stepIndex];
-      el.stepActionBtn.textContent = isDone ? "Шаг уже выполнен" : "Выполнено";
-      el.stepActionBtn.disabled = isDone;
-      el.markDoneBtn.disabled = isDone;
-
-      const stepUsesBreath = !!step.breath;
-      el.toggleBreathBtn.textContent = state.breath.running ? "Остановить дыхание" : "Запустить дыхание";
-      el.toggleBreathBtn.classList.toggle("btn-secondary", !stepUsesBreath);
-      updateGlassesOverlay();
-    }
-
-    function renderChecklist() {
-      const scenario = getCurrentScenario();
-      const completed = state.completedSteps[scenario.id];
-
-      el.checklist.innerHTML = "";
-      scenario.steps.forEach((step, index) => {
-        const item = document.createElement("div");
-        item.className = "check-item" + (completed[index] ? " done" : "");
-        item.innerHTML = `
-          <div class="check-icon">${completed[index] ? "✓" : index + 1}</div>
-          <div>
-            <div><strong>${step.checklist || step.title}</strong></div>
-            <div class="muted">${step.title}</div>
-          </div>
-        `;
-        item.addEventListener("click", () => {
-          state.stepIndex = index;
-          renderAll();
-        });
-        el.checklist.appendChild(item);
-      });
-    }
-
-    function renderTimeline() {
-      const scenario = getCurrentScenario();
-      const completed = state.completedSteps[scenario.id];
-
-      el.timeline.innerHTML = "";
-      scenario.steps.forEach((step, index) => {
-        const item = document.createElement("div");
-        let classes = "timeline-item";
-        if (index === state.stepIndex) classes += " current";
-        if (completed[index] && index !== state.stepIndex) classes += "";
-        item.className = classes;
-        item.innerHTML = `
-          <strong>${index + 1}. ${step.title}</strong><br>
-          ${completed[index] ? "Статус: выполнено" : index === state.stepIndex ? "Статус: текущий шаг" : "Статус: ожидание"}
-        `;
-        item.addEventListener("click", () => {
-          state.stepIndex = index;
-          renderAll();
-        });
-        el.timeline.appendChild(item);
-      });
-    }
-
-    function updateGlassesOverlay() {
-      const scenario = getCurrentScenario();
-      const step = getCurrentStep();
-      const progress = getScenarioProgress(scenario.id);
-
-      el.glassesStepTitle.textContent = step.title;
-      el.glassesStepText.textContent = step.desc;
-      el.glassesScenarioPill.textContent = scenario.name;
-      el.glassesProgressPill.textContent = `Прогресс ${progress.percent}%`;
-      el.glassesBreathPill.textContent = `Дыхание: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
-      el.glassesStatus.textContent = state.demo.running ? (state.demo.paused ? "Демо: пауза" : "Демо: идёт") : "Готов";
     }
 
     function renderMode() {
-      const glasses = state.mode === "glasses";
-      el.layout.classList.toggle("glasses-mode", glasses);
-      el.phoneModeBtn.classList.toggle("active", !glasses);
-      el.glassesModeBtn.classList.toggle("active", glasses);
+      const isPhone = state.mode === "phone";
+      el.phoneBtn.classList.toggle("active", isPhone);
+      el.glassesBtn.classList.toggle("active", !isPhone);
+      el.glassesView.classList.toggle("active", !isPhone);
     }
 
-    function renderAll() {
-      renderScenarioButtons();
-      renderMode();
-      renderHeader();
-      renderStep();
-      renderChecklist();
-      renderTimeline();
-      updateGlassesOverlay();
-    }
+    function renderTraining() {
+      const scenario = getScenario();
+      const step = getStep();
+      const total = scenario.steps.length;
+      const currentHuman = state.currentStepIndex + 1;
+      const percent = Math.round((currentHuman / total) * 100);
 
-    function selectScenario(index) {
-      stopDemo();
-      stopBreath(false);
-      state.scenarioIndex = index;
-      state.stepIndex = 0;
-      renderAll();
-    }
+      el.assistantState.textContent = step.aiState;
+      el.bigStep.textContent = step.title;
+      el.stepExplain.textContent = step.explain;
+      el.hintBox.textContent = step.hint;
 
-    function setMode(mode) {
-      state.mode = mode;
-      renderAll();
-    }
+      el.mainActionBtn.textContent = step.mainButton || "Понял, дальше";
 
-    function markCurrentStepDone() {
-      const scenario = getCurrentScenario();
-      ensureScenarioState(scenario.id);
+      el.progressNumber.textContent = `Шаг ${currentHuman} из ${total}`;
+      el.progressFill.style.width = `${percent}%`;
 
-      if (!state.completedSteps[scenario.id][state.stepIndex]) {
-        state.completedSteps[scenario.id][state.stepIndex] = true;
-        state.score += scenario.scorePerStep;
+      el.scenarioNameLive.textContent = scenario.name;
+      el.scenarioDescLive.textContent = scenario.description;
+      el.listenText.textContent = state.demoRunning ? "AI ведёт автоматически" : "AI слушает / ведёт";
+
+      el.glassesTopStatus.textContent = state.demoRunning ? "Демо идёт" : "AI ведёт";
+      el.glassTitle.textContent = step.title;
+      el.glassDesc.textContent = step.hint;
+      el.glassPillScenario.textContent = scenario.name;
+      el.glassPillProgress.textContent = `Шаг ${currentHuman} из ${total}`;
+      el.glassPillBreath.textContent = state.breathRunning ? "Дыхание вкл" : "Дыхание выкл";
+
+      const needBreath = !!step.breath;
+      el.breathArea.classList.toggle("active", needBreath);
+
+      if (needBreath) {
+        el.breathText.textContent = "Сейчас сделайте 2 спокойных вдоха. Следите за визуальным таймером.";
       }
 
-      renderAll();
+      el.demoToggleBtn.textContent = state.demoRunning ? "Пауза" : "Старт";
+      renderMode();
+      updateBreathUI();
+    }
+
+    function renderEnd() {
+      const scenario = getScenario();
+      el.endScenario.textContent = scenario.name;
+      el.endSteps.textContent = `${scenario.steps.length} / ${scenario.steps.length}`;
+      el.endMode.textContent = state.mode === "phone" ? "Телефон" : "Очки";
+      el.endSub.textContent = `Вы завершили сценарий «${scenario.name}». Такой интерфейс показывает, как AI может вести обучающегося почти без лишних кнопок и сложных панелей.`;
+    }
+
+    function startScenario(isDemo = false) {
+      stopDemo();
+      stopBreath(true);
+
+      state.currentScenarioIndex = state.selectedScenarioIndex;
+      state.currentStepIndex = 0;
+
+      showScreen("training");
+      renderTraining();
+
+      if (isDemo) {
+        startDemo();
+      }
     }
 
     function nextStep() {
-      const scenario = getCurrentScenario();
-      if (state.stepIndex < scenario.steps.length - 1) {
-        state.stepIndex += 1;
-        renderAll();
+      const scenario = getScenario();
+
+      if (state.currentStepIndex < scenario.steps.length - 1) {
+        state.currentStepIndex += 1;
+        renderTraining();
+
+        const step = getStep();
+        if (step.breath) {
+          startBreath();
+        } else {
+          stopBreath(true);
+        }
+      } else {
+        stopDemo();
+        stopBreath(true);
+        renderEnd();
+        showScreen("end");
       }
     }
 
     function prevStep() {
-      if (state.stepIndex > 0) {
-        state.stepIndex -= 1;
-        renderAll();
+      if (state.currentStepIndex > 0) {
+        state.currentStepIndex -= 1;
+        renderTraining();
+
+        const step = getStep();
+        if (step.breath) {
+          startBreath();
+        } else {
+          stopBreath(true);
+        }
       }
     }
 
-    function restartScenario() {
-      stopDemo();
-      stopBreath(false);
-      const scenario = getCurrentScenario();
-      state.completedSteps[scenario.id] = Array(scenario.steps.length).fill(false);
-      state.stepIndex = 0;
-      state.score = recalcScore();
-      renderAll();
-    }
-
-    function completeScenario() {
-      const scenario = getCurrentScenario();
-      ensureScenarioState(scenario.id);
-      scenario.steps.forEach((_, i) => {
-        if (!state.completedSteps[scenario.id][i]) {
-          state.completedSteps[scenario.id][i] = true;
-          state.score += scenario.scorePerStep;
-        }
-      });
-      state.stepIndex = scenario.steps.length - 1;
-      renderAll();
-    }
-
-    function recalcScore() {
-      let total = 0;
-      scenarios.forEach(scenario => {
-        ensureScenarioState(scenario.id);
-        state.completedSteps[scenario.id].forEach(done => {
-          if (done) total += scenario.scorePerStep;
-        });
-      });
-      return total;
-    }
-
-    function resetAll() {
-      stopDemo();
-      stopBreath(false);
-      state.mode = "phone";
-      state.scenarioIndex = 0;
-      state.stepIndex = 0;
-      state.score = 0;
-      state.demo.speed = 1;
-      scenarios.forEach(s => {
-        state.completedSteps[s.id] = Array(s.steps.length).fill(false);
-      });
-      renderAll();
-    }
-
-    function speakCurrentStep() {
-      const step = getCurrentStep();
-      const text = `${step.title}. ${step.desc}`;
+    function repeatCurrentStep() {
+      const step = getStep();
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
+        const utter = new SpeechSynthesisUtterance(`${step.title}. ${step.explain}`);
         utter.lang = "ru-RU";
         utter.rate = 1;
         window.speechSynthesis.speak(utter);
-      } else {
-        alert("Озвучивание не поддерживается в этом браузере.");
       }
     }
 
-    function toggleChecklist() {
-      const isHidden = el.checklist.parentElement.classList.contains("hidden");
-      el.checklist.parentElement.classList.toggle("hidden", !isHidden);
-      el.toggleChecklistBtn.textContent = isHidden ? "Скрыть чек-лист" : "Чек-лист";
+    function showHintFlash() {
+      const old = el.hintBox.textContent;
+      el.hintBox.textContent = "Подсказка активирована: " + getStep().hint;
+      el.hintBox.style.background = "rgba(245,158,11,.12)";
+      el.hintBox.style.borderColor = "rgba(245,158,11,.25)";
+
+      setTimeout(() => {
+        el.hintBox.textContent = old;
+        el.hintBox.style.background = "rgba(110,242,255,.07)";
+        el.hintBox.style.borderColor = "rgba(110,242,255,.18)";
+      }, 1400);
     }
 
-    function scheduleDemoStep() {
-      clearTimeout(state.demo.timerId);
-      if (!state.demo.running || state.demo.paused) return;
+    function setMode(mode) {
+      state.mode = mode;
+      renderMode();
+      if (el.trainingScreen.classList.contains("active")) {
+        renderTraining();
+      }
+      if (el.endScreen.classList.contains("active")) {
+        renderEnd();
+      }
+    }
 
-      const step = getCurrentStep();
-      const baseDelay = step.breath ? 6500 : 3800;
-      const delay = Math.max(1200, baseDelay / state.demo.speed);
+    function scheduleDemo() {
+      clearTimeout(state.demoTimer);
+      if (!state.demoRunning) return;
 
-      state.demo.timerId = setTimeout(() => {
-        markCurrentStepDone();
+      const step = getStep();
+      const delay = step.breath ? 6200 : 3400;
 
-        if (step.breath && !state.breath.running) {
+      state.demoTimer = setTimeout(() => {
+        if (!state.demoRunning) return;
+
+        if (step.breath) {
           startBreath();
         }
 
-        const scenario = getCurrentScenario();
-        if (state.stepIndex < scenario.steps.length - 1) {
-          state.stepIndex += 1;
-          renderAll();
-          scheduleDemoStep();
-        } else {
-          stopDemo(false);
-          renderAll();
+        nextStep();
+
+        if (el.trainingScreen.classList.contains("active") && state.demoRunning) {
+          scheduleDemo();
         }
       }, delay);
     }
 
     function startDemo() {
-      state.demo.running = true;
-      state.demo.paused = false;
-      el.statusDemo.textContent = "Демо: вкл";
-      scheduleDemoStep();
-      renderAll();
+      state.demoRunning = true;
+      renderTraining();
+      scheduleDemo();
     }
 
-    function pauseDemo() {
-      if (!state.demo.running) return;
-      state.demo.paused = !state.demo.paused;
-      if (state.demo.paused) {
-        clearTimeout(state.demo.timerId);
-      } else {
-        scheduleDemoStep();
+    function stopDemo() {
+      clearTimeout(state.demoTimer);
+      state.demoRunning = false;
+      if (el.trainingScreen.classList.contains("active")) {
+        renderTraining();
       }
-      renderAll();
     }
 
-    function stopDemo(resetFlags = true) {
-      clearTimeout(state.demo.timerId);
-      if (resetFlags) {
-        state.demo.running = false;
-        state.demo.paused = false;
+    function toggleDemo() {
+      if (state.demoRunning) {
+        stopDemo();
       } else {
-        state.demo.running = false;
-        state.demo.paused = false;
-      }
-      renderAll();
-    }
-
-    function fasterDemo() {
-      state.demo.speed = state.demo.speed === 1 ? 1.5 : state.demo.speed === 1.5 ? 2 : 1;
-      el.demoFasterBtn.textContent = `Быстрее x${state.demo.speed}`;
-      if (state.demo.running && !state.demo.paused) {
-        scheduleDemoStep();
+        startDemo();
       }
     }
 
     function updateBreathUI() {
-      if (!state.breath.running) {
-        el.breathTitle.textContent = "Ожидание";
-        el.breathSub.textContent = "Таймер не запущен";
-        el.breathCounter.textContent = `Цикл: ${state.breath.cycle} / ${state.breath.totalCycles}`;
+      if (!state.breathRunning) {
+        el.breathLabel.textContent = "Ожидание";
+        el.breathTime.textContent = "Таймер не запущен";
+        el.breathMeta.textContent = `Цикл ${state.breathCycle} из ${state.breathTotal}`;
         el.breathCircle.classList.remove("inhale");
-      } else {
-        const phaseName = state.breath.phase === "inhale" ? "Вдох" : "Выдох";
-        el.breathTitle.textContent = phaseName;
-        el.breathSub.textContent = `${state.breath.secondsLeft} сек`;
-        el.breathCounter.textContent = `Цикл: ${state.breath.cycle} / ${state.breath.totalCycles}`;
-        el.breathCircle.classList.toggle("inhale", state.breath.phase === "inhale");
+        el.glassPillBreath.textContent = "Дыхание выкл";
+        return;
       }
 
-      el.statusBreath.textContent = `Таймер дыхания: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
-      el.glassesBreathPill.textContent = `Дыхание: ${state.breath.running ? (state.breath.paused ? "пауза" : "вкл") : "выкл"}`;
-      el.toggleBreathBtn.textContent = state.breath.running ? "Остановить дыхание" : "Запустить дыхание";
+      el.breathLabel.textContent = state.breathPhase === "inhale" ? "Вдох" : "Выдох";
+      el.breathTime.textContent = `${state.breathLeft} сек`;
+      el.breathMeta.textContent = `Цикл ${state.breathCycle} из ${state.breathTotal}`;
+      el.breathCircle.classList.toggle("inhale", state.breathPhase === "inhale");
+      el.glassPillBreath.textContent = state.breathRunning ? "Дыхание вкл" : "Дыхание выкл";
     }
 
     function breathTick() {
-      clearTimeout(state.breath.timerId);
-      if (!state.breath.running || state.breath.paused) return;
+      clearTimeout(state.breathTimer);
+      if (!state.breathRunning) return;
 
       updateBreathUI();
 
-      state.breath.timerId = setTimeout(() => {
-        if (!state.breath.running || state.breath.paused) return;
+      state.breathTimer = setTimeout(() => {
+        if (!state.breathRunning) return;
 
-        state.breath.secondsLeft -= 1;
+        state.breathLeft -= 1;
 
-        if (state.breath.secondsLeft <= 0) {
-          if (state.breath.phase === "inhale") {
-            state.breath.phase = "exhale";
-            state.breath.secondsLeft = 2;
+        if (state.breathLeft <= 0) {
+          if (state.breathPhase === "inhale") {
+            state.breathPhase = "exhale";
+            state.breathLeft = 2;
           } else {
-            state.breath.cycle += 1;
-            if (state.breath.cycle >= state.breath.totalCycles) {
+            state.breathCycle += 1;
+            if (state.breathCycle >= state.breathTotal) {
               stopBreath(false);
               return;
             }
-            state.breath.phase = "inhale";
-            state.breath.secondsLeft = 2;
+            state.breathPhase = "inhale";
+            state.breathLeft = 2;
           }
         }
 
         breathTick();
       }, 1000);
-
-      updateBreathUI();
     }
 
     function startBreath() {
-      if (state.breath.running && !state.breath.paused) return;
-      state.breath.running = true;
-      state.breath.paused = false;
-
-      if (state.breath.phase === "idle") {
-        state.breath.phase = "inhale";
-        state.breath.secondsLeft = 2;
-        state.breath.cycle = 0;
-      }
-
+      clearTimeout(state.breathTimer);
+      state.breathRunning = true;
+      state.breathPhase = "inhale";
+      state.breathLeft = 2;
+      state.breathCycle = 0;
       breathTick();
-      renderAll();
-    }
-
-    function pauseBreath() {
-      if (!state.breath.running) return;
-      state.breath.paused = !state.breath.paused;
-      if (!state.breath.paused) {
-        breathTick();
-      } else {
-        clearTimeout(state.breath.timerId);
-      }
       updateBreathUI();
-      renderAll();
     }
 
     function stopBreath(reset = true) {
-      clearTimeout(state.breath.timerId);
-      state.breath.running = false;
-      state.breath.paused = false;
+      clearTimeout(state.breathTimer);
+      state.breathRunning = false;
 
       if (reset) {
-        state.breath.phase = "idle";
-        state.breath.cycle = 0;
-        state.breath.secondsLeft = 0;
+        state.breathPhase = "idle";
+        state.breathLeft = 0;
+        state.breathCycle = 0;
       } else {
-        state.breath.phase = "idle";
-        state.breath.secondsLeft = 0;
+        state.breathPhase = "idle";
+        state.breathLeft = 0;
       }
 
       updateBreathUI();
-      renderAll();
     }
 
-    function toggleBreath() {
-      if (state.breath.running) {
-        stopBreath(true);
-      } else {
-        startBreath();
-      }
+    function goToStart() {
+      stopDemo();
+      stopBreath(true);
+      showScreen("start");
     }
 
     function bindEvents() {
-      el.phoneModeBtn.addEventListener("click", () => setMode("phone"));
-      el.glassesModeBtn.addEventListener("click", () => setMode("glasses"));
+      el.phoneBtn.addEventListener("click", () => setMode("phone"));
+      el.glassesBtn.addEventListener("click", () => setMode("glasses"));
 
-      el.prevBtn.addEventListener("click", prevStep);
-      el.nextBtn.addEventListener("click", nextStep);
-      el.markDoneBtn.addEventListener("click", markCurrentStepDone);
-      el.stepActionBtn.addEventListener("click", markCurrentStepDone);
+      el.startScenarioBtn.addEventListener("click", () => startScenario(false));
+      el.startDemoBtn.addEventListener("click", () => startScenario(true));
 
-      el.toggleChecklistBtn.addEventListener("click", () => {
-        const card = el.checklist.closest(".card");
-        card.classList.toggle("hidden");
-        el.toggleChecklistBtn.textContent = card.classList.contains("hidden") ? "Показать чек-лист" : "Чек-лист";
-      });
+      el.mainActionBtn.addEventListener("click", nextStep);
+      el.backBtn.addEventListener("click", prevStep);
+      el.repeatBtn.addEventListener("click", repeatCurrentStep);
+      el.hintBtn.addEventListener("click", showHintFlash);
 
-      el.restartScenarioBtn.addEventListener("click", restartScenario);
-      el.completeScenarioBtn.addEventListener("click", completeScenario);
+      el.demoToggleBtn.addEventListener("click", toggleDemo);
+      el.demoStopBtn.addEventListener("click", stopDemo);
 
-      el.toggleBreathBtn.addEventListener("click", toggleBreath);
-      el.breathStartBtn.addEventListener("click", startBreath);
-      el.breathPauseBtn.addEventListener("click", pauseBreath);
-      el.breathResetBtn.addEventListener("click", () => stopBreath(true));
-
-      el.voiceHintBtn.addEventListener("click", speakCurrentStep);
-
-      el.openDemoBtn.addEventListener("click", startDemo);
-      el.demoStartBtn.addEventListener("click", startDemo);
-      el.demoPauseBtn.addEventListener("click", pauseDemo);
-      el.demoStopBtn.addEventListener("click", () => stopDemo(true));
-      el.demoFasterBtn.addEventListener("click", fasterDemo);
-
-      el.resetAllBtn.addEventListener("click", resetAll);
+      el.restartBtn.addEventListener("click", () => startScenario(false));
+      el.toStartBtn.addEventListener("click", goToStart);
 
       document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight") nextStep();
-        if (e.key === "ArrowLeft") prevStep();
-        if (e.key.toLowerCase() === "d") startDemo();
-        if (e.key.toLowerCase() === "b") toggleBreath();
-        if (e.key.toLowerCase() === "m") markCurrentStepDone();
+        if (el.trainingScreen.classList.contains("active")) {
+          if (e.key === "ArrowRight") nextStep();
+          if (e.key === "ArrowLeft") prevStep();
+          if (e.key.toLowerCase() === "r") repeatCurrentStep();
+          if (e.key.toLowerCase() === "d") toggleDemo();
+        }
       });
     }
 
     function init() {
-      scenarios.forEach(s => ensureScenarioState(s.id));
+      renderScenarioGrid();
+      renderMode();
       bindEvents();
-      renderAll();
-      updateBreathUI();
     }
 
     init();
