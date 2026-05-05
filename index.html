@@ -1,966 +1,732 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AR-инструктор | Resusci Anne</title>
-  <style>
-    :root {
-      --bg: #050505;
-      --panel: rgba(12, 12, 12, 0.78);
-      --panel-strong: rgba(20, 20, 20, 0.92);
-      --text: #ffffff;
-      --muted: #bdbdbd;
-      --accent: #6fd39a;
-      --blue: #4f83f1;
-      --warn: #d8a23a;
-      --danger: #b84f5b;
-      --border: rgba(255,255,255,0.14);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 75% 35%, rgba(79,131,241,0.18), transparent 30%),
-        radial-gradient(circle at 25% 70%, rgba(111,211,154,0.12), transparent 28%),
-        #050505;
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      overflow: hidden;
-    }
-
-    .ar-stage {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      padding: 28px;
-    }
-
-    .world-hint {
-      position: absolute;
-      right: 36px;
-      top: 36px;
-      width: 38vw;
-      height: calc(100vh - 72px);
-      border: 1px dashed rgba(255,255,255,0.16);
-      border-radius: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255,255,255,0.2);
-      font-size: 28px;
-      font-weight: 800;
-      text-align: center;
-      pointer-events: none;
-    }
-
-    .panel {
-      position: absolute;
-      left: 28px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 48vw;
-      max-width: 720px;
-      min-width: 420px;
-      padding: 26px;
-      border-radius: 30px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-    }
-
-    .topline {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .badge {
-      padding: 9px 13px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .live {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      color: #dff7e8;
-      background: rgba(111,211,154,0.12);
-      border-color: rgba(111,211,154,0.28);
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-      box-shadow: 0 0 16px rgba(111,211,154,0.75);
-    }
-
-    .scenario {
-      font-size: 22px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .title {
-      font-size: 52px;
-      line-height: 1.05;
-      font-weight: 900;
-      margin-bottom: 18px;
-    }
-
-    .instruction {
-      font-size: 34px;
-      line-height: 1.25;
-      color: #f4f4f4;
-      font-weight: 750;
-      margin-bottom: 20px;
-    }
-
-    .hint {
-      display: none;
-      margin-top: 18px;
-      padding: 18px;
-      border-radius: 22px;
-      background: rgba(79,131,241,0.12);
-      border: 1px solid rgba(79,131,241,0.32);
-      color: #e3ecff;
-      font-size: 24px;
-      line-height: 1.35;
-      white-space: pre-line;
-    }
-
-    .hint.visible { display: block; }
-
-    .hint.success {
-      background: rgba(46,159,91,0.14);
-      border-color: rgba(46,159,91,0.35);
-      color: #dff7e8;
-    }
-
-    .hint.error {
-      background: rgba(184,79,91,0.14);
-      border-color: rgba(184,79,91,0.35);
-      color: #ffe0e5;
-    }
-
-    .hint.warn {
-      background: rgba(216,162,58,0.14);
-      border-color: rgba(216,162,58,0.35);
-      color: #ffe9bc;
-    }
-
-    .progress {
-      margin-top: 24px;
-    }
-
-    .progress-text {
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 15px;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .bar {
-      height: 12px;
-      background: rgba(255,255,255,0.09);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--blue));
-      border-radius: 999px;
-      transition: width .25s ease;
-    }
-
-    .quiz {
-      display: none;
-      margin-top: 22px;
-      padding: 18px;
-      border-radius: 24px;
-      background: rgba(79,131,241,0.11);
-      border: 1px solid rgba(79,131,241,0.28);
-    }
-
-    .quiz.visible { display: block; }
-
-    .question {
-      font-size: 28px;
-      line-height: 1.25;
-      font-weight: 850;
-      margin-bottom: 16px;
-    }
-
-    .answers {
-      display: grid;
-      gap: 12px;
-    }
-
-    .answer {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      border-radius: 18px;
-      padding: 18px;
-      font-size: 23px;
-      font-weight: 800;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .answer.correct {
-      background: rgba(46,159,91,0.25);
-      border-color: rgba(46,159,91,0.65);
-    }
-
-    .answer.wrong {
-      background: rgba(184,79,91,0.25);
-      border-color: rgba(184,79,91,0.65);
-    }
-
-    .answer:disabled {
-      cursor: default;
-      opacity: .9;
-    }
-
-    .controls {
-      position: absolute;
-      left: 28px;
-      bottom: 28px;
-      width: 48vw;
-      max-width: 720px;
-      min-width: 420px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    .control {
-      border: 1px solid var(--border);
-      background: var(--panel-strong);
-      color: var(--text);
-      border-radius: 18px;
-      padding: 15px 10px;
-      font-size: 17px;
-      font-weight: 850;
-      cursor: pointer;
-      backdrop-filter: blur(14px);
-    }
-
-    .control.primary {
-      background: var(--blue);
-      border-color: transparent;
-    }
-
-    .control.voice {
-      background: var(--accent);
-      color: #08110d;
-      border-color: transparent;
-    }
-
-    .start {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,.82);
-      padding: 24px;
-    }
-
-    .start-card {
-      width: min(780px, 92vw);
-      padding: 30px;
-      border-radius: 32px;
-      background: var(--panel-strong);
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-
-    .start-title {
-      font-size: 44px;
-      font-weight: 900;
-      margin-bottom: 14px;
-    }
-
-    .start-text {
-      color: var(--muted);
-      font-size: 22px;
-      line-height: 1.4;
-      margin-bottom: 20px;
-    }
-
-    .scenario-buttons {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .scenario-btn {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      border-radius: 22px;
-      padding: 20px;
-      font-size: 25px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .scenario-btn:hover, .control:hover, .answer:hover {
-      filter: brightness(1.08);
-    }
-
-    .result {
-      display: none;
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 24px;
-      background: rgba(111,211,154,0.12);
-      border: 1px solid rgba(111,211,154,0.30);
-      font-size: 25px;
-      line-height: 1.35;
-      white-space: pre-line;
-    }
-
-    .result.visible { display: block; }
-
-    @media (max-width: 900px) {
-      body { overflow: auto; }
-      .ar-stage { height: auto; min-height: 100vh; padding: 14px; }
-      .world-hint { display: none; }
-      .panel {
-        position: static;
-        transform: none;
-        width: 100%;
-        min-width: 0;
-        max-width: none;
-        margin-bottom: 14px;
-      }
-      .controls {
-        position: static;
-        width: 100%;
-        min-width: 0;
-        max-width: none;
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .title { font-size: 36px; }
-      .instruction { font-size: 24px; }
-      .question { font-size: 22px; }
-      .answer { font-size: 19px; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HUD-инструктор | XREAL</title>
+<style>
+:root{
+  --bg:#030303;
+  --panel:rgba(10,10,10,.78);
+  --panel2:rgba(20,20,20,.9);
+  --text:#fff;
+  --muted:#b8b8b8;
+  --green:#6fd39a;
+  --blue:#4f83f1;
+  --red:#b84f5b;
+  --yellow:#d8a23a;
+  --border:rgba(255,255,255,.14);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 82% 48%, rgba(255,255,255,.05), transparent 18%),
+    radial-gradient(circle at 28% 30%, rgba(79,131,241,.12), transparent 22%),
+    #030303;
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.hud{
+  position:relative;
+  width:100vw;
+  height:100vh;
+}
+.panel{
+  position:absolute;
+  left:24px;
+  top:24px;
+  width:38vw;
+  min-width:390px;
+  max-width:560px;
+  padding:22px;
+  border-radius:28px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  backdrop-filter:blur(18px);
+  box-shadow:0 18px 70px rgba(0,0,0,.5);
+}
+.panel.right{
+  left:auto;
+  right:24px;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+}
+.dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(111,211,154,.8);
+}
+.scenario{
+  font-size:18px;
+  color:var(--muted);
+  font-weight:800;
+  margin-bottom:6px;
+}
+.title{
+  font-size:42px;
+  line-height:1.05;
+  font-weight:950;
+  margin-bottom:14px;
+}
+.text{
+  font-size:29px;
+  line-height:1.22;
+  font-weight:780;
+  margin-bottom:14px;
+}
+.hint{
+  display:none;
+  margin-top:14px;
+  padding:15px;
+  border-radius:20px;
+  font-size:22px;
+  line-height:1.3;
+  white-space:pre-line;
+}
+.hint.show{display:block}
+.hint.info{background:rgba(79,131,241,.14);border:1px solid rgba(79,131,241,.35);color:#e4ecff}
+.hint.ok{background:rgba(46,159,91,.16);border:1px solid rgba(46,159,91,.38);color:#dff7e8}
+.hint.bad{background:rgba(184,79,91,.16);border:1px solid rgba(184,79,91,.38);color:#ffe0e5}
+.hint.warn{background:rgba(216,162,58,.16);border:1px solid rgba(216,162,58,.38);color:#ffe9bc}
+.progressText{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:800;
+  margin-top:18px;
+  margin-bottom:8px;
+}
+.bar{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.1);
+}
+.fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--green),var(--blue));
+  transition:.25s;
+}
+.quiz{
+  display:none;
+  margin-top:16px;
+  padding:14px;
+  border-radius:22px;
+  background:rgba(79,131,241,.11);
+  border:1px solid rgba(79,131,241,.3);
+}
+.quiz.show{display:block}
+.question{
+  font-size:24px;
+  line-height:1.25;
+  font-weight:900;
+  margin-bottom:12px;
+}
+.answers{
+  display:grid;
+  gap:10px;
+}
+.answer{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:17px;
+  padding:15px;
+  font-size:21px;
+  font-weight:850;
+  text-align:left;
+}
+.answer.correct{background:rgba(46,159,91,.25);border-color:rgba(46,159,91,.7)}
+.answer.wrong{background:rgba(184,79,91,.25);border-color:rgba(184,79,91,.7)}
+.answer:disabled{opacity:.9}
+.controls{
+  position:absolute;
+  left:24px;
+  bottom:24px;
+  width:38vw;
+  min-width:390px;
+  max-width:560px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+.controls.right{
+  left:auto;
+  right:24px;
+}
+.btn{
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:#fff;
+  border-radius:17px;
+  padding:13px 8px;
+  font-size:15px;
+  font-weight:900;
+}
+.btn.primary{background:var(--blue);border-color:transparent}
+.btn.voice{background:var(--green);color:#07110c;border-color:transparent}
+.start{
+  position:absolute;
+  inset:0;
+  z-index:9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.86);
+  padding:22px;
+}
+.startCard{
+  width:min(620px,90vw);
+  padding:28px;
+  border-radius:30px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  text-align:center;
+}
+.startTitle{
+  font-size:42px;
+  font-weight:950;
+  margin-bottom:10px;
+}
+.startText{
+  color:var(--muted);
+  font-size:20px;
+  line-height:1.35;
+  margin-bottom:16px;
+}
+.scenarioBtn{
+  width:100%;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:20px;
+  padding:18px;
+  margin-top:10px;
+  font-size:23px;
+  font-weight:950;
+}
+.result{
+  display:none;
+  margin-top:16px;
+  padding:16px;
+  border-radius:22px;
+  background:rgba(111,211,154,.14);
+  border:1px solid rgba(111,211,154,.35);
+  font-size:23px;
+  line-height:1.35;
+  white-space:pre-line;
+}
+.result.show{display:block}
+.clearZone{
+  position:absolute;
+  right:34px;
+  top:34px;
+  width:48vw;
+  height:calc(100vh - 68px);
+  border-radius:30px;
+  border:1px dashed rgba(255,255,255,.08);
+  color:rgba(255,255,255,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:28px;
+  font-weight:950;
+  pointer-events:none;
+}
+@media(max-width:800px){
+  body{overflow:auto;height:auto}
+  .hud{height:auto;min-height:100vh;padding:12px}
+  .panel,.panel.right,.controls,.controls.right{
+    position:static;
+    width:100%;
+    min-width:0;
+    max-width:none;
+    margin-bottom:12px;
+  }
+  .clearZone{display:none}
+  .controls{grid-template-columns:repeat(2,1fr)}
+  .title{font-size:34px}
+  .text{font-size:23px}
+}
+</style>
 </head>
 <body>
-  <div class="start" id="startScreen">
-    <div class="start-card">
-      <div class="start-title">AR-инструктор</div>
-      <div class="start-text">
-        Упрощённый режим для очков: крупная карточка слева, минимум текста, управление голосом или кнопками.
-      </div>
+<div class="hud">
+  <div class="clearZone">ОСНОВНОЙ ОБЗОР<br>МАНЕКЕН / РУКИ</div>
 
-      <div class="scenario-buttons">
-        <button class="scenario-btn" onclick="startScenario('triage')">Первичная оценка</button>
-        <button class="scenario-btn" onclick="startScenario('cpr')">СЛР</button>
-        <button class="scenario-btn" onclick="startScenario('aed')">AED</button>
-      </div>
+  <div class="start" id="start">
+    <div class="startCard">
+      <div class="startTitle">HUD-инструктор</div>
+      <div class="startText">Режим под XREAL Beam Pro: маленькое окно сбоку, крупная подсказка, минимум интерфейса.</div>
+      <button class="scenarioBtn" onclick="startScenario('triage')">Первичная оценка</button>
+      <button class="scenarioBtn" onclick="startScenario('cpr')">СЛР</button>
+      <button class="scenarioBtn" onclick="startScenario('aed')">AED</button>
     </div>
   </div>
 
-  <div class="ar-stage">
-    <div class="world-hint">
-      ОБЛАСТЬ ОБЗОРА<br>МАНЕКЕН / РЕАЛЬНЫЙ МИР
+  <main class="panel" id="panel">
+    <div class="top">
+      <div class="badge"><span class="dot"></span> HUD</div>
+      <div class="badge" id="score">0 / 0</div>
     </div>
 
-    <main class="panel">
-      <div class="topline">
-        <div class="badge live"><span class="dot"></span> AR VIEW</div>
-        <div class="badge" id="scoreBadge">0 / 0</div>
-      </div>
+    <div class="scenario" id="scenarioName">Сценарий не выбран</div>
+    <div class="title" id="stepTitle">Готов</div>
+    <div class="text" id="stepText">Выбери сценарий.</div>
 
-      <div class="scenario" id="scenarioName">Сценарий не выбран</div>
-      <div class="title" id="stepTitle">Готов</div>
-      <div class="instruction" id="stepText">Выбери сценарий для запуска.</div>
+    <div class="hint" id="hint"></div>
 
-      <div class="hint" id="hintBox"></div>
-
-      <div class="quiz" id="quizBox">
-        <div class="question" id="quizQuestion"></div>
-        <div class="answers" id="answersBox"></div>
-      </div>
-
-      <div class="result" id="resultBox"></div>
-
-      <div class="progress">
-        <div class="progress-text">
-          <span id="stepCounter">Шаг —</span>
-          <span id="progressPercent">0%</span>
-        </div>
-        <div class="bar">
-          <div class="fill" id="progressFill"></div>
-        </div>
-      </div>
-    </main>
-
-    <div class="controls">
-      <button class="control voice" onclick="listen()">🎤 Голос</button>
-      <button class="control primary" onclick="nextStep()">Дальше</button>
-      <button class="control" onclick="explain()">Объясни</button>
-      <button class="control" onclick="goBack()">Назад</button>
+    <div class="quiz" id="quiz">
+      <div class="question" id="question"></div>
+      <div class="answers" id="answers"></div>
     </div>
+
+    <div class="result" id="result"></div>
+
+    <div class="progressText">
+      <span id="counter">Шаг —</span>
+      <span id="percent">0%</span>
+    </div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+  </main>
+
+  <div class="controls" id="controls">
+    <button class="btn voice" onclick="listen()">🎤 Голос</button>
+    <button class="btn primary" onclick="nextStep()">Дальше</button>
+    <button class="btn" onclick="explain()">Объясни</button>
+    <button class="btn" onclick="toggleSide()">↔ Сторона</button>
   </div>
+</div>
 
-  <script>
-    const scenarios = {
-      triage: {
-        name: "Первичная оценка",
-        intro: "Запускаю сценарий первичной оценки.",
-        steps: [
-          {
-            title: "Шаг 1",
-            text: "Осмотрись. Оцени безопасность.",
-            explain: "Перед помощью убедись, что тебе и пострадавшему ничего не угрожает.",
-            quiz: {
-              question: "Что проверяем первым?",
-              answers: [
-                { text: "Пульс", correct: false },
-                { text: "Безопасность места", correct: true },
-                { text: "Документы", correct: false }
-              ],
-              correctText: "Верно. Сначала безопасность.",
-              wrongText: "Неверно. Первым делом безопасность.",
-              topic: "безопасность"
-            }
-          },
-          {
-            title: "Шаг 2",
-            text: "Проверь сознание.",
-            explain: "Аккуратно потряси за плечи и громко спроси: «Вы меня слышите?»"
-          },
-          {
-            title: "Шаг 3",
-            text: "Оцени дыхание.",
-            explain: "Оцени дыхание быстро. Ориентир — 10 секунд.",
-            timer: true,
-            quiz: {
-              question: "Сколько секунд проверяем дыхание?",
-              answers: [
-                { text: "5 секунд", correct: false },
-                { text: "10 секунд", correct: true },
-                { text: "30 секунд", correct: false }
-              ],
-              correctText: "Верно. Ориентир — 10 секунд.",
-              wrongText: "Неверно. Ориентир — 10 секунд.",
-              topic: "дыхание"
-            }
-          },
-          {
-            title: "Шаг 4",
-            text: "Определи дальнейшие действия.",
-            explain: "Если не дышит — переход к СЛР. Если дышит — вызов помощи и контроль состояния.",
-            quiz: {
-              question: "Если без сознания, но дышит?",
-              answers: [
-                { text: "Начать СЛР", correct: false },
-                { text: "Вызвать помощь и контролировать", correct: true },
-                { text: "Не делать ничего", correct: false }
-              ],
-              correctText: "Верно. Вызвать помощь и контролировать.",
-              wrongText: "Неверно. Нужно вызвать помощь и контролировать.",
-              topic: "действия при дыхании"
-            }
-          }
-        ]
-      },
-
-      cpr: {
-        name: "СЛР",
-        intro: "Запускаю сценарий СЛР.",
-        steps: [
-          {
-            title: "Шаг 1",
-            text: "Проверь безопасность.",
-            explain: "Помощь начинается только если место безопасно."
-          },
-          {
-            title: "Шаг 2",
-            text: "Проверь сознание.",
-            explain: "Обратись громко и проверь реакцию."
-          },
-          {
-            title: "Шаг 3",
-            text: "Оцени дыхание.",
-            explain: "Оценка дыхания проводится быстро, примерно 10 секунд.",
-            quiz: {
-              question: "Сколько времени на оценку дыхания?",
-              answers: [
-                { text: "3 секунды", correct: false },
-                { text: "10 секунд", correct: true },
-                { text: "1 минута", correct: false }
-              ],
-              correctText: "Верно. Примерно 10 секунд.",
-              wrongText: "Неверно. Ориентир — 10 секунд.",
-              topic: "оценка дыхания"
-            }
-          },
-          {
-            title: "Шаг 4",
-            text: "Вызови помощь. Попроси AED.",
-            explain: "Чем раньше вызвана помощь и принесён AED, тем выше шанс на успешную реанимацию."
-          },
-          {
-            title: "Шаг 5",
-            text: "Начинай СЛР.",
-            explain: "Если нет сознания и нормального дыхания — начинай компрессии.",
-            quiz: {
-              question: "Что делать, если не дышит нормально?",
-              answers: [
-                { text: "Ждать", correct: false },
-                { text: "Начать СЛР", correct: true },
-                { text: "Положить на бок", correct: false }
-              ],
-              correctText: "Верно. Нужно начать СЛР.",
-              wrongText: "Неверно. Нужно начать СЛР.",
-              topic: "начало СЛР"
-            }
-          },
-          {
-            title: "Шаг 6",
-            text: "Компрессии: 5–6 см, 100–120 в минуту.",
-            explain: "Нажимай ритмично, глубоко, с полным расправлением грудной клетки.",
-            metronome: true,
-            quiz: {
-              question: "Глубина компрессий?",
-              answers: [
-                { text: "2–3 см", correct: false },
-                { text: "5–6 см", correct: true },
-                { text: "8–10 см", correct: false }
-              ],
-              correctText: "Верно. Глубина 5–6 см.",
-              wrongText: "Неверно. Ориентир — 5–6 см.",
-              topic: "глубина компрессий"
-            }
-          },
-          {
-            title: "Шаг 7",
-            text: "Продолжай до прибытия помощи или AED.",
-            explain: "Не прекращай СЛР без причины."
-          }
-        ]
-      },
-
-      aed: {
-        name: "AED",
-        intro: "Запускаю сценарий AED.",
-        steps: [
-          {
-            title: "Шаг 1",
-            text: "Включи AED.",
-            explain: "После включения AED начнёт давать голосовые подсказки.",
-            quiz: {
-              question: "Что сделать первым с AED?",
-              answers: [
-                { text: "Включить", correct: true },
-                { text: "Убрать в сторону", correct: false },
-                { text: "Ждать", correct: false }
-              ],
-              correctText: "Верно. Сначала включить AED.",
-              wrongText: "Неверно. Сначала включить AED.",
-              topic: "включение AED"
-            }
-          },
-          {
-            title: "Шаг 2",
-            text: "Открой грудную клетку.",
-            explain: "Электроды должны быть наклеены на открытую кожу."
-          },
-          {
-            title: "Шаг 3",
-            text: "Наклей электроды по схеме.",
-            explain: "Один электрод — справа вверху, второй — слева сбоку ниже."
-          },
-          {
-            title: "Шаг 4",
-            text: "Не касайся во время анализа.",
-            explain: "Во время анализа AED никто не должен касаться пострадавшего.",
-            quiz: {
-              question: "Можно касаться во время анализа?",
-              answers: [
-                { text: "Да", correct: false },
-                { text: "Нет", correct: true }
-              ],
-              correctText: "Верно. Касаться нельзя.",
-              wrongText: "Неверно. Касаться нельзя.",
-              topic: "анализ AED"
-            }
-          },
-          {
-            title: "Шаг 5",
-            text: "Если нужен разряд — предупреди и нажми кнопку.",
-            explain: "Убедись, что никто не касается пострадавшего."
-          },
-          {
-            title: "Шаг 6",
-            text: "После разряда продолжи СЛР.",
-            explain: "Пауза после разряда снижает эффективность помощи.",
-            quiz: {
-              question: "Что делать после разряда?",
-              answers: [
-                { text: "Ждать", correct: false },
-                { text: "Продолжить СЛР", correct: true }
-              ],
-              correctText: "Верно. Продолжить СЛР.",
-              wrongText: "Неверно. Нужно продолжить СЛР.",
-              topic: "после разряда"
-            }
-          }
-        ]
-      }
-    };
-
-    let currentKey = null;
-    let stepIndex = 0;
-    let correct = 0;
-    let total = 0;
-    let answered = false;
-    let audioReady = false;
-    let lastText = "";
-    let timerInterval = null;
-    let metronomeInterval = null;
-
-    const startScreen = document.getElementById("startScreen");
-    const scenarioName = document.getElementById("scenarioName");
-    const stepTitle = document.getElementById("stepTitle");
-    const stepText = document.getElementById("stepText");
-    const hintBox = document.getElementById("hintBox");
-    const quizBox = document.getElementById("quizBox");
-    const quizQuestion = document.getElementById("quizQuestion");
-    const answersBox = document.getElementById("answersBox");
-    const resultBox = document.getElementById("resultBox");
-    const progressFill = document.getElementById("progressFill");
-    const progressPercent = document.getElementById("progressPercent");
-    const stepCounter = document.getElementById("stepCounter");
-    const scoreBadge = document.getElementById("scoreBadge");
-
-    function primeAudio() {
-      if (audioReady) return;
-      audioReady = true;
-      const msg = new SpeechSynthesisUtterance("Звук включен");
-      msg.lang = "ru-RU";
-      msg.volume = 0.01;
-      window.speechSynthesis.speak(msg);
-    }
-
-    function speak(text) {
-      lastText = text;
-      if (!audioReady) return;
-
-      window.speechSynthesis.cancel();
-      const msg = new SpeechSynthesisUtterance(text);
-      msg.lang = "ru-RU";
-      msg.rate = 0.95;
-      window.speechSynthesis.speak(msg);
-    }
-
-    function setHint(text, type = "info") {
-      hintBox.textContent = text || "";
-      hintBox.className = text ? `hint visible ${type}` : "hint";
-    }
-
-    function startScenario(key) {
-      primeAudio();
-      currentKey = key;
-      stepIndex = 0;
-      correct = 0;
-      total = 0;
-      answered = false;
-      startScreen.style.display = "none";
-      resultBox.classList.remove("visible");
-      speak(scenarios[key].intro);
-      renderStep();
-    }
-
-    function currentStep() {
-      if (!currentKey) return null;
-      return scenarios[currentKey].steps[stepIndex];
-    }
-
-    function renderStep() {
-      stopTimer();
-      stopMetronome();
-      setHint("");
-      resultBox.classList.remove("visible");
-      answered = false;
-
-      const scenario = scenarios[currentKey];
-      const step = currentStep();
-
-      scenarioName.textContent = scenario.name;
-      stepTitle.textContent = step.title;
-      stepText.textContent = step.text;
-      scoreBadge.textContent = `${correct} / ${total}`;
-
-      const progress = Math.round(((stepIndex + 1) / scenario.steps.length) * 100);
-      progressFill.style.width = progress + "%";
-      progressPercent.textContent = progress + "%";
-      stepCounter.textContent = `Шаг ${stepIndex + 1} / ${scenario.steps.length}`;
-
-      if (step.quiz) {
-        showQuiz(step.quiz);
-      } else {
-        hideQuiz();
-      }
-
-      if (step.timer) startBreathingTimer();
-      if (step.metronome) startMetronome();
-
-      speak(`${step.title}. ${step.text}`);
-    }
-
-    function showQuiz(quiz) {
-      quizBox.classList.add("visible");
-      quizQuestion.textContent = quiz.question;
-      answersBox.innerHTML = "";
-
-      quiz.answers.forEach((answer, index) => {
-        const btn = document.createElement("button");
-        btn.className = "answer";
-        btn.textContent = answer.text;
-        btn.onclick = () => answerQuiz(answer, quiz, btn);
-        answersBox.appendChild(btn);
-      });
-    }
-
-    function hideQuiz() {
-      quizBox.classList.remove("visible");
-      quizQuestion.textContent = "";
-      answersBox.innerHTML = "";
-    }
-
-    function answerQuiz(answer, quiz, btn) {
-      if (answered) return;
-      answered = true;
-      total += 1;
-
-      const buttons = answersBox.querySelectorAll(".answer");
-      buttons.forEach((b, i) => {
-        b.disabled = true;
-        if (quiz.answers[i].correct) b.classList.add("correct");
-      });
-
-      if (answer.correct) {
-        correct += 1;
-        btn.classList.add("correct");
-        setHint(`${quiz.correctText}\n\n${currentStep().explain || ""}`, "success");
-        speak(quiz.correctText);
-      } else {
-        btn.classList.add("wrong");
-        setHint(`${quiz.wrongText}\n\n${currentStep().explain || ""}`, "error");
-        speak(quiz.wrongText);
-      }
-
-      scoreBadge.textContent = `${correct} / ${total}`;
-    }
-
-    function nextStep() {
-      if (!currentKey) return;
-
-      const step = currentStep();
-      if (step.quiz && !answered) {
-        setHint("Сначала ответь на вопрос.", "warn");
-        speak("Сначала ответь на вопрос.");
-        return;
-      }
-
-      if (stepIndex < scenarios[currentKey].steps.length - 1) {
-        stepIndex += 1;
-        renderStep();
-      } else {
-        finishScenario();
-      }
-    }
-
-    function goBack() {
-      if (!currentKey) return;
-      if (stepIndex > 0) {
-        stepIndex -= 1;
-        renderStep();
-      } else {
-        speak("Это первый шаг.");
-      }
-    }
-
-    function explain() {
-      const step = currentStep();
-      if (!step) return;
-      setHint(step.explain || "Для этого шага нет дополнительного объяснения.", "info");
-      speak(step.explain || "Для этого шага нет дополнительного объяснения.");
-    }
-
-    function finishScenario() {
-      stopTimer();
-      stopMetronome();
-      hideQuiz();
-
-      const percent = total ? Math.round((correct / total) * 100) : 0;
-      let level = "Базовый уровень";
-      if (percent >= 85) level = "Отличный уровень";
-      else if (percent >= 60) level = "Хороший уровень";
-
-      resultBox.textContent =
-        `Сценарий завершён.\nРезультат: ${correct} / ${total} (${percent}%).\nУровень: ${level}.\n\nМожно пройти сценарий заново или выбрать другой.`;
-
-      resultBox.classList.add("visible");
-      setHint("Готово.", "success");
-      speak(`Сценарий завершён. Результат ${correct} из ${total}.`);
-    }
-
-    function startBreathingTimer() {
-      let seconds = 10;
-      setHint(`Таймер дыхания: ${seconds} секунд`, "warn");
-
-      timerInterval = setInterval(() => {
-        seconds -= 1;
-        setHint(`Таймер дыхания: ${seconds} секунд`, "warn");
-
-        if (seconds <= 0) {
-          stopTimer();
-          setHint("Оценка дыхания завершена.", "success");
-          speak("Оценка дыхания завершена.");
+<script>
+const scenarios={
+  triage:{
+    name:"Первичная оценка",
+    intro:"Запускаю первичную оценку.",
+    steps:[
+      {
+        title:"Шаг 1",
+        text:"Осмотрись. Оцени безопасность.",
+        explain:"Перед началом помощи убедись, что тебе и пострадавшему ничего не угрожает.",
+        quiz:{
+          question:"Что проверяем первым?",
+          answers:[
+            {text:"Пульс",correct:false},
+            {text:"Безопасность места",correct:true},
+            {text:"Документы",correct:false}
+          ],
+          ok:"Верно. Сначала безопасность.",
+          bad:"Неверно. Первым делом безопасность."
         }
-      }, 1000);
-    }
-
-    function stopTimer() {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-    }
-
-    function startMetronome() {
-      let count = 0;
-      setHint("Метроном СЛР включён: держи ритм 100–120 в минуту.", "warn");
-
-      metronomeInterval = setInterval(() => {
-        count += 1;
-        if (count % 10 === 0) {
-          setHint(`Метроном СЛР: ${count} нажатий`, "warn");
+      },
+      {
+        title:"Шаг 2",
+        text:"Проверь сознание.",
+        explain:"Аккуратно потряси за плечи и громко спроси: «Вы меня слышите?»"
+      },
+      {
+        title:"Шаг 3",
+        text:"Оцени дыхание.",
+        explain:"Оцени дыхание быстро. Учебный ориентир — 10 секунд.",
+        timer:true,
+        quiz:{
+          question:"Сколько секунд проверяем дыхание?",
+          answers:[
+            {text:"5 секунд",correct:false},
+            {text:"10 секунд",correct:true},
+            {text:"30 секунд",correct:false}
+          ],
+          ok:"Верно. Ориентир — 10 секунд.",
+          bad:"Неверно. Ориентир — 10 секунд."
         }
-      }, 600);
+      },
+      {
+        title:"Шаг 4",
+        text:"Определи дальнейшие действия.",
+        explain:"Если не дышит — переход к СЛР. Если дышит — вызов помощи и контроль состояния.",
+        quiz:{
+          question:"Если без сознания, но дышит?",
+          answers:[
+            {text:"Начать СЛР",correct:false},
+            {text:"Вызвать помощь и контролировать",correct:true},
+            {text:"Ничего не делать",correct:false}
+          ],
+          ok:"Верно. Вызвать помощь и контролировать.",
+          bad:"Неверно. Нужно вызвать помощь и контролировать."
+        }
+      }
+    ]
+  },
+  cpr:{
+    name:"СЛР",
+    intro:"Запускаю сценарий СЛР.",
+    steps:[
+      {title:"Шаг 1",text:"Проверь безопасность.",explain:"Помощь начинается только если место безопасно."},
+      {title:"Шаг 2",text:"Проверь сознание.",explain:"Обратись громко и проверь реакцию."},
+      {
+        title:"Шаг 3",
+        text:"Оцени дыхание.",
+        explain:"Оценка дыхания проводится быстро, примерно 10 секунд.",
+        quiz:{
+          question:"Сколько времени на оценку дыхания?",
+          answers:[
+            {text:"3 секунды",correct:false},
+            {text:"10 секунд",correct:true},
+            {text:"1 минута",correct:false}
+          ],
+          ok:"Верно. Примерно 10 секунд.",
+          bad:"Неверно. Ориентир — 10 секунд."
+        }
+      },
+      {title:"Шаг 4",text:"Вызови помощь. Попроси AED.",explain:"Чем раньше вызвана помощь и принесён AED, тем выше шанс на успешную реанимацию."},
+      {
+        title:"Шаг 5",
+        text:"Начинай СЛР.",
+        explain:"Если нет сознания и нормального дыхания — начинай компрессии.",
+        quiz:{
+          question:"Что делать, если не дышит нормально?",
+          answers:[
+            {text:"Ждать",correct:false},
+            {text:"Начать СЛР",correct:true},
+            {text:"Положить на бок",correct:false}
+          ],
+          ok:"Верно. Нужно начать СЛР.",
+          bad:"Неверно. Нужно начать СЛР."
+        }
+      },
+      {
+        title:"Шаг 6",
+        text:"Компрессии: 5–6 см, 100–120/мин.",
+        explain:"Нажимай ритмично, глубоко, с полным расправлением грудной клетки.",
+        metronome:true,
+        quiz:{
+          question:"Глубина компрессий?",
+          answers:[
+            {text:"2–3 см",correct:false},
+            {text:"5–6 см",correct:true},
+            {text:"8–10 см",correct:false}
+          ],
+          ok:"Верно. Глубина 5–6 сантиметров.",
+          bad:"Неверно. Ориентир — 5–6 сантиметров."
+        }
+      },
+      {title:"Шаг 7",text:"Продолжай до помощи или AED.",explain:"Не прекращай СЛР без причины."}
+    ]
+  },
+  aed:{
+    name:"AED",
+    intro:"Запускаю сценарий AED.",
+    steps:[
+      {
+        title:"Шаг 1",
+        text:"Включи AED.",
+        explain:"После включения AED начнёт давать голосовые подсказки.",
+        quiz:{
+          question:"Что сделать первым с AED?",
+          answers:[
+            {text:"Включить",correct:true},
+            {text:"Убрать в сторону",correct:false},
+            {text:"Ждать",correct:false}
+          ],
+          ok:"Верно. Сначала включить AED.",
+          bad:"Неверно. Сначала включить AED."
+        }
+      },
+      {title:"Шаг 2",text:"Открой грудную клетку.",explain:"Электроды должны быть наклеены на открытую кожу."},
+      {title:"Шаг 3",text:"Наклей электроды по схеме.",explain:"Один электрод — справа вверху, второй — слева сбоку ниже."},
+      {
+        title:"Шаг 4",
+        text:"Не касайся во время анализа.",
+        explain:"Во время анализа AED никто не должен касаться пострадавшего.",
+        quiz:{
+          question:"Можно касаться во время анализа?",
+          answers:[
+            {text:"Да",correct:false},
+            {text:"Нет",correct:true}
+          ],
+          ok:"Верно. Касаться нельзя.",
+          bad:"Неверно. Касаться нельзя."
+        }
+      },
+      {title:"Шаг 5",text:"Если нужен разряд — предупреди.",explain:"Убедись, что никто не касается пострадавшего, и нажми кнопку."},
+      {
+        title:"Шаг 6",
+        text:"После разряда продолжи СЛР.",
+        explain:"Пауза после разряда снижает эффективность помощи.",
+        quiz:{
+          question:"Что делать после разряда?",
+          answers:[
+            {text:"Ждать",correct:false},
+            {text:"Продолжить СЛР",correct:true}
+          ],
+          ok:"Верно. Продолжить СЛР.",
+          bad:"Неверно. Нужно продолжить СЛР."
+        }
+      }
+    ]
+  }
+};
+
+let key=null;
+let index=0;
+let correct=0;
+let total=0;
+let answered=false;
+let audio=false;
+let last="";
+let timer=null;
+let metronome=null;
+let right=false;
+
+const el={
+  start:document.getElementById("start"),
+  panel:document.getElementById("panel"),
+  controls:document.getElementById("controls"),
+  scenario:document.getElementById("scenarioName"),
+  title:document.getElementById("stepTitle"),
+  text:document.getElementById("stepText"),
+  hint:document.getElementById("hint"),
+  quiz:document.getElementById("quiz"),
+  question:document.getElementById("question"),
+  answers:document.getElementById("answers"),
+  result:document.getElementById("result"),
+  fill:document.getElementById("fill"),
+  percent:document.getElementById("percent"),
+  counter:document.getElementById("counter"),
+  score:document.getElementById("score")
+};
+
+function primeAudio(){
+  if(audio)return;
+  audio=true;
+  const m=new SpeechSynthesisUtterance("Звук включён");
+  m.lang="ru-RU";
+  m.volume=.01;
+  speechSynthesis.speak(m);
+}
+function speak(t){
+  last=t;
+  if(!audio)return;
+  speechSynthesis.cancel();
+  const m=new SpeechSynthesisUtterance(t);
+  m.lang="ru-RU";
+  m.rate=.95;
+  speechSynthesis.speak(m);
+}
+function hint(t,type="info"){
+  el.hint.textContent=t||"";
+  el.hint.className=t?`hint show ${type}`:"hint";
+}
+function startScenario(k){
+  primeAudio();
+  key=k;
+  index=0;
+  correct=0;
+  total=0;
+  answered=false;
+  el.start.style.display="none";
+  el.result.classList.remove("show");
+  speak(scenarios[k].intro);
+  render();
+}
+function step(){
+  return scenarios[key].steps[index];
+}
+function render(){
+  stopTimer();
+  stopMetronome();
+  hint("");
+  el.result.classList.remove("show");
+  answered=false;
+
+  const s=scenarios[key];
+  const st=step();
+
+  el.scenario.textContent=s.name;
+  el.title.textContent=st.title;
+  el.text.textContent=st.text;
+  el.score.textContent=`${correct} / ${total}`;
+
+  const p=Math.round(((index+1)/s.steps.length)*100);
+  el.fill.style.width=p+"%";
+  el.percent.textContent=p+"%";
+  el.counter.textContent=`Шаг ${index+1} / ${s.steps.length}`;
+
+  if(st.quiz) showQuiz(st.quiz);
+  else hideQuiz();
+
+  if(st.timer) startBreathingTimer();
+  if(st.metronome) startMetronome();
+
+  speak(`${st.title}. ${st.text}`);
+}
+function showQuiz(q){
+  el.quiz.classList.add("show");
+  el.question.textContent=q.question;
+  el.answers.innerHTML="";
+  q.answers.forEach(a=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=a.text;
+    b.onclick=()=>answer(a,q,b);
+    el.answers.appendChild(b);
+  });
+}
+function hideQuiz(){
+  el.quiz.classList.remove("show");
+  el.answers.innerHTML="";
+}
+function answer(a,q,b){
+  if(answered)return;
+  answered=true;
+  total++;
+  const buttons=el.answers.querySelectorAll(".answer");
+  buttons.forEach((btn,i)=>{
+    btn.disabled=true;
+    if(q.answers[i].correct)btn.classList.add("correct");
+  });
+  if(a.correct){
+    correct++;
+    b.classList.add("correct");
+    hint(q.ok+"\n\n"+(step().explain||""),"ok");
+    speak(q.ok);
+  }else{
+    b.classList.add("wrong");
+    hint(q.bad+"\n\n"+(step().explain||""),"bad");
+    speak(q.bad);
+  }
+  el.score.textContent=`${correct} / ${total}`;
+}
+function nextStep(){
+  if(!key)return;
+  if(step().quiz&&!answered){
+    hint("Сначала ответь на вопрос.","warn");
+    speak("Сначала ответь на вопрос.");
+    return;
+  }
+  if(index<scenarios[key].steps.length-1){
+    index++;
+    render();
+  }else finish();
+}
+function explain(){
+  if(!key)return;
+  hint(step().explain||"Нет дополнительного объяснения.","info");
+  speak(step().explain||"Нет дополнительного объяснения.");
+}
+function finish(){
+  stopTimer();
+  stopMetronome();
+  hideQuiz();
+  const percent=total?Math.round(correct/total*100):0;
+  let lvl="Базовый уровень";
+  if(percent>=85)lvl="Отличный уровень";
+  else if(percent>=60)lvl="Хороший уровень";
+  el.result.textContent=`Сценарий завершён.\nРезультат: ${correct} / ${total} (${percent}%).\nУровень: ${lvl}.`;
+  el.result.classList.add("show");
+  hint("Готово.","ok");
+  speak(`Сценарий завершён. Результат ${correct} из ${total}.`);
+}
+function startBreathingTimer(){
+  let sec=10;
+  hint(`Таймер дыхания: ${sec} секунд`,"warn");
+  timer=setInterval(()=>{
+    sec--;
+    hint(`Таймер дыхания: ${sec} секунд`,"warn");
+    if(sec<=0){
+      stopTimer();
+      hint("Оценка дыхания завершена.","ok");
+      speak("Оценка дыхания завершена.");
     }
-
-    function stopMetronome() {
-      if (metronomeInterval) {
-        clearInterval(metronomeInterval);
-        metronomeInterval = null;
-      }
-    }
-
-    function listen() {
-      primeAudio();
-
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        setHint("Распознавание речи не поддерживается этим браузером.", "error");
-        speak("Распознавание речи не поддерживается этим браузером.");
-        return;
-      }
-
-      const recognition = new SpeechRecognition();
-      recognition.lang = "ru-RU";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      setHint("Слушаю команду...", "info");
-      recognition.start();
-
-      recognition.onresult = function(event) {
-        const text = event.results[0][0].transcript.trim().toLowerCase();
-        handleVoice(text);
-      };
-
-      recognition.onerror = function() {
-        setHint("Не удалось распознать голос.", "error");
-      };
-    }
-
-    function handleVoice(text) {
-      if (text.includes("первичная")) {
-        startScenario("triage");
-        return;
-      }
-
-      if (text.includes("слр") || text.includes("с л р")) {
-        startScenario("cpr");
-        return;
-      }
-
-      if (text.includes("aed") || text.includes("аед")) {
-        startScenario("aed");
-        return;
-      }
-
-      if (text.includes("дальше")) {
-        nextStep();
-        return;
-      }
-
-      if (text.includes("назад")) {
-        goBack();
-        return;
-      }
-
-      if (text.includes("объясни")) {
-        explain();
-        return;
-      }
-
-      if (text.includes("повтори")) {
-        speak(lastText || "Пока нечего повторять.");
-        return;
-      }
-
-      if (text.includes("не дышит")) {
-        setHint("Принято: не дышит. Следующий сценарий — СЛР.", "warn");
-        speak("Принято. Не дышит. Следующий сценарий — СЛР.");
-        return;
-      }
-
-      if (text.includes("дышит")) {
-        setHint("Принято: дыхание есть. Вызови помощь и контролируй состояние.", "success");
-        speak("Принято. Дыхание есть. Вызови помощь и контролируй состояние.");
-        return;
-      }
-
-      setHint("Команда не распознана. Скажи: дальше, объясни, назад, СЛР, AED.", "warn");
-      speak("Команда не распознана.");
-    }
-
-    const params = new URLSearchParams(window.location.search);
-    const scenarioFromUrl = params.get("scenario");
-    if (scenarioFromUrl && scenarios[scenarioFromUrl]) {
-      startScenario(scenarioFromUrl);
-    }
-  </script>
+  },1000);
+}
+function stopTimer(){
+  if(timer){clearInterval(timer);timer=null;}
+}
+function startMetronome(){
+  let c=0;
+  hint("Метроном СЛР включён. Держи ритм 100–120 в минуту.","warn");
+  metronome=setInterval(()=>{
+    c++;
+    if(c%10===0)hint(`Метроном: ${c} нажатий`,"warn");
+  },600);
+}
+function stopMetronome(){
+  if(metronome){clearInterval(metronome);metronome=null;}
+}
+function toggleSide(){
+  right=!right;
+  el.panel.classList.toggle("right",right);
+  el.controls.classList.toggle("right",right);
+}
+function listen(){
+  primeAudio();
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    hint("Голос не поддерживается этим браузером.","bad");
+    return;
+  }
+  const r=new SR();
+  r.lang="ru-RU";
+  r.interimResults=false;
+  r.maxAlternatives=1;
+  hint("Слушаю...","info");
+  r.start();
+  r.onresult=e=>{
+    const t=e.results[0][0].transcript.trim().toLowerCase();
+    voice(t);
+  };
+  r.onerror=()=>hint("Не удалось распознать голос.","bad");
+}
+function voice(t){
+  if(t.includes("первичная"))return startScenario("triage");
+  if(t.includes("слр")||t.includes("с л р"))return startScenario("cpr");
+  if(t.includes("aed")||t.includes("аед"))return startScenario("aed");
+  if(t.includes("дальше"))return nextStep();
+  if(t.includes("объясни"))return explain();
+  if(t.includes("повтори"))return speak(last||"Пока нечего повторять.");
+  if(t.includes("не дышит")){
+    hint("Принято: не дышит. Следующий сценарий — СЛР.","warn");
+    return speak("Принято. Не дышит. Следующий сценарий — СЛР.");
+  }
+  if(t.includes("дышит")){
+    hint("Принято: дыхание есть. Вызови помощь и контролируй состояние.","ok");
+    return speak("Принято. Дыхание есть.");
+  }
+  hint("Команда не распознана.","warn");
+  speak("Команда не распознана.");
+}
+const params=new URLSearchParams(location.search);
+const scenario=params.get("scenario");
+const pos=params.get("pos");
+if(pos==="right")toggleSide();
+if(scenario&&scenarios[scenario])startScenario(scenario);
+</script>
 </body>
 </html>
