@@ -6,98 +6,258 @@
 <title>Экзамен СЛР | XREAL HUD</title>
 <style>
 :root{
-  --bg:#030303;--panel:rgba(10,10,10,.82);--panel2:rgba(20,20,20,.94);
-  --text:#fff;--muted:#b8b8b8;--green:#6fd39a;--blue:#4f83f1;
-  --red:#b84f5b;--yellow:#d8a23a;--border:rgba(255,255,255,.14)
+  --bg:#030303;
+  --panel:rgba(10,10,10,.84);
+  --panel2:rgba(20,20,20,.95);
+  --text:#fff;
+  --muted:#b8b8b8;
+  --green:#6fd39a;
+  --blue:#4f83f1;
+  --red:#b84f5b;
+  --yellow:#d8a23a;
+  --border:rgba(255,255,255,.14);
 }
 *{box-sizing:border-box}
 body{
-  margin:0;width:100vw;height:100vh;overflow:hidden;background:#030303;color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif
+  margin:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 78% 44%, rgba(255,255,255,.05), transparent 20%),
+    radial-gradient(circle at 23% 30%, rgba(79,131,241,.12), transparent 23%),
+    #030303;
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
 .hud{position:relative;width:100vw;height:100vh}
 .clear{
-  position:absolute;right:34px;top:34px;width:48vw;height:calc(100vh - 68px);
-  border-radius:30px;border:1px dashed rgba(255,255,255,.08);
-  color:rgba(255,255,255,.10);display:flex;align-items:center;justify-content:center;
-  text-align:center;font-size:28px;font-weight:950;pointer-events:none
+  position:absolute;
+  right:34px;
+  top:34px;
+  width:48vw;
+  height:calc(100vh - 68px);
+  border-radius:30px;
+  border:1px dashed rgba(255,255,255,.08);
+  color:rgba(255,255,255,.10);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:28px;
+  font-weight:950;
+  pointer-events:none;
 }
 .panel{
-  position:absolute;left:24px;top:24px;width:39vw;min-width:400px;max-width:590px;
-  padding:22px;border-radius:28px;background:var(--panel);border:1px solid var(--border);
-  backdrop-filter:blur(18px);box-shadow:0 18px 70px rgba(0,0,0,.5)
+  position:absolute;
+  left:24px;
+  top:24px;
+  width:39vw;
+  min-width:400px;
+  max-width:590px;
+  padding:22px;
+  border-radius:28px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  backdrop-filter:blur(18px);
+  box-shadow:0 18px 70px rgba(0,0,0,.5);
 }
 .panel.right{left:auto;right:24px}
 .top{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}
 .badge{
-  display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;
-  background:rgba(255,255,255,.08);border:1px solid var(--border);
-  color:var(--muted);font-size:13px;font-weight:850
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:13px;
+  font-weight:850;
 }
-.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(111,211,154,.8)}
-.mode{font-size:18px;color:var(--muted);font-weight:850;margin-bottom:6px}
-.title{font-size:39px;line-height:1.05;font-weight:950;margin-bottom:14px}
-.text{font-size:27px;line-height:1.22;font-weight:780;margin-bottom:14px}
+.dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(111,211,154,.8);
+}
+.phase{
+  font-size:17px;
+  color:var(--muted);
+  font-weight:850;
+  margin-bottom:7px;
+}
+.title{
+  font-size:39px;
+  line-height:1.05;
+  font-weight:950;
+  margin-bottom:14px;
+}
+.text{
+  font-size:28px;
+  line-height:1.22;
+  font-weight:780;
+  margin-bottom:14px;
+}
 .hint{
-  display:none;margin-top:14px;padding:15px;border-radius:20px;font-size:21px;line-height:1.3;white-space:pre-line
+  display:none;
+  margin-top:14px;
+  padding:15px;
+  border-radius:20px;
+  font-size:21px;
+  line-height:1.3;
+  white-space:pre-line;
 }
 .hint.show{display:block}
 .info{background:rgba(79,131,241,.14);border:1px solid rgba(79,131,241,.35);color:#e4ecff}
 .ok{background:rgba(46,159,91,.16);border:1px solid rgba(46,159,91,.38);color:#dff7e8}
 .bad{background:rgba(184,79,91,.16);border:1px solid rgba(184,79,91,.38);color:#ffe0e5}
 .warn{background:rgba(216,162,58,.16);border:1px solid rgba(216,162,58,.38);color:#ffe9bc}
-.quiz{display:none;margin-top:16px;padding:14px;border-radius:22px;background:rgba(79,131,241,.11);border:1px solid rgba(79,131,241,.3)}
+.quiz{
+  display:none;
+  margin-top:16px;
+  padding:14px;
+  border-radius:22px;
+  background:rgba(79,131,241,.11);
+  border:1px solid rgba(79,131,241,.3);
+}
 .quiz.show{display:block}
-.question{font-size:23px;line-height:1.25;font-weight:900;margin-bottom:12px}
+.question{
+  font-size:23px;
+  line-height:1.25;
+  font-weight:900;
+  margin-bottom:12px;
+}
 .answers{display:grid;gap:10px}
 .answer{
-  border:1px solid var(--border);background:rgba(255,255,255,.08);color:#fff;border-radius:17px;
-  padding:15px;font-size:20px;font-weight:850;text-align:left
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:17px;
+  padding:15px;
+  font-size:20px;
+  font-weight:850;
+  text-align:left;
 }
 .answer.correct{background:rgba(46,159,91,.25);border-color:rgba(46,159,91,.7)}
 .answer.wrong{background:rgba(184,79,91,.25);border-color:rgba(184,79,91,.7)}
 .answer:disabled{opacity:.9}
-.progressText{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:850;margin-top:18px;margin-bottom:8px}
-.bar{height:10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.1)}
-.fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--blue));transition:.25s}
+.progressText{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:850;
+  margin-top:18px;
+  margin-bottom:8px;
+}
+.bar{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.1);
+}
+.fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--green),var(--blue));
+  transition:.25s;
+}
 .controls{
-  position:absolute;left:24px;bottom:24px;width:39vw;min-width:400px;max-width:590px;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:9px
+  position:absolute;
+  left:24px;
+  bottom:24px;
+  width:39vw;
+  min-width:400px;
+  max-width:590px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
 }
 .controls.right{left:auto;right:24px}
 .btn{
-  border:1px solid var(--border);background:var(--panel2);color:#fff;border-radius:17px;
-  padding:13px 8px;font-size:15px;font-weight:900
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:#fff;
+  border-radius:17px;
+  padding:13px 8px;
+  font-size:15px;
+  font-weight:900;
 }
 .btn.primary{background:var(--blue);border-color:transparent}
 .btn.voice{background:var(--green);color:#07110c;border-color:transparent}
 .start{
-  position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.88);padding:22px
+  position:absolute;
+  inset:0;
+  z-index:9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.88);
+  padding:22px;
 }
 .startCard{
-  width:min(700px,90vw);padding:28px;border-radius:30px;background:var(--panel2);
-  border:1px solid var(--border);text-align:center
+  width:min(720px,90vw);
+  padding:28px;
+  border-radius:30px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  text-align:center;
 }
-.startTitle{font-size:40px;font-weight:950;margin-bottom:10px}
-.startText{color:var(--muted);font-size:20px;line-height:1.35;margin-bottom:18px}
+.startTitle{
+  font-size:40px;
+  font-weight:950;
+  margin-bottom:10px;
+}
+.startText{
+  color:var(--muted);
+  font-size:20px;
+  line-height:1.35;
+  margin-bottom:18px;
+}
 .startBtn{
-  width:100%;border:1px solid var(--border);background:var(--green);color:#07110c;
-  border-radius:22px;padding:18px;font-size:24px;font-weight:950
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--green);
+  color:#07110c;
+  border-radius:22px;
+  padding:18px;
+  font-size:24px;
+  font-weight:950;
 }
 .result{
-  display:none;margin-top:16px;padding:16px;border-radius:22px;background:rgba(111,211,154,.14);
-  border:1px solid rgba(111,211,154,.35);font-size:22px;line-height:1.35;white-space:pre-line
+  display:none;
+  margin-top:16px;
+  padding:16px;
+  border-radius:22px;
+  background:rgba(111,211,154,.14);
+  border:1px solid rgba(111,211,154,.35);
+  font-size:22px;
+  line-height:1.35;
+  white-space:pre-line;
 }
 .result.show{display:block}
 @media(max-width:800px){
-  body{overflow:auto;height:auto}.hud{height:auto;min-height:100vh;padding:12px}
-  .panel,.panel.right,.controls,.controls.right{position:static;width:100%;min-width:0;max-width:none;margin-bottom:12px}
-  .clear{display:none}.controls{grid-template-columns:repeat(2,1fr)}
-  .title{font-size:34px}.text{font-size:23px}
+  body{overflow:auto;height:auto}
+  .hud{height:auto;min-height:100vh;padding:12px}
+  .panel,.panel.right,.controls,.controls.right{
+    position:static;
+    width:100%;
+    min-width:0;
+    max-width:none;
+    margin-bottom:12px;
+  }
+  .clear{display:none}
+  .controls{grid-template-columns:repeat(2,1fr)}
+  .title{font-size:34px}
+  .text{font-size:23px}
 }
 </style>
 </head>
+
 <body>
 <div class="hud">
   <div class="clear">ОСНОВНОЙ ОБЗОР<br>МАНЕКЕН / РУКИ</div>
@@ -105,7 +265,9 @@ body{
   <div class="start" id="start">
     <div class="startCard">
       <div class="startTitle">Экзамен СЛР</div>
-      <div class="startText">Сценарий: увидели лежащего человека. Очки ведут по шагам, задают вопросы и фиксируют результат.</div>
+      <div class="startText">
+        Логика экзамена: сначала действие без подсказок, потом вопрос, затем объяснение после ответа.
+      </div>
       <button class="startBtn" onclick="startExam()">Начать экзамен</button>
     </div>
   </div>
@@ -116,7 +278,7 @@ body{
       <div class="badge" id="score">0 / 0</div>
     </div>
 
-    <div class="mode">Экзамен СЛР</div>
+    <div class="phase" id="phase">Ожидание</div>
     <div class="title" id="title">Готов</div>
     <div class="text" id="text">Нажми «Начать экзамен».</div>
 
@@ -145,380 +307,631 @@ body{
 </div>
 
 <script>
-const steps=[
+const examSteps = [
   {
-    title:"Ситуация",
-    text:"Перед тобой лежит человек. Начни экзамен.",
-    explain:"В экзамене важно не бросаться сразу к пострадавшему, а соблюдать порядок: безопасность, оценка состояния, вызов помощи, затем СЛР."
+    actionTitle: "Ситуация",
+    actionText: "Перед тобой лежит человек.",
+    question: "С какого действия начинается оказание помощи?",
+    answers: [
+      { text: "С оценки безопасности места", correct: true },
+      { text: "С немедленных компрессий", correct: false },
+      { text: "С поиска документов", correct: false }
+    ],
+    correctText: "Верно. Сначала оценивается безопасность.",
+    wrongText: "Неверно. Начинать нужно с оценки безопасности.",
+    explanation: "Если место опасно, спасатель сам может пострадать. Сначала оцениваются угрозы: электричество, транспорт, газ, огонь, механизмы, химия."
   },
   {
-    title:"1. Оцени обстановку",
-    text:"Осмотрись. Убедись, что место безопасно.",
-    explain:"Проверь опасности: транспорт, электричество, газ, огонь, механизмы, химические вещества, агрессивные люди.",
-    quiz:{
-      q:"Что нужно сделать первым?",
-      a:[
-        {t:"Сразу начать компрессии",c:false},
-        {t:"Оценить безопасность места",c:true},
-        {t:"Искать документы",c:false}
-      ],
-      ok:"Верно. Сначала безопасность.",
-      bad:"Неверно. Первым делом безопасность."
-    }
+    actionTitle: "Оценка обстановки",
+    actionText: "Осмотрись вокруг.",
+    question: "Что именно нужно оценить на месте происшествия?",
+    answers: [
+      { text: "Есть ли угрозы для спасателя и пострадавшего", correct: true },
+      { text: "Какая погода на улице", correct: false },
+      { text: "Есть ли у пострадавшего документы", correct: false }
+    ],
+    correctText: "Верно. Нужно оценить угрозы.",
+    wrongText: "Неверно. Главное — угрозы для спасателя и пострадавшего.",
+    explanation: "На этом этапе важно убедиться, что можно безопасно подойти к человеку и начать помощь."
   },
   {
-    title:"2. Осмотри человека",
-    text:"Подойди. Быстро оцени положение тела и видимые признаки опасности.",
-    explain:"Посмотри: есть ли кровь, травмы, провода, предметы рядом, необычное положение тела, признаки падения."
+    actionTitle: "Первичный осмотр",
+    actionText: "Подойди и осмотри человека.",
+    question: "Что оцениваем при первичном осмотре?",
+    answers: [
+      { text: "Положение тела, видимые травмы, кровь, опасные предметы рядом", correct: true },
+      { text: "Рост и вес пострадавшего", correct: false },
+      { text: "Марку телефона", correct: false }
+    ],
+    correctText: "Верно. Нужен быстрый осмотр состояния и опасностей.",
+    wrongText: "Неверно. Оцениваем положение, травмы, кровь и опасности рядом.",
+    explanation: "Первичный осмотр помогает понять, есть ли явные повреждения и безопасно ли продолжать помощь."
   },
   {
-    title:"3. Окликни и потряси",
-    text:"Громко обратись и аккуратно потряси за плечи.",
-    explain:"Нужно проверить реакцию. Не тряси грубо, особенно если возможна травма головы, шеи или позвоночника.",
-    quiz:{
-      q:"Как проверяем реакцию?",
-      a:[
-        {t:"Окликнуть и аккуратно потрясти за плечи",c:true},
-        {t:"Сильно ударить по лицу",c:false},
-        {t:"Сразу делать вдохи",c:false}
-      ],
-      ok:"Верно. Окрик и аккуратное потряхивание.",
-      bad:"Неверно. Проверяем окриком и аккуратным потряхиванием."
-    }
+    actionTitle: "Оклик",
+    actionText: "Громко обратись к пострадавшему.",
+    question: "Зачем нужно громко окликнуть пострадавшего?",
+    answers: [
+      { text: "Чтобы проверить реакцию", correct: true },
+      { text: "Чтобы напугать окружающих", correct: false },
+      { text: "Чтобы проверить слух спасателя", correct: false }
+    ],
+    correctText: "Верно. Оклик нужен для проверки реакции.",
+    wrongText: "Неверно. Оклик нужен, чтобы проверить реакцию пострадавшего.",
+    explanation: "Если человек реагирует на голос, алгоритм будет отличаться от ситуации, когда сознание отсутствует."
   },
   {
-    title:"4. Проверь сознание",
-    text:"Определи: есть реакция или сознание отсутствует.",
-    explain:"Если реакции нет — считаем, что сознание отсутствует, и переходим к проверке дыхания и признаков жизни."
+    actionTitle: "Тактильная проверка",
+    actionText: "Аккуратно потряси за плечи.",
+    question: "Как правильно проверить реакцию прикосновением?",
+    answers: [
+      { text: "Аккуратно потрясти за плечи", correct: true },
+      { text: "Сильно ударить по лицу", correct: false },
+      { text: "Поднять человека на ноги", correct: false }
+    ],
+    correctText: "Верно. Проверяем аккуратно.",
+    wrongText: "Неверно. Нужно аккуратно потрясти за плечи.",
+    explanation: "Действие должно быть безопасным. Грубые действия могут навредить, особенно при возможной травме."
   },
   {
-    title:"5. Проверь дыхание",
-    text:"Оцени дыхание не более 10 секунд.",
-    explain:"Оцени дыхание: смотри на движения грудной клетки, слушай дыхание, ощущай выдох. Не трать много времени.",
-    timer:true,
-    quiz:{
-      q:"Сколько времени проверяем дыхание?",
-      a:[
-        {t:"Не более 10 секунд",c:true},
-        {t:"Около 1 минуты",c:false},
-        {t:"Пока не приедет помощь",c:false}
-      ],
-      ok:"Верно. Не более 10 секунд.",
-      bad:"Неверно. Ориентир — не более 10 секунд."
-    }
+    actionTitle: "Сознание",
+    actionText: "Определи, есть ли реакция.",
+    question: "Если реакции на голос и прикосновение нет, что считаем?",
+    answers: [
+      { text: "Сознание отсутствует", correct: true },
+      { text: "Человек точно спит", correct: false },
+      { text: "Помощь не нужна", correct: false }
+    ],
+    correctText: "Верно. Реакции нет — сознание отсутствует.",
+    wrongText: "Неверно. При отсутствии реакции считаем, что сознание отсутствует.",
+    explanation: "Отсутствие реакции — критический признак. После этого нужно быстро оценить дыхание и признаки жизни."
   },
   {
-    title:"6. Проверь пульс",
-    text:"Проверь признаки кровообращения по учебному алгоритму.",
-    explain:"В учебном сценарии можно проверить пульс на сонной артерии. Делай это быстро, вместе с общей оценкой состояния.",
-    quiz:{
-      q:"Где обычно проверяют пульс у взрослого в критическом состоянии?",
-      a:[
-        {t:"На сонной артерии",c:true},
-        {t:"На мизинце",c:false},
-        {t:"На стопе обязательно",c:false}
-      ],
-      ok:"Верно. В учебном алгоритме — сонная артерия.",
-      bad:"Неверно. Обычно проверяют на сонной артерии."
-    }
+    actionTitle: "Дыхание",
+    actionText: "Проверь дыхание.",
+    question: "Сколько времени допускается проверять дыхание?",
+    answers: [
+      { text: "Не более 10 секунд", correct: true },
+      { text: "Около 1 минуты", correct: false },
+      { text: "Пока не станет понятно", correct: false }
+    ],
+    correctText: "Верно. Не более 10 секунд.",
+    wrongText: "Неверно. Дыхание проверяют не более 10 секунд.",
+    explanation: "Долгая проверка дыхания задерживает начало СЛР. Нужно быстро оценить наличие нормального дыхания.",
+    timer: true
   },
   {
-    title:"7. Вызови помощь",
-    text:"Позвони 112/103 или попроси вызвать помощь.",
-    explain:"Сообщи: место, что произошло, пострадавший без сознания, дыхание и пульс отсутствуют или не определяются, начата СЛР.",
-    quiz:{
-      q:"Что важно сообщить диспетчеру?",
-      a:[
-        {t:"Место, состояние, что нет сознания/дыхания/пульса",c:true},
-        {t:"Только своё имя",c:false},
-        {t:"Цвет одежды пострадавшего и всё",c:false}
-      ],
-      ok:"Верно. Диспетчеру нужны место и состояние.",
-      bad:"Неверно. Нужно сообщить место и критическое состояние."
-    }
+    actionTitle: "Способ проверки дыхания",
+    actionText: "Оцени наличие дыхания.",
+    question: "Как проверяется дыхание?",
+    answers: [
+      { text: "Смотреть, слушать, ощущать", correct: true },
+      { text: "Только смотреть на лицо", correct: false },
+      { text: "Только считать пульс на руке", correct: false }
+    ],
+    correctText: "Верно. Смотреть, слушать, ощущать.",
+    wrongText: "Неверно. Используется принцип: смотреть, слушать, ощущать.",
+    explanation: "Смотрим на движения грудной клетки, слушаем дыхание, ощущаем выдох."
   },
   {
-    title:"8. Освободи грудную клетку",
-    text:"Убери стесняющую одежду. Открой грудную клетку.",
-    explain:"Для компрессий и AED грудная клетка должна быть доступна. Убери плотную, стягивающую одежду."
+    actionTitle: "Пульс",
+    actionText: "Проверь признаки кровообращения.",
+    question: "Где в учебном алгоритме обычно проверяют пульс у взрослого?",
+    answers: [
+      { text: "На сонной артерии", correct: true },
+      { text: "На мизинце", correct: false },
+      { text: "На одежде", correct: false }
+    ],
+    correctText: "Верно. Обычно на сонной артерии.",
+    wrongText: "Неверно. В учебном алгоритме пульс у взрослого проверяют на сонной артерии.",
+    explanation: "Проверка должна быть быстрой и не задерживать начало помощи."
   },
   {
-    title:"9. Решение о СЛР",
-    text:"Если нет сознания, дыхания и пульса — начинай СЛР.",
-    explain:"Не откладывай начало компрессий. Основная цель — поддерживать кровообращение до прибытия помощи или AED.",
-    quiz:{
-      q:"Когда начинаем СЛР?",
-      a:[
-        {t:"Нет сознания и нет нормального дыхания/признаков кровообращения",c:true},
-        {t:"Если человек разговаривает",c:false},
-        {t:"Если человек просто устал",c:false}
-      ],
-      ok:"Верно. Это показание к СЛР.",
-      bad:"Неверно. СЛР начинают при отсутствии сознания и нормального дыхания/признаков жизни."
-    }
+    actionTitle: "Вызов помощи",
+    actionText: "Вызови скорую помощь.",
+    question: "Что нужно сообщить диспетчеру?",
+    answers: [
+      { text: "Место, что произошло, состояние пострадавшего", correct: true },
+      { text: "Только своё имя", correct: false },
+      { text: "Только возраст пострадавшего", correct: false }
+    ],
+    correctText: "Верно. Нужны место, событие и состояние.",
+    wrongText: "Неверно. Диспетчеру нужно сообщить место, что произошло и состояние.",
+    explanation: "Сообщи адрес или ориентиры, что человек без сознания, нет нормального дыхания/пульса, помощь начата."
   },
   {
-    title:"10. Поставь руки",
-    text:"Основание ладони — на центр грудной клетки.",
-    explain:"Руки ставятся на нижнюю половину грудины, в центр грудной клетки. Вторую руку — сверху, пальцы не давят на рёбра.",
-    quiz:{
-      q:"Куда ставим руки для компрессий?",
-      a:[
-        {t:"В центр грудной клетки на грудину",c:true},
-        {t:"На живот",c:false},
-        {t:"На левое плечо",c:false}
-      ],
-      ok:"Верно. Центр грудной клетки.",
-      bad:"Неверно. Руки ставятся в центр грудной клетки на грудину."
-    }
+    actionTitle: "Одежда",
+    actionText: "Освободи грудную клетку.",
+    question: "Зачем освобождать грудную клетку?",
+    answers: [
+      { text: "Для правильных компрессий и установки AED", correct: true },
+      { text: "Чтобы было удобнее разговаривать", correct: false },
+      { text: "Это необязательное декоративное действие", correct: false }
+    ],
+    correctText: "Верно. Грудная клетка должна быть доступна.",
+    wrongText: "Неверно. Грудную клетку освобождают для компрессий и AED.",
+    explanation: "Стесняющая одежда мешает правильной постановке рук, контролю грудной клетки и установке электродов AED."
   },
   {
-    title:"11. Компрессии",
-    text:"Нажимай глубиной 5–6 см, темп 100–120 в минуту.",
-    explain:"Локти прямые, плечи над руками. После каждого нажатия дай грудной клетке полностью расправиться.",
-    metronome:true,
-    quiz:{
-      q:"Какая глубина компрессий у взрослого?",
-      a:[
-        {t:"5–6 см",c:true},
-        {t:"1–2 см",c:false},
-        {t:"10–12 см",c:false}
-      ],
-      ok:"Верно. Глубина 5–6 сантиметров.",
-      bad:"Неверно. Ориентир — 5–6 сантиметров."
-    }
+    actionTitle: "Решение о СЛР",
+    actionText: "Определи, нужна ли СЛР.",
+    question: "Когда нужно начинать СЛР?",
+    answers: [
+      { text: "Нет сознания и нет нормального дыхания/признаков кровообращения", correct: true },
+      { text: "Человек разговаривает", correct: false },
+      { text: "Человек жалуется на усталость", correct: false }
+    ],
+    correctText: "Верно. Это показание к СЛР.",
+    wrongText: "Неверно. СЛР начинают при отсутствии сознания и нормального дыхания/признаков жизни.",
+    explanation: "При критическом состоянии нельзя терять время. Нужно переходить к компрессиям."
   },
   {
-    title:"12. Соотношение",
-    text:"Выполняй 30 компрессий и 2 вдоха.",
-    explain:"Классический учебный цикл: 30 нажатий на грудную клетку и 2 спасательных вдоха, если обучен и есть возможность.",
-    quiz:{
-      q:"Какое соотношение компрессий и вдохов?",
-      a:[
-        {t:"30:2",c:true},
-        {t:"5:1",c:false},
-        {t:"100:10",c:false}
-      ],
-      ok:"Верно. 30 компрессий и 2 вдоха.",
-      bad:"Неверно. В учебном алгоритме — 30:2."
-    }
+    actionTitle: "Положение рук",
+    actionText: "Поставь руки для компрессий.",
+    question: "Куда ставятся руки?",
+    answers: [
+      { text: "В центр грудной клетки на грудину", correct: true },
+      { text: "На живот", correct: false },
+      { text: "На левое плечо", correct: false }
+    ],
+    correctText: "Верно. Руки ставятся в центр грудной клетки.",
+    wrongText: "Неверно. Руки ставятся в центр грудной клетки на грудину.",
+    explanation: "Основание ладони ставится на центр грудной клетки. Вторая рука сверху. Локти прямые."
   },
   {
-    title:"13. Вдохи",
-    text:"Открой дыхательные пути и сделай 2 вдоха.",
-    explain:"Запрокинь голову, приподними подбородок, зажми нос, герметично охвати рот и сделай вдох до видимого подъёма грудной клетки.",
-    quiz:{
-      q:"Что должно быть видно при эффективном вдохе?",
-      a:[
-        {t:"Подъём грудной клетки",c:true},
-        {t:"Движение стопы",c:false},
-        {t:"Изменение цвета одежды",c:false}
-      ],
-      ok:"Верно. Должен быть подъём грудной клетки.",
-      bad:"Неверно. Ориентир — подъём грудной клетки."
-    }
+    actionTitle: "Компрессии",
+    actionText: "Начни компрессии грудной клетки.",
+    question: "Какая глубина компрессий у взрослого?",
+    answers: [
+      { text: "5–6 см", correct: true },
+      { text: "1–2 см", correct: false },
+      { text: "10–12 см", correct: false }
+    ],
+    correctText: "Верно. Глубина 5–6 см.",
+    wrongText: "Неверно. Глубина компрессий у взрослого — 5–6 см.",
+    explanation: "Компрессии должны быть достаточно глубокими, но не чрезмерными. Важно давать грудной клетке полностью расправляться.",
+    metronome: true
   },
   {
-    title:"14. Продолжай СЛР",
-    text:"Продолжай циклы до помощи, AED или признаков жизни.",
-    explain:"Не делай длинных пауз. Продолжай до прибытия специалистов, появления AED, восстановления дыхания или физической невозможности продолжать."
+    actionTitle: "Темп компрессий",
+    actionText: "Продолжай компрессии.",
+    question: "Какой темп компрессий нужен?",
+    answers: [
+      { text: "100–120 в минуту", correct: true },
+      { text: "20–30 в минуту", correct: false },
+      { text: "200–240 в минуту", correct: false }
+    ],
+    correctText: "Верно. Темп 100–120 в минуту.",
+    wrongText: "Неверно. Темп компрессий — 100–120 в минуту.",
+    explanation: "Слишком медленный темп снижает кровоток, слишком быстрый ухудшает качество компрессий."
   },
   {
-    title:"15. Если очнулся",
-    text:"Если дыхание восстановилось — переведи в устойчивое боковое положение.",
-    explain:"Если пострадавший без сознания, но нормально дышит, его переводят в устойчивое боковое положение и контролируют состояние до приезда помощи.",
-    quiz:{
-      q:"Что делать, если дыхание восстановилось, но сознания нет?",
-      a:[
-        {t:"Устойчивое боковое положение и контроль",c:true},
-        {t:"Оставить на спине и уйти",c:false},
-        {t:"Продолжать компрессии без оценки",c:false}
-      ],
-      ok:"Верно. Боковое положение и контроль.",
-      bad:"Неверно. Нужно боковое положение и контроль состояния."
-    }
+    actionTitle: "Соотношение",
+    actionText: "Выполни цикл СЛР.",
+    question: "Какое соотношение компрессий и вдохов в учебном алгоритме?",
+    answers: [
+      { text: "30:2", correct: true },
+      { text: "5:1", correct: false },
+      { text: "100:10", correct: false }
+    ],
+    correctText: "Верно. 30 компрессий и 2 вдоха.",
+    wrongText: "Неверно. В учебном алгоритме используется 30:2.",
+    explanation: "Один цикл: 30 компрессий, затем 2 спасательных вдоха, если спасатель обучен и готов их выполнять."
+  },
+  {
+    actionTitle: "Вдохи",
+    actionText: "Выполни спасательные вдохи.",
+    question: "Что должно быть видно при эффективном вдохе?",
+    answers: [
+      { text: "Подъём грудной клетки", correct: true },
+      { text: "Движение стопы", correct: false },
+      { text: "Изменение цвета одежды", correct: false }
+    ],
+    correctText: "Верно. Должен быть подъём грудной клетки.",
+    wrongText: "Неверно. Ориентир эффективного вдоха — подъём грудной клетки.",
+    explanation: "Перед вдохом нужно открыть дыхательные пути: запрокинуть голову и приподнять подбородок."
+  },
+  {
+    actionTitle: "Продолжение",
+    actionText: "Продолжай СЛР.",
+    question: "До какого момента продолжают СЛР?",
+    answers: [
+      { text: "До прибытия помощи, AED, признаков жизни или невозможности продолжать", correct: true },
+      { text: "Только 10 секунд", correct: false },
+      { text: "Пока не надоест", correct: false }
+    ],
+    correctText: "Верно. Продолжаем до помощи, AED или признаков жизни.",
+    wrongText: "Неверно. СЛР продолжают до помощи, AED, признаков жизни или невозможности продолжать.",
+    explanation: "Важно минимизировать паузы и не прекращать помощь без причины."
+  },
+  {
+    actionTitle: "Признаки жизни",
+    actionText: "Пострадавший начал дышать.",
+    question: "Что делать, если дыхание восстановилось, но сознания нет?",
+    answers: [
+      { text: "Перевести в устойчивое боковое положение и контролировать", correct: true },
+      { text: "Оставить на спине и уйти", correct: false },
+      { text: "Продолжать компрессии без оценки", correct: false }
+    ],
+    correctText: "Верно. Боковое положение и контроль.",
+    wrongText: "Неверно. Нужно устойчивое боковое положение и контроль состояния.",
+    explanation: "Если человек дышит, но без сознания, боковое положение помогает снизить риск западения языка и аспирации."
   }
 ];
 
-let i=0,correct=0,total=0,answered=false,audio=false,last="",timer=null,metronome=null,right=false,started=false;
+let stepIndex = 0;
+let phase = "action";
+let correct = 0;
+let total = 0;
+let answered = false;
+let started = false;
+let audioReady = false;
+let lastText = "";
+let timer = null;
+let metronome = null;
+let right = false;
 
-const el={
-  start:document.getElementById("start"),
-  panel:document.getElementById("panel"),
-  controls:document.getElementById("controls"),
-  title:document.getElementById("title"),
-  text:document.getElementById("text"),
-  hint:document.getElementById("hint"),
-  quiz:document.getElementById("quiz"),
-  question:document.getElementById("question"),
-  answers:document.getElementById("answers"),
-  result:document.getElementById("result"),
-  fill:document.getElementById("fill"),
-  percent:document.getElementById("percent"),
-  counter:document.getElementById("counter"),
-  score:document.getElementById("score")
+const el = {
+  start: document.getElementById("start"),
+  panel: document.getElementById("panel"),
+  controls: document.getElementById("controls"),
+  phase: document.getElementById("phase"),
+  title: document.getElementById("title"),
+  text: document.getElementById("text"),
+  hint: document.getElementById("hint"),
+  quiz: document.getElementById("quiz"),
+  question: document.getElementById("question"),
+  answers: document.getElementById("answers"),
+  result: document.getElementById("result"),
+  fill: document.getElementById("fill"),
+  percent: document.getElementById("percent"),
+  counter: document.getElementById("counter"),
+  score: document.getElementById("score")
 };
 
 function primeAudio(){
-  if(audio)return;
-  audio=true;
-  const m=new SpeechSynthesisUtterance("Звук включён");
-  m.lang="ru-RU";m.volume=.01;speechSynthesis.speak(m);
+  if(audioReady) return;
+  audioReady = true;
+  const msg = new SpeechSynthesisUtterance("Звук включён");
+  msg.lang = "ru-RU";
+  msg.volume = 0.01;
+  speechSynthesis.speak(msg);
 }
-function speak(t){
-  last=t;
-  if(!audio)return;
+
+function speak(text){
+  lastText = text;
+  if(!audioReady) return;
   speechSynthesis.cancel();
-  const m=new SpeechSynthesisUtterance(t);
-  m.lang="ru-RU";m.rate=.95;speechSynthesis.speak(m);
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "ru-RU";
+  msg.rate = 0.95;
+  speechSynthesis.speak(msg);
 }
-function setHint(t,type="info"){
-  el.hint.textContent=t||"";
-  el.hint.className=t?`hint show ${type}`:"hint";
+
+function setHint(text, type="info"){
+  el.hint.textContent = text || "";
+  el.hint.className = text ? `hint show ${type}` : "hint";
 }
+
+function currentStep(){
+  return examSteps[stepIndex];
+}
+
 function startExam(){
   primeAudio();
-  started=true;i=0;correct=0;total=0;answered=false;
-  el.start.style.display="none";
+  started = true;
+  stepIndex = 0;
+  phase = "action";
+  correct = 0;
+  total = 0;
+  answered = false;
+  el.start.style.display = "none";
+  el.result.classList.remove("show");
   render();
 }
-function step(){return steps[i]}
+
 function render(){
-  stopTimer();stopMetronome();setHint("");answered=false;
+  stopTimer();
+  stopMetronome();
+  setHint("");
+  hideQuiz();
+  answered = false;
   el.result.classList.remove("show");
-  const st=step();
-  el.title.textContent=st.title;
-  el.text.textContent=st.text;
-  el.score.textContent=`${correct} / ${total}`;
-  const p=Math.round(((i+1)/steps.length)*100);
-  el.fill.style.width=p+"%";
-  el.percent.textContent=p+"%";
-  el.counter.textContent=`Шаг ${i+1} / ${steps.length}`;
-  if(st.quiz)showQuiz(st.quiz);else hideQuiz();
-  if(st.timer)startTimer();
-  if(st.metronome)startMetronome();
-  speak(`${st.title}. ${st.text}`);
+
+  const step = currentStep();
+  updateProgress();
+
+  if(phase === "action"){
+    el.phase.textContent = "Этап: действие";
+    el.title.textContent = step.actionTitle;
+    el.text.textContent = step.actionText;
+    speak(`${step.actionTitle}. ${step.actionText}`);
+  }
+
+  if(phase === "question"){
+    el.phase.textContent = "Этап: вопрос";
+    el.title.textContent = "Проверка";
+    el.text.textContent = "Ответь на вопрос.";
+    showQuiz(step);
+    speak(`Вопрос. ${step.question}`);
+  }
 }
-function showQuiz(q){
+
+function updateProgress(){
+  const progress = Math.round(((stepIndex + 1) / examSteps.length) * 100);
+  el.fill.style.width = progress + "%";
+  el.percent.textContent = progress + "%";
+  el.counter.textContent = `Шаг ${stepIndex + 1} / ${examSteps.length}`;
+  el.score.textContent = `${correct} / ${total}`;
+}
+
+function showQuiz(step){
   el.quiz.classList.add("show");
-  el.question.textContent=q.q;
-  el.answers.innerHTML="";
-  q.a.forEach(a=>{
-    const b=document.createElement("button");
-    b.className="answer";
-    b.textContent=a.t;
-    b.onclick=()=>answer(a,q,b);
-    el.answers.appendChild(b);
+  el.question.textContent = step.question;
+  el.answers.innerHTML = "";
+
+  step.answers.forEach(answer => {
+    const btn = document.createElement("button");
+    btn.className = "answer";
+    btn.textContent = answer.text;
+    btn.onclick = () => answerQuestion(answer, btn);
+    el.answers.appendChild(btn);
   });
 }
+
 function hideQuiz(){
   el.quiz.classList.remove("show");
-  el.answers.innerHTML="";
+  el.question.textContent = "";
+  el.answers.innerHTML = "";
 }
-function answer(a,q,b){
-  if(answered)return;
-  answered=true;total++;
-  const buttons=el.answers.querySelectorAll(".answer");
-  buttons.forEach((btn,idx)=>{
-    btn.disabled=true;
-    if(q.a[idx].c)btn.classList.add("correct");
+
+function answerQuestion(answer, selectedBtn){
+  if(answered) return;
+
+  answered = true;
+  total++;
+
+  const step = currentStep();
+  const buttons = el.answers.querySelectorAll(".answer");
+
+  buttons.forEach((btn, index) => {
+    btn.disabled = true;
+    if(step.answers[index].correct){
+      btn.classList.add("correct");
+    }
   });
-  if(a.c){
-    correct++;b.classList.add("correct");
-    setHint(q.ok+"\n\n"+(step().explain||""),"ok");
-    speak(q.ok);
+
+  if(answer.correct){
+    correct++;
+    selectedBtn.classList.add("correct");
+    setHint(`${step.correctText}\n\nОбъяснение: ${step.explanation}`, "ok");
+    speak(step.correctText);
   }else{
-    b.classList.add("wrong");
-    setHint(q.bad+"\n\n"+(step().explain||""),"bad");
-    speak(q.bad);
+    selectedBtn.classList.add("wrong");
+    setHint(`${step.wrongText}\n\nОбъяснение: ${step.explanation}`, "bad");
+    speak(step.wrongText);
   }
-  el.score.textContent=`${correct} / ${total}`;
+
+  updateProgress();
 }
+
 function next(){
-  if(!started)return;
-  if(step().quiz&&!answered){
-    setHint("Сначала ответь на вопрос.","warn");
+  if(!started) return;
+
+  if(phase === "action"){
+    phase = "question";
+    render();
+    return;
+  }
+
+  if(phase === "question"){
+    if(!answered){
+      setHint("Сначала ответь на вопрос.", "warn");
+      speak("Сначала ответь на вопрос.");
+      return;
+    }
+
+    if(stepIndex < examSteps.length - 1){
+      stepIndex++;
+      phase = "action";
+      render();
+    }else{
+      finish();
+    }
+  }
+}
+
+function explain(){
+  if(!started) return;
+
+  const step = currentStep();
+
+  if(phase === "action"){
+    setHint("В режиме экзамена объяснение появится после ответа. Выполни действие и нажми «Дальше».", "warn");
+    speak("В режиме экзамена объяснение появится после ответа.");
+    return;
+  }
+
+  if(phase === "question" && !answered){
+    setHint("Сначала ответь на вопрос. После ответа появится объяснение.", "warn");
     speak("Сначала ответь на вопрос.");
     return;
   }
-  if(i<steps.length-1){i++;render()}else finish();
+
+  if(phase === "question" && answered){
+    setHint(`Объяснение: ${step.explanation}`, "info");
+    speak(step.explanation);
+  }
 }
-function explain(){
-  if(!started)return;
-  setHint(step().explain||"Нет дополнительного объяснения.","info");
-  speak(step().explain||"Нет дополнительного объяснения.");
-}
+
 function finish(){
-  stopTimer();stopMetronome();hideQuiz();
-  const percent=total?Math.round(correct/total*100):0;
-  let lvl="Базовый уровень";
-  if(percent>=85)lvl="Экзамен пройден отлично";
-  else if(percent>=70)lvl="Экзамен пройден";
-  else lvl="Нужно повторить алгоритм";
-  el.result.textContent=`Экзамен завершён.\nРезультат: ${correct} / ${total} (${percent}%).\nИтог: ${lvl}.`;
+  stopTimer();
+  stopMetronome();
+  hideQuiz();
+
+  const percent = total ? Math.round((correct / total) * 100) : 0;
+  let level = "Нужно повторить алгоритм";
+
+  if(percent >= 85){
+    level = "Экзамен пройден отлично";
+  }else if(percent >= 70){
+    level = "Экзамен пройден";
+  }
+
+  el.phase.textContent = "Экзамен завершён";
+  el.title.textContent = "Результат";
+  el.text.textContent = "Экзамен СЛР завершён.";
+  el.result.textContent = `Результат: ${correct} / ${total} (${percent}%).\nИтог: ${level}.\n\nОшибки можно разобрать с инструктором или повторить сценарий.`;
   el.result.classList.add("show");
-  setHint("Экзамен завершён.","ok");
+  setHint("Готово.", "ok");
   speak(`Экзамен завершён. Результат ${correct} из ${total}.`);
 }
+
 function startTimer(){
-  let sec=10;
-  setHint(`Проверка дыхания: ${sec} секунд`,"warn");
-  timer=setInterval(()=>{
+  let sec = 10;
+  setHint(`Таймер: ${sec} секунд`, "warn");
+
+  timer = setInterval(() => {
     sec--;
-    setHint(`Проверка дыхания: ${sec} секунд`,"warn");
-    if(sec<=0){
+    setHint(`Таймер: ${sec} секунд`, "warn");
+
+    if(sec <= 0){
       stopTimer();
-      setHint("Проверка завершена.","ok");
-      speak("Проверка дыхания завершена.");
+      setHint("Время проверки завершено.", "ok");
+      speak("Время проверки завершено.");
     }
-  },1000);
+  }, 1000);
 }
-function stopTimer(){if(timer){clearInterval(timer);timer=null}}
+
+function stopTimer(){
+  if(timer){
+    clearInterval(timer);
+    timer = null;
+  }
+}
+
 function startMetronome(){
-  let c=0;
-  setHint("Метроном включён. Держи темп 100–120 в минуту.","warn");
-  metronome=setInterval(()=>{
-    c++;
-    if(c%10===0)setHint(`Метроном: ${c} нажатий`,"warn");
-  },600);
+  let count = 0;
+  setHint("Метроном включён.", "warn");
+
+  metronome = setInterval(() => {
+    count++;
+    if(count % 10 === 0){
+      setHint(`Метроном: ${count} нажатий`, "warn");
+    }
+  }, 600);
 }
-function stopMetronome(){if(metronome){clearInterval(metronome);metronome=null}}
+
+function stopMetronome(){
+  if(metronome){
+    clearInterval(metronome);
+    metronome = null;
+  }
+}
+
 function toggleSide(){
-  right=!right;
-  el.panel.classList.toggle("right",right);
-  el.controls.classList.toggle("right",right);
+  right = !right;
+  el.panel.classList.toggle("right", right);
+  el.controls.classList.toggle("right", right);
 }
+
 function listen(){
   primeAudio();
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){setHint("Голос не поддерживается этим браузером.","bad");return}
-  const r=new SR();
-  r.lang="ru-RU";r.interimResults=false;r.maxAlternatives=1;
-  setHint("Слушаю...","info");
-  r.start();
-  r.onresult=e=>voice(e.results[0][0].transcript.trim().toLowerCase());
-  r.onerror=()=>setHint("Не удалось распознать голос.","bad");
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+    setHint("Голос не поддерживается этим браузером.", "bad");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "ru-RU";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  setHint("Слушаю...", "info");
+  recognition.start();
+
+  recognition.onresult = event => {
+    const text = event.results[0][0].transcript.trim().toLowerCase();
+    handleVoice(text);
+  };
+
+  recognition.onerror = () => {
+    setHint("Не удалось распознать голос.", "bad");
+  };
 }
-function voice(t){
-  if(t.includes("начать"))return startExam();
-  if(t.includes("дальше"))return next();
-  if(t.includes("объясни"))return explain();
-  if(t.includes("повтори"))return speak(last||"Пока нечего повторять.");
-  if(t.includes("сторона"))return toggleSide();
 
-  if(t.includes("безопас")){setHint("Принято: безопасность оценена.","ok");speak("Принято.");return}
-  if(t.includes("сознания нет")||t.includes("нет сознания")){setHint("Принято: сознание отсутствует.","warn");speak("Принято. Сознание отсутствует.");return}
-  if(t.includes("не дышит")||t.includes("дыхания нет")){setHint("Принято: дыхание отсутствует. Готовься к СЛР.","warn");speak("Принято. Дыхание отсутствует.");return}
-  if(t.includes("пульса нет")){setHint("Принято: пульс отсутствует. Начинай СЛР.","warn");speak("Принято. Начинай СЛР.");return}
-  if(t.includes("очнулся")||t.includes("дышит")){setHint("Принято: признаки жизни появились. Боковое положение и контроль.","ok");speak("Принято. Боковое положение и контроль.");return}
+function handleVoice(text){
+  if(text.includes("начать")){
+    startExam();
+    return;
+  }
 
-  setHint("Команда не распознана. Скажи: дальше, объясни, повтори.","warn");
+  if(text.includes("дальше")){
+    next();
+    return;
+  }
+
+  if(text.includes("объясни")){
+    explain();
+    return;
+  }
+
+  if(text.includes("повтори")){
+    speak(lastText || "Пока нечего повторять.");
+    return;
+  }
+
+  if(text.includes("сторона")){
+    toggleSide();
+    return;
+  }
+
+  if(text.includes("безопас")){
+    setHint("Принято: безопасность оценена. Нажми или скажи «дальше».", "ok");
+    speak("Принято.");
+    return;
+  }
+
+  if(text.includes("сознания нет") || text.includes("нет сознания")){
+    setHint("Принято: сознание отсутствует.", "warn");
+    speak("Принято. Сознание отсутствует.");
+    return;
+  }
+
+  if(text.includes("не дышит") || text.includes("дыхания нет")){
+    setHint("Принято: дыхание отсутствует.", "warn");
+    speak("Принято. Дыхание отсутствует.");
+    return;
+  }
+
+  if(text.includes("пульса нет")){
+    setHint("Принято: пульс отсутствует.", "warn");
+    speak("Принято. Пульс отсутствует.");
+    return;
+  }
+
+  if(text.includes("очнулся") || text.includes("дышит")){
+    setHint("Принято: появились признаки жизни.", "ok");
+    speak("Принято. Признаки жизни появились.");
+    return;
+  }
+
+  setHint("Команда не распознана. Скажи: дальше, объясни, повтори.", "warn");
   speak("Команда не распознана.");
 }
 
-const params=new URLSearchParams(location.search);
-if(params.get("pos")==="right")toggleSide();
-if(params.get("start")==="1")startExam();
+const params = new URLSearchParams(location.search);
+
+if(params.get("pos") === "right"){
+  toggleSide();
+}
+
+if(params.get("start") === "1"){
+  startExam();
+}
 </script>
 </body>
 </html>
