@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HUD-инструктор | XREAL</title>
+<title>HUD-инструктор 5 модулей | XREAL</title>
 <style>
 :root{
   --bg:#030303;
-  --panel:rgba(10,10,10,.78);
-  --panel2:rgba(20,20,20,.9);
+  --panel:rgba(10,10,10,.80);
+  --panel2:rgba(20,20,20,.92);
   --text:#fff;
   --muted:#b8b8b8;
   --green:#6fd39a;
@@ -24,16 +24,29 @@ body{
   height:100vh;
   overflow:hidden;
   background:
-    radial-gradient(circle at 82% 48%, rgba(255,255,255,.05), transparent 18%),
-    radial-gradient(circle at 28% 30%, rgba(79,131,241,.12), transparent 22%),
+    radial-gradient(circle at 80% 45%, rgba(255,255,255,.05), transparent 20%),
+    radial-gradient(circle at 25% 30%, rgba(79,131,241,.13), transparent 24%),
     #030303;
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
-.hud{
-  position:relative;
-  width:100vw;
-  height:100vh;
+.hud{position:relative;width:100vw;height:100vh}
+.clearZone{
+  position:absolute;
+  right:34px;
+  top:34px;
+  width:48vw;
+  height:calc(100vh - 68px);
+  border-radius:30px;
+  border:1px dashed rgba(255,255,255,.08);
+  color:rgba(255,255,255,.11);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:28px;
+  font-weight:950;
+  pointer-events:none;
 }
 .panel{
   position:absolute;
@@ -41,7 +54,7 @@ body{
   top:24px;
   width:38vw;
   min-width:390px;
-  max-width:560px;
+  max-width:580px;
   padding:22px;
   border-radius:28px;
   background:var(--panel);
@@ -49,16 +62,8 @@ body{
   backdrop-filter:blur(18px);
   box-shadow:0 18px 70px rgba(0,0,0,.5);
 }
-.panel.right{
-  left:auto;
-  right:24px;
-}
-.top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:14px;
-}
+.panel.right{left:auto;right:24px}
+.top{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}
 .badge{
   display:inline-flex;
   align-items:center;
@@ -72,36 +77,19 @@ body{
   font-weight:800;
 }
 .dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
+  width:9px;height:9px;border-radius:50%;
   background:var(--green);
   box-shadow:0 0 14px rgba(111,211,154,.8);
 }
-.scenario{
-  font-size:18px;
-  color:var(--muted);
-  font-weight:800;
-  margin-bottom:6px;
-}
-.title{
-  font-size:42px;
-  line-height:1.05;
-  font-weight:950;
-  margin-bottom:14px;
-}
-.text{
-  font-size:29px;
-  line-height:1.22;
-  font-weight:780;
-  margin-bottom:14px;
-}
+.scenario{font-size:18px;color:var(--muted);font-weight:800;margin-bottom:6px}
+.title{font-size:40px;line-height:1.05;font-weight:950;margin-bottom:14px}
+.text{font-size:28px;line-height:1.22;font-weight:780;margin-bottom:14px}
 .hint{
   display:none;
   margin-top:14px;
   padding:15px;
   border-radius:20px;
-  font-size:22px;
+  font-size:21px;
   line-height:1.3;
   white-space:pre-line;
 }
@@ -119,16 +107,9 @@ body{
   margin-top:18px;
   margin-bottom:8px;
 }
-.bar{
-  height:10px;
-  border-radius:999px;
-  overflow:hidden;
-  background:rgba(255,255,255,.1);
-}
+.bar{height:10px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.1)}
 .fill{
-  height:100%;
-  width:0%;
-  border-radius:999px;
+  height:100%;width:0%;border-radius:999px;
   background:linear-gradient(90deg,var(--green),var(--blue));
   transition:.25s;
 }
@@ -141,23 +122,15 @@ body{
   border:1px solid rgba(79,131,241,.3);
 }
 .quiz.show{display:block}
-.question{
-  font-size:24px;
-  line-height:1.25;
-  font-weight:900;
-  margin-bottom:12px;
-}
-.answers{
-  display:grid;
-  gap:10px;
-}
+.question{font-size:23px;line-height:1.25;font-weight:900;margin-bottom:12px}
+.answers{display:grid;gap:10px}
 .answer{
   border:1px solid var(--border);
   background:rgba(255,255,255,.08);
   color:#fff;
   border-radius:17px;
   padding:15px;
-  font-size:21px;
+  font-size:20px;
   font-weight:850;
   text-align:left;
 }
@@ -170,15 +143,12 @@ body{
   bottom:24px;
   width:38vw;
   min-width:390px;
-  max-width:560px;
+  max-width:580px;
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:9px;
 }
-.controls.right{
-  left:auto;
-  right:24px;
-}
+.controls.right{left:auto;right:24px}
 .btn{
   border:1px solid var(--border);
   background:var(--panel2);
@@ -197,37 +167,28 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  background:rgba(0,0,0,.86);
+  background:rgba(0,0,0,.88);
   padding:22px;
 }
 .startCard{
-  width:min(620px,90vw);
+  width:min(680px,90vw);
   padding:28px;
   border-radius:30px;
   background:var(--panel2);
   border:1px solid var(--border);
   text-align:center;
 }
-.startTitle{
-  font-size:42px;
-  font-weight:950;
-  margin-bottom:10px;
-}
-.startText{
-  color:var(--muted);
-  font-size:20px;
-  line-height:1.35;
-  margin-bottom:16px;
-}
+.startTitle{font-size:40px;font-weight:950;margin-bottom:10px}
+.startText{color:var(--muted);font-size:19px;line-height:1.35;margin-bottom:16px}
 .scenarioBtn{
   width:100%;
   border:1px solid var(--border);
   background:rgba(255,255,255,.08);
   color:#fff;
   border-radius:20px;
-  padding:18px;
+  padding:16px;
   margin-top:10px;
-  font-size:23px;
+  font-size:21px;
   font-weight:950;
 }
 .result{
@@ -237,28 +198,11 @@ body{
   border-radius:22px;
   background:rgba(111,211,154,.14);
   border:1px solid rgba(111,211,154,.35);
-  font-size:23px;
+  font-size:22px;
   line-height:1.35;
   white-space:pre-line;
 }
 .result.show{display:block}
-.clearZone{
-  position:absolute;
-  right:34px;
-  top:34px;
-  width:48vw;
-  height:calc(100vh - 68px);
-  border-radius:30px;
-  border:1px dashed rgba(255,255,255,.08);
-  color:rgba(255,255,255,.12);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-size:28px;
-  font-weight:950;
-  pointer-events:none;
-}
 @media(max-width:800px){
   body{overflow:auto;height:auto}
   .hud{height:auto;min-height:100vh;padding:12px}
@@ -283,10 +227,12 @@ body{
   <div class="start" id="start">
     <div class="startCard">
       <div class="startTitle">HUD-инструктор</div>
-      <div class="startText">Режим под XREAL Beam Pro: маленькое окно сбоку, крупная подсказка, минимум интерфейса.</div>
-      <button class="scenarioBtn" onclick="startScenario('triage')">Первичная оценка</button>
-      <button class="scenarioBtn" onclick="startScenario('cpr')">СЛР</button>
-      <button class="scenarioBtn" onclick="startScenario('aed')">AED</button>
+      <div class="startText">5 модулей первой помощи для XREAL Beam Pro. Выбери сценарий.</div>
+      <button class="scenarioBtn" onclick="startScenario('triage')">1. Первичная оценка</button>
+      <button class="scenarioBtn" onclick="startScenario('cpr')">2. СЛР</button>
+      <button class="scenarioBtn" onclick="startScenario('aed')">3. AED</button>
+      <button class="scenarioBtn" onclick="startScenario('bleeding')">4. Кровотечения</button>
+      <button class="scenarioBtn" onclick="startScenario('choking')">5. Инородное тело / удушье</button>
     </div>
   </div>
 
@@ -383,16 +329,26 @@ const scenarios={
       }
     ]
   },
+
   cpr:{
     name:"СЛР",
     intro:"Запускаю сценарий СЛР.",
     steps:[
-      {title:"Шаг 1",text:"Проверь безопасность.",explain:"Помощь начинается только если место безопасно."},
-      {title:"Шаг 2",text:"Проверь сознание.",explain:"Обратись громко и проверь реакцию."},
+      {
+        title:"Шаг 1",
+        text:"Проверь безопасность.",
+        explain:"Помощь начинается только если место безопасно."
+      },
+      {
+        title:"Шаг 2",
+        text:"Проверь сознание.",
+        explain:"Громко обратись к пострадавшему и проверь реакцию."
+      },
       {
         title:"Шаг 3",
         text:"Оцени дыхание.",
         explain:"Оценка дыхания проводится быстро, примерно 10 секунд.",
+        timer:true,
         quiz:{
           question:"Сколько времени на оценку дыхания?",
           answers:[
@@ -404,11 +360,15 @@ const scenarios={
           bad:"Неверно. Ориентир — 10 секунд."
         }
       },
-      {title:"Шаг 4",text:"Вызови помощь. Попроси AED.",explain:"Чем раньше вызвана помощь и принесён AED, тем выше шанс на успешную реанимацию."},
+      {
+        title:"Шаг 4",
+        text:"Вызови помощь. Попроси AED.",
+        explain:"Чем раньше вызвана помощь и принесён AED, тем выше шанс на успешную реанимацию."
+      },
       {
         title:"Шаг 5",
         text:"Начинай СЛР.",
-        explain:"Если нет сознания и нормального дыхания — начинай компрессии.",
+        explain:"Если нет сознания и нормального дыхания — начинай компрессии грудной клетки.",
         quiz:{
           question:"Что делать, если не дышит нормально?",
           answers:[
@@ -436,9 +396,14 @@ const scenarios={
           bad:"Неверно. Ориентир — 5–6 сантиметров."
         }
       },
-      {title:"Шаг 7",text:"Продолжай до помощи или AED.",explain:"Не прекращай СЛР без причины."}
+      {
+        title:"Шаг 7",
+        text:"Продолжай до помощи или AED.",
+        explain:"Не прекращай СЛР без причины."
+      }
     ]
   },
+
   aed:{
     name:"AED",
     intro:"Запускаю сценарий AED.",
@@ -458,8 +423,16 @@ const scenarios={
           bad:"Неверно. Сначала включить AED."
         }
       },
-      {title:"Шаг 2",text:"Открой грудную клетку.",explain:"Электроды должны быть наклеены на открытую кожу."},
-      {title:"Шаг 3",text:"Наклей электроды по схеме.",explain:"Один электрод — справа вверху, второй — слева сбоку ниже."},
+      {
+        title:"Шаг 2",
+        text:"Открой грудную клетку.",
+        explain:"Электроды должны быть наклеены на открытую кожу."
+      },
+      {
+        title:"Шаг 3",
+        text:"Наклей электроды по схеме.",
+        explain:"Один электрод — справа вверху, второй — слева сбоку ниже."
+      },
       {
         title:"Шаг 4",
         text:"Не касайся во время анализа.",
@@ -474,7 +447,11 @@ const scenarios={
           bad:"Неверно. Касаться нельзя."
         }
       },
-      {title:"Шаг 5",text:"Если нужен разряд — предупреди.",explain:"Убедись, что никто не касается пострадавшего, и нажми кнопку."},
+      {
+        title:"Шаг 5",
+        text:"Если нужен разряд — предупреди.",
+        explain:"Убедись, что никто не касается пострадавшего, и нажми кнопку."
+      },
       {
         title:"Шаг 6",
         text:"После разряда продолжи СЛР.",
@@ -490,19 +467,168 @@ const scenarios={
         }
       }
     ]
+  },
+
+  bleeding:{
+    name:"Кровотечения",
+    intro:"Запускаю сценарий помощи при кровотечении.",
+    steps:[
+      {
+        title:"Шаг 1",
+        text:"Оцени безопасность и надень защиту.",
+        explain:"Перед контактом с кровью важно защитить себя: перчатки, барьерные средства, безопасная позиция.",
+        quiz:{
+          question:"Что важно сделать перед контактом с кровью?",
+          answers:[
+            {text:"Надеть перчатки",correct:true},
+            {text:"Сразу дать воды",correct:false},
+            {text:"Посадить пострадавшего и уйти",correct:false}
+          ],
+          ok:"Верно. Сначала защита спасателя.",
+          bad:"Неверно. Перед контактом нужна защита."
+        }
+      },
+      {
+        title:"Шаг 2",
+        text:"Определи источник кровотечения.",
+        explain:"Быстро найди место кровотечения. От этого зависит способ остановки крови."
+      },
+      {
+        title:"Шаг 3",
+        text:"Прижми рану напрямую.",
+        explain:"Прямое давление на рану — базовое действие при сильном наружном кровотечении.",
+        quiz:{
+          question:"Что сделать при сильном наружном кровотечении в первую очередь?",
+          answers:[
+            {text:"Прямое давление на рану",correct:true},
+            {text:"Попросить пострадавшего походить",correct:false},
+            {text:"Промыть рану долго водой",correct:false}
+          ],
+          ok:"Верно. Сначала прямое давление.",
+          bad:"Неверно. При сильном кровотечении сначала прямое давление."
+        }
+      },
+      {
+        title:"Шаг 4",
+        text:"Если кровь не остановлена — используй жгут.",
+        explain:"Жгут применяют при массивном кровотечении из конечности, когда прямого давления недостаточно или ситуация критическая.",
+        quiz:{
+          question:"Когда нужен жгут?",
+          answers:[
+            {text:"При массивном кровотечении из конечности",correct:true},
+            {text:"При головной боли",correct:false},
+            {text:"При лёгкой царапине",correct:false}
+          ],
+          ok:"Верно. Жгут — при массивном кровотечении из конечности.",
+          bad:"Неверно. Жгут применяют при массивном кровотечении из конечности."
+        }
+      },
+      {
+        title:"Шаг 5",
+        text:"Зафиксируй время наложения.",
+        explain:"Время наложения жгута обязательно фиксируется и передаётся медикам.",
+        timerLabel:"Контроль времени жгута",
+        quiz:{
+          question:"Что нужно зафиксировать после наложения жгута?",
+          answers:[
+            {text:"Время наложения",correct:true},
+            {text:"Цвет одежды",correct:false},
+            {text:"Температуру воздуха",correct:false}
+          ],
+          ok:"Верно. Нужно зафиксировать время.",
+          bad:"Неверно. Важно зафиксировать время наложения."
+        }
+      },
+      {
+        title:"Шаг 6",
+        text:"Вызови помощь и контролируй состояние.",
+        explain:"После остановки кровотечения нужно вызвать помощь и наблюдать за пострадавшим до передачи специалистам."
+      }
+    ]
+  },
+
+  choking:{
+    name:"Инородное тело / удушье",
+    intro:"Запускаю сценарий помощи при удушье.",
+    steps:[
+      {
+        title:"Шаг 1",
+        text:"Оцени: человек кашляет или не может говорить?",
+        explain:"Если человек эффективно кашляет, его нужно побуждать кашлять. Если не может говорить и дышать — нужна активная помощь.",
+        quiz:{
+          question:"Если человек эффективно кашляет, что делать?",
+          answers:[
+            {text:"Побуждать кашлять и наблюдать",correct:true},
+            {text:"Сразу делать СЛР",correct:false},
+            {text:"Дать лечь на спину",correct:false}
+          ],
+          ok:"Верно. Пусть кашляет, наблюдай.",
+          bad:"Неверно. При эффективном кашле побуждаем кашлять и наблюдаем."
+        }
+      },
+      {
+        title:"Шаг 2",
+        text:"Если не может дышать — позови помощь.",
+        explain:"При выраженном удушье важно быстро привлечь помощь и действовать по алгоритму."
+      },
+      {
+        title:"Шаг 3",
+        text:"Сделай до 5 ударов между лопатками.",
+        explain:"Удары выполняют основанием ладони между лопатками, контролируя состояние после каждого удара.",
+        counter:true,
+        quiz:{
+          question:"Сколько ударов между лопатками выполняется на этапе?",
+          answers:[
+            {text:"До 5",correct:true},
+            {text:"До 20",correct:false},
+            {text:"1 раз и ждать",correct:false}
+          ],
+          ok:"Верно. До 5 ударов.",
+          bad:"Неверно. Выполняют до 5 ударов между лопатками."
+        }
+      },
+      {
+        title:"Шаг 4",
+        text:"Если не помогло — до 5 абдоминальных толчков.",
+        explain:"Абдоминальные толчки выполняют, если удары между лопатками не помогли и пострадавший в сознании.",
+        counter:true,
+        quiz:{
+          question:"Что делать, если удары между лопатками не помогли?",
+          answers:[
+            {text:"До 5 абдоминальных толчков",correct:true},
+            {text:"Оставить человека одного",correct:false},
+            {text:"Дать воды",correct:false}
+          ],
+          ok:"Верно. До 5 абдоминальных толчков.",
+          bad:"Неверно. Следующий шаг — до 5 абдоминальных толчков."
+        }
+      },
+      {
+        title:"Шаг 5",
+        text:"Чередуй действия до улучшения или потери сознания.",
+        explain:"Продолжай чередовать удары и толчки, контролируя состояние."
+      },
+      {
+        title:"Шаг 6",
+        text:"Если потерял сознание — переходи к СЛР.",
+        explain:"При потере сознания нужно аккуратно опустить пострадавшего и начать алгоритм СЛР.",
+        quiz:{
+          question:"Что делать при потере сознания?",
+          answers:[
+            {text:"Перейти к СЛР",correct:true},
+            {text:"Продолжать давать воду",correct:false},
+            {text:"Ждать без действий",correct:false}
+          ],
+          ok:"Верно. При потере сознания — переход к СЛР.",
+          bad:"Неверно. При потере сознания переходят к СЛР."
+        }
+      }
+    ]
   }
 };
 
-let key=null;
-let index=0;
-let correct=0;
-let total=0;
-let answered=false;
-let audio=false;
-let last="";
-let timer=null;
-let metronome=null;
-let right=false;
+let key=null,index=0,correct=0,total=0,answered=false,audio=false,last="";
+let timer=null,metronome=null,right=false,counterTimer=null;
 
 const el={
   start:document.getElementById("start"),
@@ -530,6 +656,7 @@ function primeAudio(){
   m.volume=.01;
   speechSynthesis.speak(m);
 }
+
 function speak(t){
   last=t;
   if(!audio)return;
@@ -539,10 +666,12 @@ function speak(t){
   m.rate=.95;
   speechSynthesis.speak(m);
 }
+
 function hint(t,type="info"){
   el.hint.textContent=t||"";
   el.hint.className=t?`hint show ${type}`:"hint";
 }
+
 function startScenario(k){
   primeAudio();
   key=k;
@@ -555,12 +684,13 @@ function startScenario(k){
   speak(scenarios[k].intro);
   render();
 }
-function step(){
-  return scenarios[key].steps[index];
-}
+
+function step(){return scenarios[key].steps[index]}
+
 function render(){
   stopTimer();
   stopMetronome();
+  stopCounter();
   hint("");
   el.result.classList.remove("show");
   answered=false;
@@ -583,9 +713,12 @@ function render(){
 
   if(st.timer) startBreathingTimer();
   if(st.metronome) startMetronome();
+  if(st.timerLabel) startSimpleTimer(st.timerLabel);
+  if(st.counter) startActionCounter();
 
   speak(`${st.title}. ${st.text}`);
 }
+
 function showQuiz(q){
   el.quiz.classList.add("show");
   el.question.textContent=q.question;
@@ -598,10 +731,12 @@ function showQuiz(q){
     el.answers.appendChild(b);
   });
 }
+
 function hideQuiz(){
   el.quiz.classList.remove("show");
   el.answers.innerHTML="";
 }
+
 function answer(a,q,b){
   if(answered)return;
   answered=true;
@@ -623,6 +758,7 @@ function answer(a,q,b){
   }
   el.score.textContent=`${correct} / ${total}`;
 }
+
 function nextStep(){
   if(!key)return;
   if(step().quiz&&!answered){
@@ -635,14 +771,17 @@ function nextStep(){
     render();
   }else finish();
 }
+
 function explain(){
   if(!key)return;
   hint(step().explain||"Нет дополнительного объяснения.","info");
   speak(step().explain||"Нет дополнительного объяснения.");
 }
+
 function finish(){
   stopTimer();
   stopMetronome();
+  stopCounter();
   hideQuiz();
   const percent=total?Math.round(correct/total*100):0;
   let lvl="Базовый уровень";
@@ -653,6 +792,7 @@ function finish(){
   hint("Готово.","ok");
   speak(`Сценарий завершён. Результат ${correct} из ${total}.`);
 }
+
 function startBreathingTimer(){
   let sec=10;
   hint(`Таймер дыхания: ${sec} секунд`,"warn");
@@ -666,9 +806,20 @@ function startBreathingTimer(){
     }
   },1000);
 }
-function stopTimer(){
-  if(timer){clearInterval(timer);timer=null;}
+
+function startSimpleTimer(label){
+  let sec=0;
+  hint(`${label}: 0 секунд`,"warn");
+  timer=setInterval(()=>{
+    sec++;
+    hint(`${label}: ${sec} секунд`,"warn");
+  },1000);
 }
+
+function stopTimer(){
+  if(timer){clearInterval(timer);timer=null}
+}
+
 function startMetronome(){
   let c=0;
   hint("Метроном СЛР включён. Держи ритм 100–120 в минуту.","warn");
@@ -677,14 +828,35 @@ function startMetronome(){
     if(c%10===0)hint(`Метроном: ${c} нажатий`,"warn");
   },600);
 }
+
 function stopMetronome(){
-  if(metronome){clearInterval(metronome);metronome=null;}
+  if(metronome){clearInterval(metronome);metronome=null}
 }
+
+function startActionCounter(){
+  let c=0;
+  hint("Счёт действий: 0 из 5","warn");
+  counterTimer=setInterval(()=>{
+    c++;
+    hint(`Счёт действий: ${Math.min(c,5)} из 5`,"warn");
+    if(c>=5){
+      stopCounter();
+      hint("Серия завершена. Оцени состояние.","ok");
+      speak("Серия завершена. Оцени состояние.");
+    }
+  },1300);
+}
+
+function stopCounter(){
+  if(counterTimer){clearInterval(counterTimer);counterTimer=null}
+}
+
 function toggleSide(){
   right=!right;
   el.panel.classList.toggle("right",right);
   el.controls.classList.toggle("right",right);
 }
+
 function listen(){
   primeAudio();
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -704,13 +876,19 @@ function listen(){
   };
   r.onerror=()=>hint("Не удалось распознать голос.","bad");
 }
+
 function voice(t){
   if(t.includes("первичная"))return startScenario("triage");
   if(t.includes("слр")||t.includes("с л р"))return startScenario("cpr");
   if(t.includes("aed")||t.includes("аед"))return startScenario("aed");
+  if(t.includes("кров"))return startScenario("bleeding");
+  if(t.includes("удуш")||t.includes("инород"))return startScenario("choking");
+
   if(t.includes("дальше"))return nextStep();
   if(t.includes("объясни"))return explain();
   if(t.includes("повтори"))return speak(last||"Пока нечего повторять.");
+  if(t.includes("сторона"))return toggleSide();
+
   if(t.includes("не дышит")){
     hint("Принято: не дышит. Следующий сценарий — СЛР.","warn");
     return speak("Принято. Не дышит. Следующий сценарий — СЛР.");
@@ -719,9 +897,19 @@ function voice(t){
     hint("Принято: дыхание есть. Вызови помощь и контролируй состояние.","ok");
     return speak("Принято. Дыхание есть.");
   }
+  if(t.includes("кровотечение остановлено")){
+    hint("Принято: кровотечение остановлено. Контролируй состояние.","ok");
+    return speak("Принято. Контролируй состояние.");
+  }
+  if(t.includes("потерял сознание")){
+    hint("Принято: потеря сознания. Переход к алгоритму СЛР.","warn");
+    return speak("Принято. Переход к СЛР.");
+  }
+
   hint("Команда не распознана.","warn");
   speak("Команда не распознана.");
 }
+
 const params=new URLSearchParams(location.search);
 const scenario=params.get("scenario");
 const pos=params.get("pos");
